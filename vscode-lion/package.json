@@ -1,0 +1,29 @@
+{
+  "name": "lion-lang",
+  "displayName": "Lion Language",
+  "description": "Lion scripting language support",
+  "version": "0.1.0",
+  "publisher": "lion-lang",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Programming Languages", "Language Servers"],
+  "activationEvents": ["onLanguage:lion"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "lion",
+      "aliases": ["Lion", "lion"],
+      "extensions": [".lion"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "lion",
+      "scopeName": "source.lion",
+      "path": "./syntaxes/lion.tmLanguage.json"
+    }]
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}
