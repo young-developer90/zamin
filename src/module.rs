@@ -21,7 +21,7 @@ impl ModuleLoader {
 
     fn build_modules(heap: &mut GcHeap) -> HashMap<String, Value> {
         let mut modules = HashMap::new();
-        for (name, items) in stdlib::build_stdlib() {
+        for (name, items) in stdlib::build_stdlib(heap) {
             let mut dict_items = Vec::new();
             for (key, val) in items {
                 dict_items.push((make_string(heap, &key), val));

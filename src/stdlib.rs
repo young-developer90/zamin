@@ -17,7 +17,7 @@ use crate::collections_mod;
 use crate::itertools_mod;
 use crate::test_mod;
 
-pub fn build_stdlib() -> Vec<(String, Vec<(String, Value)>)> {
+pub fn build_stdlib(heap: &mut GcHeap) -> Vec<(String, Vec<(String, Value)>)> {
     let mut modules = Vec::new();
 
     // io module
@@ -449,7 +449,7 @@ pub fn build_stdlib() -> Vec<(String, Vec<(String, Value)>)> {
     modules.push(("stats".to_string(), stats_mod::build_stats()));
     modules.push(("url".to_string(), url_mod::build_url()));
     modules.push(("re".to_string(), re_mod::build_re()));
-    modules.push(("datetime".to_string(), datetime_mod::build_datetime()));
+    modules.push(("datetime".to_string(), datetime_mod::build_datetime(heap)));
     modules.push(("logging".to_string(), logging_mod::build_logging()));
     modules.push(("subprocess".to_string(), subprocess_mod::build_subprocess()));
     modules.push(("path".to_string(), path_mod::build_path()));

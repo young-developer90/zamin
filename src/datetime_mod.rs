@@ -3,22 +3,36 @@ use std::rc::Rc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crate::gc::*;
 
-pub fn build_datetime() -> Vec<(String, Value)> {
+pub fn build_datetime(heap: &mut GcHeap) -> Vec<(String, Value)> {
+    let key_year = make_string(heap, "year");
+    let key_month = make_string(heap, "month");
+    let key_day = make_string(heap, "day");
+    let key_hour = make_string(heap, "hour");
+    let key_minute = make_string(heap, "minute");
+    let key_second = make_string(heap, "second");
+    let key_unix = make_string(heap, "unix");
+
     let mut funcs = Vec::new();
 
+    let ky1 = key_year.clone(); let km1 = key_month.clone(); let kd1 = key_day.clone();
+    let kh1 = key_hour.clone(); let kmi1 = key_minute.clone(); let ks1 = key_second.clone(); let ku1 = key_unix.clone();
     funcs.push(("now".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.now>".to_string(),
-        func: Rc::new(|_, ctx| {
+        func: Rc::new(move |_, ctx| {
             let dur = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-            Ok(make_datetime_dict(ctx.heap, dur.as_secs() as i64))
+            Ok(datetime_dict_from_ts(ctx.heap, dur.as_secs() as i64,
+                &ky1, &km1, &kd1, &kh1, &kmi1, &ks1, &ku1))
         }),
     })));
 
+    let ky2 = key_year.clone(); let km2 = key_month.clone(); let kd2 = key_day.clone();
+    let kh2 = key_hour.clone(); let kmi2 = key_minute.clone(); let ks2 = key_second.clone(); let ku2 = key_unix.clone();
     funcs.push(("from_unix".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.from_unix>".to_string(),
-        func: Rc::new(|args, ctx| {
+        func: Rc::new(move |args, ctx| {
             let ts = to_i64(&args[0])?;
-            Ok(make_datetime_dict(ctx.heap, ts))
+            Ok(datetime_dict_from_ts(ctx.heap, ts,
+                &ky2, &km2, &kd2, &kh2, &kmi2, &ks2, &ku2))
         }),
     })));
 
@@ -28,13 +42,7 @@ pub fn build_datetime() -> Vec<(String, Value)> {
             if args.len() < 2 { return Err("datetime.format requires a datetime dict and format string".to_string()); }
             let dt = &args[0];
             let fmt = args[1].to_string(ctx.heap);
-            let year = get_dict_int(dt, ctx.heap, "year")?;
-            let month = get_dict_int(dt, ctx.heap, "month")?;
-            let day = get_dict_int(dt, ctx.heap, "day")?;
-            let hour = get_dict_int(dt, ctx.heap, "hour")?;
-            let minute = get_dict_int(dt, ctx.heap, "minute")?;
-            let second = get_dict_int(dt, ctx.heap, "second")?;
-            // Single-pass format: scan format string and build result
+            let (year, month, day, hour, minute, second, _) = extract_datetime_fields(dt, ctx.heap)?;
             let mut result = String::with_capacity(fmt.len());
             let mut chars = fmt.chars();
             while let Some(c) = chars.next() {
@@ -58,9 +66,11 @@ pub fn build_datetime() -> Vec<(String, Value)> {
         }),
     })));
 
+    let ky3 = key_year.clone(); let km3 = key_month.clone(); let kd3 = key_day.clone();
+    let kh3 = key_hour.clone(); let kmi3 = key_minute.clone(); let ks3 = key_second.clone(); let ku3 = key_unix.clone();
     funcs.push(("parse".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.parse>".to_string(),
-        func: Rc::new(|args, ctx| {
+        func: Rc::new(move |args, ctx| {
             if args.len() < 2 { return Err("datetime.parse requires a date string and format string".to_string()); }
             let s = args[0].to_string(ctx.heap);
             let fmt = args[1].to_string(ctx.heap);
@@ -93,47 +103,37 @@ pub fn build_datetime() -> Vec<(String, Value)> {
                 }
             }
             let unix = date_to_unix(year, month, day, hour, minute, second);
-            let mut entries = Vec::new();
-            entries.push((make_string(ctx.heap, "year"), Value::Int(year)));
-            entries.push((make_string(ctx.heap, "month"), Value::Int(month)));
-            entries.push((make_string(ctx.heap, "day"), Value::Int(day)));
-            entries.push((make_string(ctx.heap, "hour"), Value::Int(hour)));
-            entries.push((make_string(ctx.heap, "minute"), Value::Int(minute)));
-            entries.push((make_string(ctx.heap, "second"), Value::Int(second)));
-            entries.push((make_string(ctx.heap, "unix"), Value::Int(unix)));
-            Ok(make_dict(ctx.heap, entries))
+            Ok(datetime_dict_from_ts(ctx.heap, unix,
+                &ky3, &km3, &kd3, &kh3, &kmi3, &ks3, &ku3))
         }),
     })));
 
     funcs.push(("unix".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.unix>".to_string(),
         func: Rc::new(|args, ctx| {
-            let dt = &args[0];
-            if let Value::Dict(r) = dt {
-                let entries = match ctx.heap.get(*r) { GcObj::Dict(e) => e, _ => return Err("not a dict".to_string()) };
-                for (k, v) in entries {
-                    if let GcObj::String(s) = ctx.heap.get(match k { Value::String(r) => *r, _ => continue }) {
-                        if s == "unix" { return Ok(v.clone()); }
-                    }
-                }
-            }
-            Err("datetime.unix: invalid datetime dict".to_string())
+            if args.is_empty() { return Err("datetime.unix requires a datetime dict".to_string()); }
+            let (_, _, _, _, _, _, unix) = extract_datetime_fields(&args[0], ctx.heap)?;
+            Ok(Value::Int(unix))
         }),
     })));
 
     funcs
 }
 
-fn make_datetime_dict(heap: &mut GcHeap, unix_ts: i64) -> Value {
+fn datetime_dict_from_ts(
+    heap: &mut GcHeap, unix_ts: i64,
+    key_year: &Value, key_month: &Value, key_day: &Value,
+    key_hour: &Value, key_minute: &Value, key_second: &Value, key_unix: &Value,
+) -> Value {
     let (year, month, day, hour, minute, second) = unix_to_date(unix_ts);
     let mut entries = Vec::with_capacity(7);
-    entries.push((make_string(heap, "year"), Value::Int(year)));
-    entries.push((make_string(heap, "month"), Value::Int(month)));
-    entries.push((make_string(heap, "day"), Value::Int(day)));
-    entries.push((make_string(heap, "hour"), Value::Int(hour)));
-    entries.push((make_string(heap, "minute"), Value::Int(minute)));
-    entries.push((make_string(heap, "second"), Value::Int(second)));
-    entries.push((make_string(heap, "unix"), Value::Int(unix_ts)));
+    entries.push((key_year.clone(), Value::Int(year)));
+    entries.push((key_month.clone(), Value::Int(month)));
+    entries.push((key_day.clone(), Value::Int(day)));
+    entries.push((key_hour.clone(), Value::Int(hour)));
+    entries.push((key_minute.clone(), Value::Int(minute)));
+    entries.push((key_second.clone(), Value::Int(second)));
+    entries.push((key_unix.clone(), Value::Int(unix_ts)));
     make_dict(heap, entries)
 }
 
@@ -144,47 +144,62 @@ fn unix_to_date(ts: i64) -> (i64, i64, i64, i64, i64, i64) {
     let minute = (time_secs % 3600) / 60;
     let second = time_secs % 60;
 
-    let mut y = 1970i64;
-    let mut remaining = days;
-    loop {
-        let days_in_year = if is_leap(y) { 366 } else { 365 };
-        if remaining < days_in_year { break; }
-        remaining -= days_in_year;
-        y += 1;
-    }
+    let z = days + 719468;
+    let era = if z >= 0 { z } else { z - 146096 } / 146097;
+    let doe = z - era * 146097;
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = doy - (153 * mp + 2) / 5 + 1;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    let y = if m <= 2 { y + 1 } else { y };
 
-    let month_days = if is_leap(y) {
-        [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    } else {
-        [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    };
-
-    let mut m = 0i64;
-    for (i, &md) in month_days.iter().enumerate() {
-        if remaining < md { m = i as i64 + 1; break; }
-        remaining -= md;
-    }
-    let day = remaining + 1;
-
-    (y, m, day, hour, minute, second)
-}
-
-fn is_leap(year: i64) -> bool {
-    (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+    (y as i64, m as i64, d as i64, hour, minute, second)
 }
 
 fn date_to_unix(year: i64, month: i64, day: i64, hour: i64, minute: i64, second: i64) -> i64 {
-    let month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    let mut total_days = 0i64;
-    for y in 1970..year {
-        total_days += if is_leap(y) { 366 } else { 365 };
+    let (y, m) = if month <= 2 { (year - 1, month + 9) } else { (year, month - 3) };
+    let era = if y >= 0 { y / 400 } else { (y - 399) / 400 };
+    let yoe = y - era * 400;
+    let doy = (153 * m + 2) / 5 + day - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    let days = era * 146097 + doe - 719468;
+    days * 86400 + hour * 3600 + minute * 60 + second
+}
+
+fn extract_datetime_fields(val: &Value, heap: &GcHeap) -> Result<(i64, i64, i64, i64, i64, i64, i64), String> {
+    match val {
+        Value::Dict(r) => {
+            let entries = match heap.get(*r) { GcObj::Dict(e) => e, _ => return Err("not a dict".to_string()) };
+            let mut year = 0i64; let mut month = 0i64; let mut day = 0i64;
+            let mut hour = 0i64; let mut minute = 0i64; let mut second = 0i64;
+            let mut unix = 0i64;
+            let mut found = 0u8;
+            for (k, v) in entries {
+                let key_str = match heap.get(match k { Value::String(r) => *r, _ => continue }) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => continue,
+                };
+                let val = match to_i64(v) { Ok(n) => n, _ => continue };
+                match key_str {
+                    "year" => { year = val; found |= 1; }
+                    "month" => { month = val; found |= 2; }
+                    "day" => { day = val; found |= 4; }
+                    "hour" => { hour = val; found |= 8; }
+                    "minute" => { minute = val; found |= 16; }
+                    "second" => { second = val; found |= 32; }
+                    "unix" => { unix = val; found |= 64; }
+                    _ => {}
+                }
+            }
+            if found & 0x7f != 0x7f {
+                return Err("datetime dict missing required fields".to_string());
+            }
+            Ok((year, month, day, hour, minute, second, unix))
+        }
+        _ => Err("expected datetime dict".to_string()),
     }
-    for m in 0..(month - 1) as usize {
-        total_days += month_days[m];
-        if m == 1 && is_leap(year) { total_days += 1; }
-    }
-    total_days += day - 1;
-    total_days * 86400 + hour * 3600 + minute * 60 + second
 }
 
 fn parse_num_peek(chars: &mut std::iter::Peekable<std::str::Chars>, count: usize) -> i64 {
@@ -199,21 +214,4 @@ fn parse_num_peek(chars: &mut std::iter::Peekable<std::str::Chars>, count: usize
         }
     }
     n
-}
-
-fn get_dict_int(val: &Value, heap: &GcHeap, key: &str) -> Result<i64, String> {
-    match val {
-        Value::Dict(r) => {
-            let entries = match heap.get(*r) { GcObj::Dict(e) => e, _ => return Err("not a dict".to_string()) };
-            for (k, v) in entries {
-                if let GcObj::String(s) = heap.get(match k { Value::String(r) => *r, _ => continue }) {
-                    if s == key {
-                        return to_i64(v);
-                    }
-                }
-            }
-            Err(format!("datetime dict has no key '{}'", key))
-        }
-        _ => Err("expected datetime dict".to_string()),
-    }
 }
