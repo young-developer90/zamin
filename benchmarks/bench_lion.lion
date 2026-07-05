@@ -1,0 +1,121 @@
+// Lion benchmark
+// Run with: lion run benchmarks/bench_lion.lion
+
+func bench(name, fn) {
+    let start = time.now();
+    fn();
+    let elapsed = (time.now() - start) * 1000.0;
+    print(f"{name}: {elapsed} ms");
+}
+
+print("=== Lion Benchmarks ===\n");
+
+// 1. Regex
+print("--- re (regex) ---");
+let log_lines = [];
+for i in 0..10000 {
+    log_lines.push(f"2024-01-15 10:30:45 ERROR [module] something went wrong #{i}");
+}
+let text = string.join(log_lines, "\n");
+
+bench("re.find_all 10k lines", func() {
+    let results = re.find_all("ERROR\\s+\\[.*?\\]", text);
+    if results.len() != 10000 { print("ERROR: count mismatch") }
+});
+
+bench("re.sub_all 10k lines", func() {
+    let result = re.sub_all("\\d+", "X", text);
+    if result.len() == 0 { print("ERROR: empty result") }
+});
+
+bench("re.split 10k lines", func() {
+    let parts = re.split("\n", text);
+    if parts.len() != 10000 { print("ERROR: split count") }
+});
+
+// 2. Counter
+print("\n--- collections.Counter ---");
+let words = [];
+let tokens = ["the", "and", "of", "to", "a", "in", "for", "is", "on", "that"];
+for i in 0..50000 {
+    words.push(tokens[i % 10]);
+}
+
+bench("Counter 50k words", func() {
+    let c = collections.Counter(words);
+    if c.the != 5000 { print("ERROR: counter mismatch") }
+});
+
+// 3. Unique
+print("\n--- itertools.unique ---");
+let mixed = [];
+for i in 0..20000 {
+    mixed.push(i % 1000);
+}
+
+bench("unique 20k items (1k distinct)", func() {
+    let u = itertools.unique(mixed);
+    if u.len() != 1000 { print("ERROR: unique count") }
+});
+
+// 4. Sorted
+print("\n--- itertools.sorted ---");
+let unsorted = [];
+for i in 0..10000 {
+    unsorted.push(9999 - i);
+}
+
+bench("sorted 10k items (reverse)", func() {
+    let s = itertools.sorted(unsorted);
+    if s[0] != 0 { print("ERROR: sort failed") }
+});
+
+// 5. Datetime
+print("\n--- datetime ---");
+bench("datetime.now (10k calls)", func() {
+    for i in 0..10000 {
+        let dt = datetime.now();
+        if dt.year < 2020 { print("ERROR: bad year") }
+    }
+});
+
+bench("datetime.format (10k calls)", func() {
+    let dt = datetime.now();
+    for i in 0..10000 {
+        let s = datetime.format(dt, "%Y-%m-%d %H:%M:%S");
+        if string.len(s) != 19 { print("ERROR: bad format") }
+    }
+});
+
+// 6. Hashlib
+print("\n--- hashlib ---");
+let hash_data = [];
+for i in 0..1000 {
+    hash_data.push(f"hello world {i}");
+}
+
+bench("sha256 1k strings", func() {
+    for s in hash_data {
+        let h = hashlib.sha256(s);
+        if string.len(h) != 64 { print("ERROR: bad hash") }
+    }
+});
+
+bench("base64 1k strings", func() {
+    for s in hash_data {
+        let enc = hashlib.base64_encode(s);
+        let dec = hashlib.base64_decode(enc);
+        if dec != s { print("ERROR: base64 roundtrip") }
+    }
+});
+
+// 7. Subprocess
+print("\n--- subprocess ---");
+bench("subprocess.run_shell (100 calls)", func() {
+    for i in 0..100 {
+        let r = subprocess.run_shell(f"echo {i}");
+        if r.returncode != 0 { print("ERROR: bad rc") }
+    }
+});
+
+print("\n=== Benchmarks complete ===");

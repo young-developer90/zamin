@@ -194,6 +194,32 @@ set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x
 cargo build --release
 ```
 
+## Performance Benchmarks
+
+Benchmarks comparing Lion 1.4.6 against Python 3.14 on the same workloads. Lower is better.
+
+| Benchmark | Lion | Python | vs Python |
+|-----------|------|--------|-----------|
+| `re.find_all` — 10k lines | 22.2 ms | 1.8 ms | ~12× slower |
+| `re.sub_all` — 10k lines | 57.5 ms | 9.4 ms | ~6× slower |
+| `re.split` — 10k lines | 5.7 ms | 0.5 ms | ~11× slower |
+| `collections.Counter` — 50k words | 14.6 ms | 1.2 ms | ~12× slower |
+| `itertools.unique` — 20k items | 6.0 ms | 0.2 ms | ~30× slower |
+| `itertools.sorted` — 10k items | 0.4 ms | 0.06 ms | ~7× slower |
+| `datetime.now` — 10k calls | 54.8 ms | 1.7 ms | ~32× slower |
+| `datetime.format` — 10k calls | 98.8 ms | 17.2 ms | ~6× slower |
+| `hashlib.sha256` — 1k strings | 46.2 ms | 1.6 ms | ~29× slower |
+| `hashlib.base64` — 1k strings | 38.5 ms | 0.4 ms | ~96× slower |
+| `subprocess.run_shell` — 100 calls | 1.57 s | 1.41 s | ~1.1× slower |
+
+Lion is an interpreted, unoptimized bytecode VM while Python benefits from decades of optimization and C-backed native implementations. The subprocess benchmark shows comparable performance (OS process spawning is the bottleneck, not the language).
+
+Benchmarks are in [`benchmarks/`](benchmarks/) and can be run with:
+```bash
+cargo run --bin lion -- run benchmarks/bench_lion.lion
+python benchmarks/bench_python.py
+```
+
 ## Running Tests
 
 ```bash
