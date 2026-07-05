@@ -2,7 +2,7 @@
 ; Inno Setup script — https://jrsoftware.org/isinfo.php
 
 #define MyAppName "Lion"
-#define MyAppVersion "1.5.4"
+#define MyAppVersion "1.5.5"
 #define MyAppPublisher "Lion Language"
 #define MyAppURL "https://github.com/young-developer90/lion"
 #define MyAppExeName "lion.exe"
