@@ -1,20 +1,29 @@
 mod ast;
 mod bytecode;
 mod cli;
+mod collections_mod;
 mod compiler;
 mod csv_mod;
+mod datetime_mod;
 mod gc;
+mod hashlib_mod;
 mod html_mod;
 mod http;
 mod http_module;
+mod itertools_mod;
 mod json_mod;
 mod lexer;
+mod logging_mod;
 mod module;
 mod parser;
+mod path_mod;
+mod re_mod;
 mod repl;
 mod stats_mod;
 mod stdlib;
 mod string_mod;
+mod subprocess_mod;
+mod test_mod;
 mod url_mod;
 mod vm;
 
@@ -152,11 +161,11 @@ fn run_tests(path: &str) -> Result<Vec<(String, bool, String)>, String> {
         let mut files = Vec::new();
         for entry in std::fs::read_dir(path).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
-            let path = entry.path();
-            if path.extension().and_then(|s| s.to_str()) == Some("lion") {
-                let fname = path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
+            let entry_path = entry.path();
+            if entry_path.extension().and_then(|s| s.to_str()) == Some("lion") {
+                let fname = entry_path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
                 if !skip_tests.iter().any(|s| fname.starts_with(s)) {
-                    files.push(path.to_string_lossy().to_string());
+                    files.push(entry_path.to_string_lossy().to_string());
                 }
             }
         }
@@ -165,33 +174,35 @@ fn run_tests(path: &str) -> Result<Vec<(String, bool, String)>, String> {
         vec![path.to_string()]
     };
 
-    for file in test_files {
-        let source = std::fs::read_to_string(&file)
-            .map_err(|e| format!("cannot read file '{}': {}", file, e))?;
+    for file in &test_files {
+        let name = std::path::Path::new(&file)
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or(&file)
+            .to_string();
 
-        let mut loader = module::ModuleLoader::new();
-        loader.load_stdlib();
-
-        match loader.execute_source(&source) {
-            Ok(result) => {
-                let name = std::path::Path::new(&file)
-                    .file_stem()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or(&file)
-                    .to_string();
-                let passed = !result.contains("Error");
-                let msg = if passed { String::new() } else { result };
-                results.push((name, passed, msg));
-            }
+        // Run as subprocess to capture all output (stdout + stderr)
+        let exe_path = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("lion"));
+        let output = match std::process::Command::new(&exe_path)
+            .arg("run")
+            .arg(file)
+            .output()
+        {
+            Ok(out) => out,
             Err(e) => {
-                let name = std::path::Path::new(&file)
-                    .file_stem()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or(&file)
-                    .to_string();
-                results.push((name, false, e));
+                results.push((name, false, format!("cannot run test: {}", e)));
+                continue;
             }
-        }
+        };
+
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        let combined = format!("{}{}", stdout, stderr);
+        let exit_ok = output.status.success();
+
+        let has_fail = combined.contains("FAIL:") || (!exit_ok && combined.contains("Error"));
+        let passed = !has_fail;
+        results.push((name, passed, if passed { String::new() } else { combined }));
     }
 
     Ok(results)

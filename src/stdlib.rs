@@ -7,6 +7,15 @@ use crate::stats_mod;
 use crate::url_mod;
 use crate::json_mod;
 use crate::string_mod;
+use crate::re_mod;
+use crate::datetime_mod;
+use crate::logging_mod;
+use crate::subprocess_mod;
+use crate::path_mod;
+use crate::hashlib_mod;
+use crate::collections_mod;
+use crate::itertools_mod;
+use crate::test_mod;
 
 pub fn build_stdlib() -> Vec<(String, Vec<(String, Value)>)> {
     let mut modules = Vec::new();
@@ -323,6 +332,22 @@ pub fn build_stdlib() -> Vec<(String, Vec<(String, Value)>)> {
             }),
         }),
     ));
+    os.push((
+        "system".to_string(),
+        Value::NativeFunc(NativeFunc {
+            name: "<os.system>".to_string(),
+            func: Rc::new(|args, ctx| {
+                if args.is_empty() { return Err("os.system requires a command".to_string()); }
+                let cmd_str = args[0].to_string(ctx.heap);
+                let shell = if cfg!(windows) { "cmd" } else { "sh" };
+                let shell_arg = if cfg!(windows) { "/C" } else { "-c" };
+                match std::process::Command::new(shell).arg(shell_arg).arg(&cmd_str).status() {
+                    Ok(status) => Ok(Value::Int(status.code().unwrap_or(-1) as i64)),
+                    Err(e) => Err(format!("os.system: {}", e)),
+                }
+            }),
+        }),
+    ));
     modules.push(("os".to_string(), os));
 
     // matrix module
@@ -423,6 +448,15 @@ pub fn build_stdlib() -> Vec<(String, Vec<(String, Value)>)> {
     modules.push(("csv".to_string(), csv_mod::build_csv()));
     modules.push(("stats".to_string(), stats_mod::build_stats()));
     modules.push(("url".to_string(), url_mod::build_url()));
+    modules.push(("re".to_string(), re_mod::build_re()));
+    modules.push(("datetime".to_string(), datetime_mod::build_datetime()));
+    modules.push(("logging".to_string(), logging_mod::build_logging()));
+    modules.push(("subprocess".to_string(), subprocess_mod::build_subprocess()));
+    modules.push(("path".to_string(), path_mod::build_path()));
+    modules.push(("hashlib".to_string(), hashlib_mod::build_hashlib()));
+    modules.push(("collections".to_string(), collections_mod::build_collections()));
+    modules.push(("itertools".to_string(), itertools_mod::build_itertools()));
+    modules.push(("test".to_string(), test_mod::build_test()));
 
     modules
 }

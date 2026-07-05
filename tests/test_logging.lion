@@ -1,0 +1,17 @@
+// Test logging module
+print("testing logging...");
+logging.set_level("ERROR");
+logging.debug("should not appear");
+logging.info("should not appear");
+logging.warn("should not appear");
+logging.error("this should appear as error");
+
+logging.set_level("DEBUG");
+logging.debug("this should appear as debug");
+logging.info("this should appear as info");
+
+logging.basic_config("WARN");
+logging.debug("should not appear");
+logging.info("should not appear");
+
+print("PASS: logging tests completed (check stderr for log output)");

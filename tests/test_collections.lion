@@ -1,0 +1,24 @@
+// Test collections module
+print("testing collections.Counter...");
+let c = collections.Counter(["a", "b", "a", "c", "b", "a"]);
+if c.a != 3 { print("FAIL: Counter a should be 3 got " .. c.a); return; }
+if c.b != 2 { print("FAIL: Counter b should be 2"); return; }
+if c.c != 1 { print("FAIL: Counter c should be 1"); return; }
+
+print("testing collections.Counter with string...");
+let c2 = collections.Counter("hello");
+if c2.h != 1 { print("FAIL: Counter('hello').h"); return; }
+if c2.l != 2 { print("FAIL: Counter('hello').l"); return; }
+
+print("testing collections.deque...");
+let d = collections.deque([1, 2, 3]);
+collections.push_left(d, 0);
+if collections.pop_left(d) != 0 { print("FAIL: deque pop_left"); return; }
+collections.push_right(d, 4);
+if collections.pop_right(d) != 4 { print("FAIL: deque pop_right"); return; }
+
+print("testing collections.flatten...");
+let f = collections.flatten([[1, 2], [3, [4, 5]]]);
+if f.len() != 5 { print("FAIL: flatten count got " .. f.len()); return; }
+
+print("PASS: all collections tests passed");

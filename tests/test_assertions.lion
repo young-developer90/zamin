@@ -1,0 +1,22 @@
+// Test test/assertion module
+print("testing test.assert_eq...");
+test.assert_eq(42, 42, "numbers equal");
+test.assert_eq("hello", "hello", "strings equal");
+
+print("testing test.assert_ne...");
+test.assert_ne(1, 2, "different");
+
+print("testing test.assert_true...");
+test.assert_true(true, "true value");
+test.assert_true(1, "truthy int");
+
+print("testing test.assert_false...");
+test.assert_false(false, "false value");
+test.assert_false(nil, "nil is false");
+test.assert_false(0, "zero is false");
+
+print("testing test.assert_contains...");
+test.assert_contains([1, 2, 3], 2, "list contains");
+test.assert_contains("hello world", "world", "string contains");
+
+print("PASS: assertion tests completed");

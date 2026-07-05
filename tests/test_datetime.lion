@@ -1,0 +1,22 @@
+// Test datetime module
+print("testing datetime.now...");
+let dt = datetime.now();
+if dt.year == nil { print("FAIL: datetime.now missing year"); return; }
+if dt.month < 1 or dt.month > 12 { print("FAIL: datetime.now invalid month"); return; }
+if dt.day < 1 or dt.day > 31 { print("FAIL: datetime.now invalid day"); return; }
+
+print("testing datetime.from_unix...");
+let dt2 = datetime.from_unix(0);
+if dt2.year != 1970 { print("FAIL: from_unix(0) year should be 1970 got " .. dt2.year); return; }
+if dt2.month != 1 { print("FAIL: from_unix(0) month"); return; }
+if dt2.day != 1 { print("FAIL: from_unix(0) day"); return; }
+
+print("testing datetime.format...");
+let fmt = datetime.format(dt2, "%Y-%m-%d");
+if fmt != "1970-01-01" { print("FAIL: format got " .. fmt); return; }
+
+print("testing datetime.unix...");
+let ts = datetime.unix(dt2);
+if ts != 0 { print("FAIL: unix should be 0"); return; }
+
+print("PASS: all datetime tests passed");

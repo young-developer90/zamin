@@ -1,0 +1,32 @@
+// Test path module
+print("testing path.join...");
+let j = path.join("a", "b", "c");
+if j != "a/b/c" { print("FAIL: path.join got " .. j); return; }
+
+print("testing path.basename...");
+let b = path.basename("a/b/c.txt");
+if b != "c.txt" { print("FAIL: path.basename got " .. b); return; }
+
+print("testing path.dirname...");
+let d = path.dirname("a/b/c.txt");
+if d != "a/b" { print("FAIL: path.dirname got " .. d); return; }
+
+print("testing path.ext...");
+let e = path.ext("file.txt");
+if e != "txt" { print("FAIL: path.ext got " .. e); return; }
+
+print("testing path.split...");
+let parts = path.split("a/b/file.txt");
+if parts.len() != 2 { print("FAIL: path.split count"); return; }
+
+print("testing path.is_dir...");
+if not path.is_dir(".") { print("FAIL: path.is_dir('.') should be true"); return; }
+
+print("testing path.is_file...");
+if not path.is_file("tests/test_path.lion") { print("FAIL: path.is_file should be true"); return; }
+
+print("testing path.abs...");
+let abs = path.abs(".");
+if abs == "." { print("FAIL: path.abs should return absolute path"); return; }
+
+print("PASS: all path tests passed");

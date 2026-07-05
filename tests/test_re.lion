@@ -1,0 +1,32 @@
+// Test regex module
+print("testing re.find...");
+let m = re.find("\\d+", "hello 123 world");
+if m == nil { print("FAIL: re.find returned nil"); return; }
+if m != "123" { print("FAIL: expected 123 got " .. m); return; }
+
+print("testing re.is_match...");
+if not re.is_match("foo", "foobar") { print("FAIL: re.is_match"); return; }
+if re.is_match("xyz", "foobar") { print("FAIL: re.is_match false positive"); return; }
+
+print("testing re.split...");
+let parts = re.split("\\s+", "a b   c");
+if parts.len() != 3 { print("FAIL: re.split count"); return; }
+
+print("testing re.sub...");
+let s = re.sub("world", "there", "hello world");
+if s != "hello there" { print("FAIL: re.sub got " .. s); return; }
+
+print("testing re.sub_all...");
+let s2 = re.sub_all("\\d", "X", "a1b2c3");
+if s2 != "aXbXcX" { print("FAIL: re.sub_all got " .. s2); return; }
+
+print("testing re.find_all...");
+let all = re.find_all("\\w+", "hello world");
+if all.len() != 2 { print("FAIL: re.find_all count"); return; }
+
+print("testing re.captures...");
+let caps = re.captures("(\\w+)@(\\w+)", "a@b");
+if caps == nil { print("FAIL: re.captures returned nil"); return; }
+if caps.len() != 3 { print("FAIL: re.captures count"); return; }
+
+print("PASS: all regex tests passed");

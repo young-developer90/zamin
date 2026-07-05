@@ -434,3 +434,21 @@ pub fn make_struct_def(heap: &mut GcHeap, name: &str, methods: Vec<(String, usiz
 pub fn make_struct_instance(heap: &mut GcHeap, struct_ref: ObjRef, fields: Vec<(Value, Value)>) -> Value {
     Value::StructInstance(heap.alloc(GcObj::StructInstance { struct_ref, fields }))
 }
+
+pub fn to_f64(val: &Value) -> Result<f64, String> {
+    match val {
+        Value::Int(n) => Ok(*n as f64),
+        Value::UInt(n) => Ok(*n as f64),
+        Value::Float(n) => Ok(*n),
+        _ => Err(format!("cannot convert {} to float", val.type_name())),
+    }
+}
+
+pub fn to_i64(val: &Value) -> Result<i64, String> {
+    match val {
+        Value::Int(n) => Ok(*n),
+        Value::UInt(n) => Ok(*n as i64),
+        Value::Float(n) => Ok(*n as i64),
+        _ => Err(format!("cannot convert {} to int", val.type_name())),
+    }
+}

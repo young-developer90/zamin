@@ -1,0 +1,47 @@
+// Test itertools module
+print("testing itertools.chain...");
+let c = itertools.chain([1, 2], [3, 4]);
+if c.len() != 4 { print("FAIL: chain count"); return; }
+
+print("testing itertools.zip...");
+let z = itertools.zip([1, 2, 3], ["a", "b", "c"]);
+if z.len() != 3 { print("FAIL: zip count"); return; }
+
+print("testing itertools.enumerate...");
+let e = itertools.enumerate(["a", "b", "c"]);
+if e.len() != 3 { print("FAIL: enumerate count"); return; }
+
+print("testing itertools.take...");
+let t = itertools.take(2, [1, 2, 3, 4]);
+if t.len() != 2 { print("FAIL: take count"); return; }
+
+print("testing itertools.drop...");
+let dr = itertools.drop(2, [1, 2, 3, 4]);
+if dr.len() != 2 { print("FAIL: drop count"); return; }
+
+print("testing itertools.reverse...");
+let r = itertools.reverse([1, 2, 3]);
+if r[0] != 3 { print("FAIL: reverse"); return; }
+
+print("testing itertools.unique...");
+let u = itertools.unique([1, 2, 1, 3, 2]);
+if u.len() != 3 { print("FAIL: unique count"); return; }
+
+print("testing itertools.sorted...");
+let s = itertools.sorted([3, 1, 2]);
+if s[0] != 1 { print("FAIL: sorted"); return; }
+
+print("testing itertools.any...");
+if not itertools.any([false, true, false]) { print("FAIL: any"); return; }
+
+print("testing itertools.all...");
+if itertools.all([true, false, true]) { print("FAIL: all"); return; }
+
+print("testing itertools.identity...");
+if itertools.identity(42) != 42 { print("FAIL: identity"); return; }
+
+print("testing itertools.repeat...");
+let rp = itertools.repeat("x", 3);
+if rp.len() != 3 { print("FAIL: repeat count"); return; }
+
+print("PASS: all itertools tests passed");

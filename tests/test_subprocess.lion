@@ -1,0 +1,15 @@
+// Test subprocess module
+print("testing subprocess.run_shell...");
+let result = subprocess.run_shell("echo hello");
+if result.returncode != 0 { print("FAIL: subprocess.run_shell return code"); return; }
+
+print("testing subprocess.run_shell_output...");
+let out = subprocess.run_shell_output("echo hello");
+let trimmed = string.trim(out);
+if trimmed != "hello" { print("FAIL: subprocess.run_shell_output got '" .. trimmed .. "'"); return; }
+
+print("testing os.system...");
+let rc = os.system("echo test");
+if rc != 0 { print("FAIL: os.system return code"); return; }
+
+print("PASS: subprocess tests passed");

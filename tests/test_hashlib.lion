@@ -1,0 +1,30 @@
+// Test hashlib module
+print("testing hashlib.sha256...");
+let h = hashlib.sha256("hello");
+if h.len() != 64 { print("FAIL: sha256 length should be 64 got " .. h.len()); return; }
+
+print("testing hashlib.md5...");
+let m = hashlib.md5("hello");
+if m.len() != 32 { print("FAIL: md5 length should be 32 got " .. m.len()); return; }
+
+print("testing hashlib.sha512...");
+let s = hashlib.sha512("hello");
+if s.len() != 128 { print("FAIL: sha512 length should be 128 got " .. s.len()); return; }
+
+print("testing hashlib.base64_encode...");
+let enc = hashlib.base64_encode("hello");
+if enc.len() == 0 { print("FAIL: base64_encode returned empty"); return; }
+
+print("testing hashlib.base64_decode...");
+let dec = hashlib.base64_decode(enc);
+if dec != "hello" { print("FAIL: base64_decode roundtrip"); return; }
+
+print("testing hashlib.hex_encode...");
+let he = hashlib.hex_encode("abc");
+if he != "616263" { print("FAIL: hex_encode got " .. he); return; }
+
+print("testing hashlib.hex_decode...");
+let hd = hashlib.hex_decode("616263");
+if hd != "abc" { print("FAIL: hex_decode got " .. hd); return; }
+
+print("PASS: all hashlib tests passed");
