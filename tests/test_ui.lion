@@ -1,0 +1,27 @@
+func main() {
+    let win = graphics.init("UI Demo", 400, 300);
+    let count = 0;
+
+    win.add_button(50, 50, 100, 40, "Click me", func() {
+        count = count + 1;
+        print("clicked", count);
+    });
+
+    win.add_button(200, 50, 100, 40, "Quit", func() {
+        print("quit!");
+    });
+
+    win.draw_text(50, 20, "Button Demo", (255, 255, 255));
+
+    let idx = win.add_text_input(50, 150, 200, 30, func(ev, text) {
+        if ev == "submit" {
+            print("submitted:", text);
+        }
+    });
+
+    win.draw_text(50, 130, "Type below:", (200, 200, 200));
+
+    win.present();
+    print("window ready - close window to exit");
+    win.run();
+}

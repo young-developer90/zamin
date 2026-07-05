@@ -1,0 +1,10 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    win.present();
+    let running = true;
+    while running {
+        running = false;
+    }
+    win.close();
+    print("done");
+}

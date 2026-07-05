@@ -1,0 +1,34 @@
+func main() {
+    print("=== CSV Module ===");
+    let csv_text = "name,age,city\nAlice,30,NYC\nBob,25,LA\nCharlie,35,Chicago";
+    print("CSV input:");
+    print(csv_text);
+
+    print("");
+    print("Parsed (list of lists):");
+    let rows = csv.parse(csv_text);
+    print("rows:", rows);
+    print("row count:", rows.len());
+
+    print("");
+    print("Parsed with header (list of dicts):");
+    let dicts = csv.parse_header(csv_text);
+    for d in dicts {
+        print("  name:", d.name, " age:", d.age);
+    }
+
+    print("");
+    print("Stringify back:");
+    let out = csv.stringify(rows);
+    print(out);
+
+    print("");
+    print("=== Stats on CSV data ===");
+    let ages = [30, 25, 35];
+    print("ages:", ages);
+    print("mean age:", stats.mean(ages));
+    print("std age:", stats.std(ages));
+
+    print("");
+    print("=== ALL DATA TESTS PASSED ===");
+}

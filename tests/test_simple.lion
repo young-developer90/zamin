@@ -1,0 +1,8 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    win.draw_text(10, 100, "Press ESC to quit", (255, 255, 255));
+    win.present();
+    let events = win.poll_events();
+    print("got", events);
+    win.close();
+}

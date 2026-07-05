@@ -1,0 +1,10 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    win.clear();
+    win.draw_text(10, 100, "test", (255, 255, 255));
+    win.present();
+    let evts = win.poll_events();
+    print("got", evts);
+    win.close();
+    print("closed");
+}

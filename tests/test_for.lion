@@ -1,0 +1,7 @@
+func main() {
+    let events = [1, 2, 3];
+    for ev in events {
+        print(ev);
+    }
+    print("done");
+}

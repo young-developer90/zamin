@@ -1,0 +1,13 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    win.draw_text(10, 100, "test", (255, 255, 255));
+    win.present();
+    let running = true;
+    while running {
+        let evts = win.draw_text(0, 0, "hi", (255, 255, 255));
+        print("got events");
+        running = false;
+    }
+    print("done");
+    win.close();
+}

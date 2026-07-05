@@ -1,0 +1,5 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    print(win);
+    win.run();
+}

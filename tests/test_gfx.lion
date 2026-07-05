@@ -1,0 +1,8 @@
+func main() {
+    let win = graphics.init("Test", 640, 480);
+    win.clear();
+    win.draw_text(10, 10, "Window created! Close to exit.", (255, 255, 255));
+    win.present();
+    print("window created - close window to exit");
+    win.run();
+}

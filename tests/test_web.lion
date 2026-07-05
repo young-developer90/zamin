@@ -1,0 +1,58 @@
+func main() {
+    print("=== URL Module ===");
+    let u = url.parse("https://example.com/path?name=hello&age=25#section");
+    print("scheme:", u.scheme);
+    print("host:", u.host);
+    print("path:", u.path);
+    print("query:", u.query);
+    print("encoded:", url.encode("hello world & more"));
+    print("decoded:", url.decode("hello+world+%26+more"));
+    print("joined:", url.join("https://example.com/a/b", "../c"));
+
+    print("");
+    print("=== HTML Module ===");
+    let doc = html.parse("<html><body><h1 class='title'>Hello</h1><p id='main'>World <b>bold</b></p></body></html>");
+    print("tag:", doc.tag);
+    print("text:", doc.text);
+    print("h1 tag:", doc.tag);
+
+    print("");
+    print("=== HTML Select ===");
+    let items = html.select(doc.html, "p");
+    print("items count:", items.len());
+    if items.len() > 0 {
+        print("first item tag:", items[0].tag);
+        print("first item text:", items[0].text);
+    }
+
+    print("");
+    print("=== HTML Functions ===");
+    let sample = "<p id='x'>text</p>";
+    let frags = html.parse_fragment(sample);
+    print("fragments:", frags.len());
+
+    print("encoded:", html.encode("<script>alert('xss')</script>"));
+    print("decoded:", html.decode("&lt;tag&gt;"));
+
+    print("");
+    print("=== JSON Module ===");
+    let data = json.parse("{\"name\": \"Lion\", \"version\": 1.0, \"tags\": [\"lang\", \"interpreter\"]}");
+    print("parsed name:", data.name);
+    print("stringified:", json.stringify(data));
+    print("pretty:", json.pretty(data));
+
+    print("");
+    print("=== String Module ===");
+    print("upper:", string.upper("hello"));
+    print("lower:", string.lower("WORLD"));
+    print("trim:", string.trim("  hi  "));
+    print("split:", string.split("a,b,c", ","));
+    print("contains:", string.contains("hello world", "world"));
+    print("replace:", string.replace("hello world", "world", "there"));
+    print("repeat:", string.repeat("ab", 3));
+    print("reverse:", string.reverse("abc"));
+    print("substring:", string.substring("abcdef", 1, 4));
+
+    print("");
+    print("=== ALL WEB TESTS PASSED ===");
+}

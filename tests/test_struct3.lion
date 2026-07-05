@@ -1,0 +1,14 @@
+struct Counter {
+    func init(this, n) {
+        print("init called!");
+        this.count = n;
+    }
+    func get(this) {
+        print("get called!");
+        return this.count;
+    }
+}
+
+let c = Counter(n=5);
+print(c.count);
+print(c.get());

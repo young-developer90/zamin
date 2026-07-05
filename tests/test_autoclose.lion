@@ -1,0 +1,17 @@
+func main() {
+    let win = graphics.init("Auto Test", 320, 240);
+    win.draw_text(10, 100, "Auto closing...", (255, 255, 255));
+    win.present();
+    let running = true;
+    while running {
+        let evts = win.poll_events();
+        for ev in evts {
+            if ev == "quit" {
+                running = false;
+            }
+        }
+        running = false;
+    }
+    win.close();
+    print("auto exit ok");
+}

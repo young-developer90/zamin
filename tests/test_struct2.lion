@@ -1,0 +1,8 @@
+struct Empty {
+    func init(this) {
+        print("init called!");
+    }
+}
+
+let e = Empty();
+print("done");

@@ -1,0 +1,33 @@
+func main() {
+    let win = graphics.init("Final Test", 400, 300);
+    let count = 0;
+
+    win.add_button(10, 10, 100, 40, "Click", func() {
+        count = count + 1;
+        print("clicked", count);
+    });
+    win.add_button(120, 10, 100, 40, "Quit", func() {
+        win.close();
+        print("bye");
+    });
+
+    let idx = win.add_text_input(10, 100, 200, 30, func(ev, text) {
+        if ev == "submit" {
+            print("text:", text);
+        }
+    });
+
+    win.draw_text(10, 70, "Buttons + Text Input", (0, 255, 0));
+    win.present();
+
+    let running = true;
+    while running {
+        let evts = win.poll_events();
+        for ev in evts {
+            if ev == "quit" {
+                running = false;
+            }
+        }
+    }
+    print("final done");
+}

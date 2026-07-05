@@ -1,0 +1,14 @@
+struct Person {
+    func init(this, name, age) {
+        this.name = name;
+        this.age = age;
+    }
+    func greet(this) {
+        print("Hello, my name is ", this.name, " and I am ", this.age);
+    }
+}
+
+let p = Person(name = "artin", age = 16);
+p.greet();
+print(p.name);
+print(p.age);

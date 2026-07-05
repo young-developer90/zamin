@@ -1,0 +1,14 @@
+struct Point {
+    func init(this, x, y) {
+        print("init");
+        this.x = x;
+        this.y = y;
+    }
+    func sum(this) {
+        return this.x + this.y;
+    }
+}
+
+let p = Point(x=3, y=4);
+print(p.x);
+print(p.sum());

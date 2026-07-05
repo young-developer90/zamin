@@ -1,0 +1,14 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    let running = true;
+    let count = 0;
+    while running {
+        count = count + 1;
+        if count > 5 {
+            running = false;
+        }
+        print("loop", count);
+    }
+    win.close();
+    print("done");
+}

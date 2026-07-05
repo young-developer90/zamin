@@ -1,0 +1,23 @@
+func main() {
+    let win = graphics.init("Text Test", 400, 300);
+
+    let draw = func() {
+        win.clear();
+
+        // Draw some shapes first
+        win.draw_rect(10, 10, 100, 100, "fill", (255, 0, 0));
+        win.draw_circle(300, 150, 60, "fill", (0, 120, 255));
+
+        // Draw text at various positions
+        win.draw_text(10, 150, "Hello at y=150", (255, 255, 255));
+        win.draw_text(10, 180, "More text at y=180", (0, 255, 0));
+        win.draw_text(10, 210, "Third line at y=210", (255, 255, 0));
+
+        // Text with scale
+        win.draw_text(10, 240, "Big", (255, 128, 0), 3);
+        win.draw_text(80, 240, "Small", (128, 128, 255), 1);
+    };
+
+    win.run(draw);
+    print("exited");
+}

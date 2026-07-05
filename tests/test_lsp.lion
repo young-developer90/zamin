@@ -1,0 +1,13 @@
+let x = 42
+
+func greet(name) {
+    print("Hello, " + name)
+}
+
+greet("World")
+
+let z = x +
+
+if true {
+    print("yes")
+}

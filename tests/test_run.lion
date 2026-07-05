@@ -1,0 +1,16 @@
+func main() {
+    let win = graphics.init("Demo", 400, 300);
+
+    let x = 200;
+    let y = 150;
+    let r = 50;
+
+    let draw = func() {
+        win.clear();
+        win.draw_circle(x, y, r, "fill", (0, 120, 255));
+        win.draw_text(x - 20, y - 4, "Circle", (255, 255, 255));
+    };
+
+    win.run(draw);
+    print("exited");
+}

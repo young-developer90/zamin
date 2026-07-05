@@ -1,0 +1,13 @@
+func main() {
+    let win = graphics.init("Test", 320, 240);
+    win.clear();
+    win.draw_rect(50, 50, 100, 100, "fill", (255, 0, 0));
+    win.draw_circle(200, 100, 40, "outline", (0, 255, 0));
+    win.draw_line(10, 10, 300, 200, (0, 0, 255));
+    win.set_pixel(160, 120, (255, 255, 0));
+    win.draw_text(10, 220, "Hello Lion!", (255, 255, 255));
+    win.present();
+    print("width:", win.get_width(), "height:", win.get_height());
+    print("done - close window to exit");
+    win.run();
+}

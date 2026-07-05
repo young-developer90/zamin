@@ -1,0 +1,18 @@
+func main() {
+    let x = 1;
+    let outer = true;
+    while outer {
+        let y = 2;
+        print(x, y);
+        outer = false;
+        let inner = true;
+        while inner {
+            let z = 3;
+            print(x, y, z);
+            inner = false;
+        }
+        print(y);
+    }
+    print(x);
+    print("nested scopes ok");
+}
