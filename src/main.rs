@@ -1,5 +1,6 @@
 mod ast;
 mod bytecode;
+mod cext;
 mod cli;
 mod collections_mod;
 mod compiler;

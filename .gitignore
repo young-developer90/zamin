@@ -11,3 +11,7 @@ Thumbs.db
 vscode-lion/node_modules/
 vscode-lion/out/
 *.vsix
+# C extension compiled binaries
+modules/*.dll
+modules/*.so
+modules/*.dylib

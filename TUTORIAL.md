@@ -698,6 +698,44 @@ export const PI = 3.14159;
 export { greet, PI };
 ```
 
+### C Extensions
+
+Lion can load native C extensions. Place a compiled shared library (`.dll` on Windows, `.so` on Linux, `.dylib` on macOS) in the `modules/` folder and `import` it by filename (without extension).
+
+The extension must define `lion_module_init` which returns an array of function names and C function pointers.
+
+**Example** (`modules/fib.c`):
+```c
+#include "lion.h"
+
+static LionValue fib(int argc, const LionValue* args) {
+    int n = (argc > 0 && args[0].tag == LION_INT) ? (int)args[0].data.as_int : 0;
+    long long a = 0, b = 1;
+    for (int i = 0; i < n; i++) { long long t = a + b; a = b; b = t; }
+    LionValue r; r.tag = LION_INT; r.data.as_int = a;
+    return r;
+}
+
+static LionModuleFunc funcs[] = {{"fib", fib}};
+
+int lion_module_init(int* count, LionModuleFunc** out) {
+    *count = 1; *out = funcs; return 0;
+}
+```
+
+Compile and use:
+```bash
+gcc -O2 -shared -o modules/fib.dll modules/fib.c -Iinclude
+```
+```lion
+import fib;
+print(fib.fib(10));  // 55
+```
+
+**Supported types:** `LION_NIL`, `LION_INT`, `LION_FLOAT`, `LION_BOOL`, `LION_STRING`.
+
+See `include/lion.h` for the full C API header.
+
 ---
 
 ## Built-in Standard Library

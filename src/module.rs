@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use crate::cext;
 use crate::compiler::Compiler;
 use crate::gc::*;
 use crate::http_module;
@@ -55,6 +56,39 @@ impl ModuleLoader {
                 py_items.push((make_string(heap, &key), val));
             }
             modules.insert("py".to_string(), Value::Dict(heap.alloc(GcObj::Dict(py_items))));
+        }
+
+        // Load C extension modules (*.dll / *.so)
+        if let Ok(dir) = std::env::current_dir() {
+            let ext_dir = dir.join("modules");
+            if ext_dir.is_dir() {
+                if let Ok(entries) = std::fs::read_dir(&ext_dir) {
+                    for entry in entries.flatten() {
+                        let path = entry.path();
+                        let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+                        if ext != "dll" && ext != "so" && ext != "dylib" {
+                            continue;
+                        }
+                        let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string());
+                        let mod_name = match stem {
+                            Some(n) if !modules.contains_key(&n) => n,
+                            _ => continue,
+                        };
+                        match cext::load_extension(&path, heap) {
+                            Ok(funcs) => {
+                                let mut items = Vec::new();
+                                for (key, val) in funcs {
+                                    items.push((make_string(heap, &key), val));
+                                }
+                                modules.insert(mod_name, Value::Dict(heap.alloc(GcObj::Dict(items))));
+                            }
+                            Err(e) => {
+                                eprintln!("warning: failed to load C extension '{}': {}", mod_name, e);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         modules

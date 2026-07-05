@@ -2,7 +2,7 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.1-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.5.2-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
@@ -20,7 +20,7 @@ Lion is designed to be:
 - **Expressive** — first-class functions, closures, pattern matching, ternaries, list comprehensions.
 - **Approachable** — you can learn the whole language in an afternoon.
 - **Self-contained** — batteries included: HTTP client, JSON/CSV/HTML parsers, stats module, file I/O, regex, datetime, logging, subprocess, pathlib, hashlib/crypto, collections, itertools, and unit test assertions.
-- **Extensible** — module system with import/export, optional Python interop, optional CUDA GPU acceleration.
+- **Extensible** — module system with import/export, optional Python interop, optional CUDA GPU acceleration, and C extension API for native modules.
 
 ## Installation
 
@@ -294,6 +294,41 @@ mymod.hello();
 let squares = [x * x for x in 0..10];
 let evens = [x for x in 0..20 if x % 2 == 0];
 ```
+
+### C Extensions
+
+Lion can load native C extensions — shared libraries (`.dll`/`.so`/`.dylib`) placed in the `modules/` directory. Each extension must define `lion_module_init` and return an array of functions.
+
+**C header** (`include/lion.h`):
+```c
+#include "lion.h"
+
+static LionValue add(int argc, const LionValue* args) {
+    long long a = (argc > 0 && args[0].tag == LION_INT) ? args[0].data.as_int : 0;
+    long long b = (argc > 1 && args[1].tag == LION_INT) ? args[1].data.as_int : 0;
+    LionValue r; r.tag = LION_INT; r.data.as_int = a + b;
+    return r;
+}
+
+static LionModuleFunc funcs[] = {{"add", add}};
+
+int lion_module_init(int* count, LionModuleFunc** out) {
+    *count = 1; *out = funcs; return 0;
+}
+```
+
+**Compile:**
+```bash
+gcc -O2 -shared -o modules/example.dll modules/example.c -Iinclude
+```
+
+**Use in Lion:**
+```lion
+import example;
+print(example.add(3, 4));  // 7
+```
+
+Supported types: `LION_NIL`, `LION_INT`, `LION_FLOAT`, `LION_BOOL`, `LION_STRING`.
 
 ## Standard Library Reference
 
