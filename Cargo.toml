@@ -1,6 +1,6 @@
 [package]
 name = "lion"
-version = "1.4.8"
+version = "1.5.0"
 edition = "2021"
 description = "The Lion programming language interpreter"
 

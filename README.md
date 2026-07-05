@@ -2,7 +2,7 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.8-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.5.0-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
@@ -434,9 +434,9 @@ cargo build --release
 
 ## Performance Benchmarks
 
-Benchmarks comparing Lion 1.4.8 (release build) against Python 3.14 on the same workloads. Lower is better.
+Benchmarks comparing Lion 1.5.0 (release build) against Python 3.14 on the same workloads. Lower is better.
 
-| Benchmark | Lion 1.4.8 | Python 3.14 | vs Python |
+| Benchmark | Lion 1.5.0 | Python 3.14 | vs Python |
 |-----------|------------|-------------|-----------|
 | `re.find_all` — 10k lines | 2.1 ms | 1.7 ms | ~1.3× slower |
 | `re.sub_all` — 10k lines | 3.8 ms | 8.6 ms | ~2.3× faster |
@@ -450,7 +450,7 @@ Benchmarks comparing Lion 1.4.8 (release build) against Python 3.14 on the same 
 | `hashlib.base64` — 1k strings | 5.6 ms | 0.4 ms | ~14× slower |
 | `subprocess.run_shell` — 100 calls | 1.45 s | 1.49 s | ~1× (on par) |
 
-Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.4.7/1.4.8 include: direct-threaded for-range loops (avoiding iterator GC allocation), combined jump/pop opcodes, increment/decrement opcodes for counters, constant folding in the compiler, single-pass datetime format and field extraction, streamlined dict attribute lookup, drain-based Call opcode (eliminating arg vector clones in the main interpreter), `make_string_owned` across stdlib (removing one extra String clone per allocation), fast-path hex encoding with lookup table, optimized concat/add paths, direct GC byte access in hashlib via `Cow<[u8]>` (eliminating input string clones), and O(1) civil-date algorithms for `date_to_unix` and `unix_to_date`.
+Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.5.0 include: direct-threaded for-range loops (avoiding iterator GC allocation), combined jump/pop opcodes, increment/decrement opcodes for counters, constant folding in the compiler, single-pass datetime format and field extraction, streamlined dict attribute lookup, drain-based Call opcode (eliminating arg vector clones in the main interpreter), `make_string_owned` across stdlib (removing one extra String clone per allocation), fast-path hex encoding with lookup table, optimized concat/add paths, direct GC byte access in hashlib via `Cow<[u8]>` (eliminating input string clones), and O(1) civil-date algorithms for `date_to_unix` and `unix_to_date`.
 
 Benchmarks are in [`benchmarks/`](benchmarks/) and can be run with:
 ```bash
