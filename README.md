@@ -141,13 +141,37 @@ cd vscode-lion && npm install && cd ..
 code --install-extension vscode-lion/
 ```
 
+### Python interop (optional)
+
+Lion can import and call Python modules directly via [PyO3](https://pyo3.rs/). Enable with the `python` feature.
+
+```bash
+cargo build --release --features python
+```
+
+```lion
+import py;
+
+// Import any Python module
+let np = py.import("numpy");
+let arr = np.array([[1, 2], [3, 4]]);
+print(arr);
+
+// Pandas, matplotlib, etc.
+let pd = py.import("pandas");
+let df = pd.DataFrame({"name": ["Alice", "Bob"], "age": [30, 25]});
+print(df);
+```
+
+Types are converted automatically: Int, Float, String, Bool, List, Dict, Nil map to their Python equivalents. Python objects are wrapped so their attributes and methods are callable from Lion.
+
 ### CUDA support (optional)
 
 Install the [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) and set the `CUDA_PATH` environment variable. The build script detects it automatically.
 
 ```bash
 set CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.x
-cargo build --release --features cuda
+cargo build --release
 ```
 
 ## Running Tests
