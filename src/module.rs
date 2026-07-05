@@ -5,6 +5,7 @@ use crate::cext;
 use crate::compiler::Compiler;
 use crate::gc::*;
 use crate::http_module;
+use crate::leopard_mod;
 use crate::parser::Parser;
 use crate::stdlib;
 use crate::vm::Vm;
@@ -36,6 +37,14 @@ impl ModuleLoader {
             http_items.push((make_string(heap, &key), val));
         }
         modules.insert("http".to_string(), Value::Dict(heap.alloc(GcObj::Dict(http_items))));
+
+        {
+            let mut leopard_items = Vec::new();
+            for (key, val) in leopard_mod::build_leopard() {
+                leopard_items.push((make_string(heap, &key), val));
+            }
+            modules.insert("leopard".to_string(), Value::Dict(heap.alloc(GcObj::Dict(leopard_items))));
+        }
 
         #[cfg(cuda_support)]
         {

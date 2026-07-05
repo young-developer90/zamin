@@ -1,0 +1,20 @@
+// Leopard GUI demo
+// Run with: lion run examples/leopard_demo.lion
+
+let root = leopard.Leo("Leopard Demo", 400, 300);
+
+let label = leopard.Label(root, "Hello from Leopard!");
+leopard.pack(label, "top", 0, 10);
+
+let entry = leopard.Entry(root);
+leopard.pack(entry, "top", 0, 10);
+leopard.insert(entry, 0, "Type something");
+
+leopard.title(root, "Leopard Demo");
+leopard.geometry(root, 400, 300);
+
+leopard.messagebox("Ready!", "Leopard");
+print("Starting mainloop...");
+
+leopard.mainloop(root);
+print("Done!");

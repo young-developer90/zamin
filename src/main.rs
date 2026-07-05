@@ -13,6 +13,7 @@ mod http;
 mod http_module;
 mod itertools_mod;
 mod json_mod;
+mod leopard_mod;
 mod lexer;
 mod logging_mod;
 mod module;
@@ -26,7 +27,7 @@ mod string_mod;
 mod subprocess_mod;
 mod test_mod;
 mod url_mod;
-mod vm;
+pub mod vm;
 
 #[cfg(cuda_support)]
 mod cuda;
