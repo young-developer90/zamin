@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="mane" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EA580C;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E1B4B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#312E81;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded background -->
+  <rect x="8" y="8" rx="40" ry="40" width="240" height="240" fill="url(#bg)" />
+
+  <!-- Mane (sunburst rays) -->
+  <g transform="translate(128,125)" stroke="url(#mane)" stroke-width="6" stroke-linecap="round" fill="none">
+    <line x2="0" y2="-62" transform="rotate(0)" />
+    <line x2="0" y2="-62" transform="rotate(30)" />
+    <line x2="0" y2="-62" transform="rotate(60)" />
+    <line x2="0" y2="-62" transform="rotate(90)" />
+    <line x2="0" y2="-62" transform="rotate(120)" />
+    <line x2="0" y2="-62" transform="rotate(150)" />
+    <line x2="0" y2="-62" transform="rotate(180)" />
+    <line x2="0" y2="-62" transform="rotate(210)" />
+    <line x2="0" y2="-62" transform="rotate(240)" />
+    <line x2="0" y2="-62" transform="rotate(270)" />
+    <line x2="0" y2="-62" transform="rotate(300)" />
+    <line x2="0" y2="-62" transform="rotate(330)" />
+  </g>
+
+  <!-- Lion face circle -->
+  <circle cx="128" cy="120" r="48" fill="url(#body)" />
+
+  <!-- Ears -->
+  <ellipse cx="95" cy="82" rx="14" ry="12" fill="url(#body)" />
+  <ellipse cx="161" cy="82" rx="14" ry="12" fill="url(#body)" />
+  <ellipse cx="95" cy="82" rx="8" ry="7" fill="#FDE68A" />
+  <ellipse cx="161" cy="82" rx="8" ry="7" fill="#FDE68A" />
+
+  <!-- Eyes -->
+  <ellipse cx="112" cy="113" rx="9" ry="10" fill="white" />
+  <ellipse cx="144" cy="113" rx="9" ry="10" fill="white" />
+  <ellipse cx="114" cy="115" rx="5" ry="6" fill="#1E1B4B" />
+  <ellipse cx="146" cy="115" rx="5" ry="6" fill="#1E1B4B" />
+  <!-- Eye shine -->
+  <circle cx="117" cy="112" r="2" fill="white" />
+  <circle cx="149" cy="112" r="2" fill="white" />
+
+  <!-- Nose -->
+  <path d="M123 131 Q128 127 133 131 Q128 136 123 131" fill="#92400E" />
+
+  <!-- Mouth -->
+  <path d="M128 131 L128 138" stroke="#92400E" stroke-width="2.5" fill="none" />
+  <path d="M118 136 Q123 142 128 138" stroke="#92400E" stroke-width="2.5" fill="none" />
+  <path d="M128 138 Q133 142 138 136" stroke="#92400E" stroke-width="2.5" fill="none" />
+
+  <!-- Whiskers -->
+  <line x1="95" y1="118" x2="75" y2="112" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+  <line x1="95" y1="126" x2="75" y2="130" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+  <line x1="161" y1="118" x2="181" y2="112" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+  <line x1="161" y1="126" x2="181" y2="130" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Text: LION -->
+  <text x="128" y="205" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="900" letter-spacing="6" fill="#F59E0B">LION</text>
+</svg>
