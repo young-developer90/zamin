@@ -528,18 +528,23 @@ impl Compiler {
             Stmt::FuncDef {
                 name,
                 params,
-                is_vararg: _,
+                is_vararg,
                 body,
                 ..
             } => {
                 let func_chunk = self.add_chunk(Some(name.clone()));
+                {
+                    let chunk = &mut self.chunks[func_chunk];
+                    chunk.params = (*params).clone();
+                    chunk.is_vararg = *is_vararg;
+                }
                 let prev_chunk = self.current_chunk;
                 self.current_chunk = func_chunk;
                 let prev_depth = self.current_func_depth;
                 self.current_func_depth += 1;
 
                 self.enter_scope();
-                for param in params {
+                for param in params.iter() {
                     self.add_local(param);
                 }
                 for stmt in body {
@@ -850,17 +855,22 @@ impl Compiler {
             Expr::Func {
                 name,
                 params,
-                is_vararg: _,
+                is_vararg,
                 body,
             } => {
                 let func_chunk = self.add_chunk(name.clone());
+                {
+                    let chunk = &mut self.chunks[func_chunk];
+                    chunk.params = (*params).clone();
+                    chunk.is_vararg = *is_vararg;
+                }
                 let prev_chunk = self.current_chunk;
                 self.current_chunk = func_chunk;
                 let prev_depth = self.current_func_depth;
                 self.current_func_depth += 1;
 
                 self.enter_scope();
-                for param in params {
+                for param in params.iter() {
                     self.add_local(param);
                 }
                 for stmt in body {

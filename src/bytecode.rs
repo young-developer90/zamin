@@ -192,6 +192,8 @@ pub struct Chunk {
     pub locals: usize,
     pub upvalues: Vec<UpvalueInfo>,
     pub name: Option<String>,
+    pub params: Vec<String>,
+    pub is_vararg: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -211,6 +213,8 @@ impl Chunk {
             locals: 0,
             upvalues: Vec::new(),
             name,
+            params: Vec::new(),
+            is_vararg: false,
         }
     }
 

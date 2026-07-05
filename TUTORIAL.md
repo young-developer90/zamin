@@ -423,12 +423,12 @@ print(double(5));   // 10
 
 ### Variadic Functions
 
-Use `...` to accept any number of arguments:
+Use `...name` to accept any number of extra arguments as a list:
 
 ```lion
-func sum(...) {
+func sum(...nums) {
     let total = 0;
-    for n in args {
+    for n in nums {
         total = total + n;
     }
     return total;
@@ -437,7 +437,13 @@ func sum(...) {
 print(sum(1, 2, 3, 4));  // 10
 ```
 
-The captured arguments are available as a list named `args` inside the function.
+The variadic parameter collects excess arguments into a list with the given name. You can also combine named parameters with variadic:
+
+```lion
+func log(prefix, ...args) {
+    print(prefix + ": " + args);
+}
+```
 
 ### Named Arguments
 

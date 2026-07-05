@@ -26,7 +26,7 @@ pub enum TokenKind {
     Increment, Decrement,
     Eq, Ne, Lt, Gt, Le, Ge,
     Assign,
-    Dot, DotDot,
+    Dot, DotDot, Ellipsis,
     Arrow,
     Pipe,
     Colon, Semicolon, Question, Comma,
@@ -585,17 +585,26 @@ impl Lexer {
                 '.' => match self.peek() {
                     Some('.') => {
                         self.advance();
-                        Some(Token {
-                            kind: TokenKind::DotDot,
-                            line: self.start_line,
-                            col: self.start_col,
-                        })
+                        if self.peek() == Some('.') {
+                            self.advance();
+                            Some(Token {
+                                kind: TokenKind::Ellipsis,
+                                line: self.start_line,
+                                col: self.start_col,
+                            })
+                        } else {
+                            Some(Token {
+                                kind: TokenKind::DotDot,
+                                line: self.start_line,
+                                col: self.start_col,
+                            })
+                        }
                     }
                     _ => Some(Token {
                         kind: TokenKind::Dot,
                         line: self.start_line,
                         col: self.start_col,
-                    }),
+                    })
                 },
                 '|' => Some(Token {
                     kind: TokenKind::Pipe,

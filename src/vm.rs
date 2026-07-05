@@ -365,7 +365,7 @@ impl Vm {
                     let argc = self.read_u16(self.ip) as usize;
                     self.ip += 2;
 
-                    let args: Vec<Value> = if argc > 0 {
+                    let mut args: Vec<Value> = if argc > 0 {
                         let start = self.stack.len() - argc;
                         self.stack.drain(start..).collect()
                     } else { Vec::new() };
@@ -393,8 +393,11 @@ impl Vm {
                             }
                         }
                         Value::Function(func_ref) => {
-                            let body_chunk = match self.heap.get(func_ref) {
-                                GcObj::Function { body_chunk, .. } => *body_chunk,
+                            let (body_chunk, named_count, is_vararg) = match self.heap.get(func_ref) {
+                                GcObj::Function { body_chunk, params, is_vararg, .. } => {
+                                    let named = if *is_vararg && !params.is_empty() { params.len() - 1 } else { params.len() };
+                                    (*body_chunk, named, *is_vararg)
+                                }
                                 _ => return Err("not a function".to_string()),
                             };
                             let frame = Frame {
@@ -405,14 +408,23 @@ impl Vm {
                                 closure: None,
                             };
                             self.frames.push(frame);
-                            for arg in args { self.stack.push(arg); }
+                            if is_vararg {
+                                let variadic = if named_count < args.len() { args.split_off(named_count) } else { Vec::new() };
+                                for arg in args { self.stack.push(arg); }
+                                self.stack.push(make_list(&mut self.heap, variadic));
+                            } else {
+                                for arg in args { self.stack.push(arg); }
+                            }
                             self.chunk_idx = body_chunk;
                             self.ip = 0;
                         }
                         Value::Closure(cl_ref) => {
-                            let body_chunk = match self.heap.get(cl_ref) {
+                            let (body_chunk, named_count, is_vararg) = match self.heap.get(cl_ref) {
                                 GcObj::Closure { function, .. } => match self.heap.get(*function) {
-                                    GcObj::Function { body_chunk, .. } => *body_chunk,
+                                    GcObj::Function { body_chunk, params, is_vararg, .. } => {
+                                        let named = if *is_vararg && !params.is_empty() { params.len() - 1 } else { params.len() };
+                                        (*body_chunk, named, *is_vararg)
+                                    }
                                     _ => return Err("not a function in closure".to_string()),
                                 },
                                 _ => return Err("not a closure".to_string()),
@@ -425,7 +437,13 @@ impl Vm {
                                 closure: Some(cl_ref),
                             };
                             self.frames.push(frame);
-                            for arg in args { self.stack.push(arg); }
+                            if is_vararg {
+                                let variadic = if named_count < args.len() { args.split_off(named_count) } else { Vec::new() };
+                                for arg in args { self.stack.push(arg); }
+                                self.stack.push(make_list(&mut self.heap, variadic));
+                            } else {
+                                for arg in args { self.stack.push(arg); }
+                            }
                             self.chunk_idx = body_chunk;
                             self.ip = 0;
                         }
@@ -507,8 +525,8 @@ impl Vm {
                     self.ip += 2;
                     let func_ref = self.heap.alloc(GcObj::Function {
                         name: self.chunks[chunk_idx].name.clone(),
-                        params: Vec::new(),
-                        is_vararg: false,
+                        params: self.chunks[chunk_idx].params.clone(),
+                        is_vararg: self.chunks[chunk_idx].is_vararg,
                         body_chunk: chunk_idx,
                         upvalue_count: 0,
                     });
@@ -534,8 +552,8 @@ impl Vm {
                     }
                     let func_ref = self.heap.alloc(GcObj::Function {
                         name: self.chunks[chunk_idx].name.clone(),
-                        params: Vec::new(),
-                        is_vararg: false,
+                        params: self.chunks[chunk_idx].params.clone(),
+                        is_vararg: self.chunks[chunk_idx].is_vararg,
                         body_chunk: chunk_idx,
                         upvalue_count: upvalue_infos.len(),
                     });
@@ -1734,25 +1752,44 @@ fn next_iterator(iter: &Value, heap: &mut GcHeap) -> Result<(bool, Value), Strin
     }
 }
 
+fn pack_variadic(args: &[Value], named_count: usize, is_vararg: bool, heap: &mut GcHeap) -> Vec<Value> {
+    if is_vararg {
+        let mut owned = args.to_vec();
+        let extra = if named_count < owned.len() { owned.split_off(named_count) } else { Vec::new() };
+        owned.push(make_list(heap, extra));
+        owned
+    } else {
+        args.to_vec()
+    }
+}
+
 pub fn call_func_closure(func: &Value, args: &[Value], ctx: &mut VmContext) -> Result<Value, String> {
     match func {
         Value::NativeFunc(f) => (f.func)(args, ctx),
         Value::Function(func_ref) => {
-            let body_chunk = match ctx.heap.get(*func_ref) {
-                GcObj::Function { body_chunk, .. } => *body_chunk,
+            let (body_chunk, named_count, is_vararg) = match ctx.heap.get(*func_ref) {
+                GcObj::Function { body_chunk, params, is_vararg, .. } => {
+                    let named = if *is_vararg && !params.is_empty() { params.len() - 1 } else { params.len() };
+                    (*body_chunk, named, *is_vararg)
+                }
                 _ => return Err("not a function".to_string()),
             };
-            execute_chunk(body_chunk, args, ctx)
+            let packed = pack_variadic(args, named_count, is_vararg, ctx.heap);
+            execute_chunk(body_chunk, &packed, ctx)
         }
         Value::Closure(cl_ref) => {
-            let (body_chunk, upvalues) = match ctx.heap.get(*cl_ref) {
+            let (body_chunk, named_count, is_vararg, upvalues) = match ctx.heap.get(*cl_ref) {
                 GcObj::Closure { function, upvalues } => match ctx.heap.get(*function) {
-                    GcObj::Function { body_chunk, .. } => (*body_chunk, upvalues.clone()),
+                    GcObj::Function { body_chunk, params, is_vararg, .. } => {
+                        let named = if *is_vararg && !params.is_empty() { params.len() - 1 } else { params.len() };
+                        (*body_chunk, named, *is_vararg, upvalues.clone())
+                    }
                     _ => return Err("not a function in closure".to_string()),
                 },
                 _ => return Err("not a closure".to_string()),
             };
-            execute_closure_chunk(body_chunk, args, upvalues, ctx)
+            let packed = pack_variadic(args, named_count, is_vararg, ctx.heap);
+            execute_closure_chunk(body_chunk, &packed, upvalues, ctx)
         }
         Value::Dict(r) => {
             let entries = match ctx.heap.get(*r) {
@@ -2126,7 +2163,9 @@ fn execute_chunk(chunk_idx: usize, args: &[Value], ctx: &mut VmContext) -> Resul
                 let cidx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip + 1]]) as usize;
                 ip += 2;
                 let func_ref = ctx.heap.alloc(GcObj::Function {
-                    name: ctx.chunks[cidx].name.clone(), params: Vec::new(), is_vararg: false,
+                    name: ctx.chunks[cidx].name.clone(),
+                    params: ctx.chunks[cidx].params.clone(),
+                    is_vararg: ctx.chunks[cidx].is_vararg,
                     body_chunk: cidx, upvalue_count: 0,
                 });
                 stack.push(Value::Function(func_ref));

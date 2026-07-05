@@ -254,12 +254,21 @@ impl Parser {
 
         loop {
             match self.advance() {
-                Token { kind: TokenKind::Identifier(n), .. } => {
-                    if n == "..." {
-                        is_vararg = true;
-                    } else {
-                        params.push(n);
+                Token { kind: TokenKind::Ellipsis, .. } => {
+                    is_vararg = true;
+                    match self.advance() {
+                        Token { kind: TokenKind::Identifier(n), .. } => {
+                            params.push(n);
+                        }
+                        tok => return Err(ParseError {
+                            message: format!("expected parameter name after ..., got {:?}", tok.kind),
+                            line: tok.line,
+                            col: tok.col,
+                        }),
                     }
+                }
+                Token { kind: TokenKind::Identifier(n), .. } => {
+                    params.push(n);
                 }
                 tok => return Err(ParseError {
                     message: format!("expected parameter name, got {:?}", tok.kind),
