@@ -1,4 +1,5 @@
 use std::rc::Rc;
+use std::collections::HashMap;
 use crate::gc::*;
 
 pub fn build_itertools() -> Vec<(String, Value)> {
@@ -12,6 +13,7 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 match arg {
                     Value::List(r) => {
                         if let GcObj::List(items) = ctx.heap.get(*r) {
+                            result.reserve(items.len());
                             result.extend(items.clone());
                         }
                     }
@@ -32,9 +34,8 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                     _ => vec![],
                 }
             }).collect();
-            if lists.is_empty() { return Ok(make_list(ctx.heap, vec![])); }
             let min_len = lists.iter().map(|l| l.len()).min().unwrap_or(0);
-            let mut result = Vec::new();
+            let mut result = Vec::with_capacity(min_len);
             for i in 0..min_len {
                 let tuple_items: Vec<Value> = lists.iter().map(|l| l[i].clone()).collect();
                 result.push(make_list(ctx.heap, tuple_items));
@@ -67,10 +68,9 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 Value::List(r) => match ctx.heap.get(*r) { GcObj::List(items) => items.clone(), _ => return Err("expected list".to_string()) },
                 _ => return Err("expected list".to_string()),
             };
-            let mut result = Vec::new();
+            let mut result = Vec::with_capacity(items.len());
             for item in &items {
-                let mapped = call_fn_with_arg(fn_val, item, ctx)?;
-                result.push(mapped);
+                result.push(call_fn_with_arg(fn_val, item, ctx)?);
             }
             Ok(make_list(ctx.heap, result))
         }),
@@ -85,13 +85,13 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 Value::List(r) => match ctx.heap.get(*r) { GcObj::List(items) => items.clone(), _ => return Err("expected list".to_string()) },
                 _ => return Err("expected list".to_string()),
             };
-            let mut result = Vec::new();
+            let mut result = Vec::with_capacity(items.len());
             for item in &items {
-                let keep = call_fn_with_arg(fn_val, item, ctx)?;
-                if keep.is_truthy() {
+                if call_fn_with_arg(fn_val, item, ctx)?.is_truthy() {
                     result.push(item.clone());
                 }
             }
+            result.shrink_to_fit();
             Ok(make_list(ctx.heap, result))
         }),
     })));
@@ -108,11 +108,7 @@ pub fn build_itertools() -> Vec<(String, Value)> {
             if items.is_empty() {
                 return if args.len() >= 3 { Ok(args[2].clone()) } else { Err("reduce of empty list with no initial value".to_string()) };
             }
-            let mut acc = if args.len() >= 3 {
-                args[2].clone()
-            } else {
-                items[0].clone()
-            };
+            let mut acc = if args.len() >= 3 { args[2].clone() } else { items[0].clone() };
             let start = if args.len() >= 3 { 0 } else { 1 };
             for i in start..items.len() {
                 acc = call_fn_with_two_args(fn_val, &acc, &items[i], ctx)?;
@@ -144,11 +140,8 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 Value::List(r) => match ctx.heap.get(*r) { GcObj::List(items) => items.clone(), _ => return Err("expected list".to_string()) },
                 _ => return Err("expected list".to_string()),
             };
-            if n >= items.len() {
-                Ok(make_list(ctx.heap, vec![]))
-            } else {
-                Ok(make_list(ctx.heap, items[n..].to_vec()))
-            }
+            if n >= items.len() { Ok(make_list(ctx.heap, vec![])) }
+            else { Ok(make_list(ctx.heap, items[n..].to_vec())) }
         }),
     })));
 
@@ -163,7 +156,8 @@ pub fn build_itertools() -> Vec<(String, Value)> {
             let start = to_i64(&args[1])? as usize;
             let end = to_i64(&args[2])? as usize;
             let step = if args.len() >= 4 { to_i64(&args[3])? as usize } else { 1 };
-            let mut result = Vec::new();
+            let cap = (end.min(items.len()).saturating_sub(start) + step - 1) / step;
+            let mut result = Vec::with_capacity(cap);
             let mut i = start;
             while i < end.min(items.len()) {
                 result.push(items[i].clone());
@@ -181,19 +175,21 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 Value::List(r) => match ctx.heap.get(*r) { GcObj::List(items) => items.clone(), _ => return Err("expected list".to_string()) },
                 _ => return Err("expected list".to_string()),
             };
-            let mut result: Vec<Value> = Vec::new();
+            let mut buckets: HashMap<u64, Vec<Value>> = HashMap::new();
+            let mut result = Vec::with_capacity(items.len());
             for item in &items {
+                let h = item.hash(ctx.heap);
+                let bucket = buckets.entry(h).or_default();
                 let mut found = false;
-                for existing in &result {
-                    if existing.eq(item, ctx.heap) {
-                        found = true;
-                        break;
-                    }
+                for existing in bucket.iter() {
+                    if existing.eq(item, ctx.heap) { found = true; break; }
                 }
                 if !found {
+                    bucket.push(item.clone());
                     result.push(item.clone());
                 }
             }
+            result.shrink_to_fit();
             Ok(make_list(ctx.heap, result))
         }),
     })));
@@ -217,11 +213,9 @@ pub fn build_itertools() -> Vec<(String, Value)> {
         func: Rc::new(|args, ctx| {
             let start = if args.is_empty() { 0i64 } else { to_i64(&args[0])? };
             let step = if args.len() < 2 { 1i64 } else { to_i64(&args[1])? };
-            let limit = 10000; // bounded for safety
-            let mut result = Vec::new();
-            for i in 0..limit {
-                result.push(Value::Int(start + step * i));
-            }
+            let limit = 10000;
+            let mut result = Vec::with_capacity(limit);
+            for i in 0..limit { result.push(Value::Int(start + step * i as i64)); }
             Ok(make_list(ctx.heap, result))
         }),
     })));
@@ -232,7 +226,8 @@ pub fn build_itertools() -> Vec<(String, Value)> {
             if args.len() < 2 { return Err("repeat requires a value and a count".to_string()); }
             let val = args[0].clone();
             let count = to_i64(&args[1])? as usize;
-            let result = vec![val; count];
+            let mut result = Vec::with_capacity(count);
+            for _ in 0..count { result.push(val.clone()); }
             Ok(make_list(ctx.heap, result))
         }),
     })));
@@ -247,10 +242,9 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                     _ => vec![],
                 }
             }).collect();
-            if lists.iter().any(|l| l.is_empty()) {
-                return Ok(make_list(ctx.heap, vec![]));
-            }
-            let mut result = Vec::new();
+            if lists.iter().any(|l| l.is_empty()) { return Ok(make_list(ctx.heap, vec![])); }
+            let total = lists.iter().map(|l| l.len()).product::<usize>();
+            let mut result = Vec::with_capacity(total);
             let mut indices = vec![0usize; lists.len()];
             loop {
                 let tuple: Vec<Value> = indices.iter().enumerate().map(|(i, &idx)| lists[i][idx].clone()).collect();
@@ -259,12 +253,7 @@ pub fn build_itertools() -> Vec<(String, Value)> {
                 for i in (0..lists.len()).rev() {
                     if carry {
                         indices[i] += 1;
-                        if indices[i] >= lists[i].len() {
-                            indices[i] = 0;
-                            carry = true;
-                        } else {
-                            carry = false;
-                        }
+                        if indices[i] >= lists[i].len() { indices[i] = 0; } else { carry = false; }
                     }
                 }
                 if carry { break; }
@@ -284,8 +273,7 @@ pub fn build_itertools() -> Vec<(String, Value)> {
             if args.len() >= 2 {
                 let fn_val = &args[1];
                 for item in &items {
-                    let val = call_fn_with_arg(fn_val, item, ctx)?;
-                    if val.is_truthy() { return Ok(Value::Bool(true)); }
+                    if call_fn_with_arg(fn_val, item, ctx)?.is_truthy() { return Ok(Value::Bool(true)); }
                 }
                 Ok(Value::Bool(false))
             } else {
@@ -305,8 +293,7 @@ pub fn build_itertools() -> Vec<(String, Value)> {
             if args.len() >= 2 {
                 let fn_val = &args[1];
                 for item in &items {
-                    let val = call_fn_with_arg(fn_val, item, ctx)?;
-                    if !val.is_truthy() { return Ok(Value::Bool(false)); }
+                    if !call_fn_with_arg(fn_val, item, ctx)?.is_truthy() { return Ok(Value::Bool(false)); }
                 }
                 Ok(Value::Bool(true))
             } else {
@@ -318,32 +305,25 @@ pub fn build_itertools() -> Vec<(String, Value)> {
     funcs.push(("sorted".to_string(), Value::NativeFunc(NativeFunc {
         name: "<itertools.sorted>".to_string(),
         func: Rc::new(|args, ctx| {
-            let list_val = args.first().ok_or("sorted requires a list")?;
-            let mut items = match list_val {
+            let items = match &args[0] {
                 Value::List(r) => match ctx.heap.get(*r) { GcObj::List(items) => items.clone(), _ => return Err("expected list".to_string()) },
                 _ => return Err("expected list".to_string()),
             };
             if args.len() >= 2 {
                 let key_fn = &args[1];
-                let mut keyed: Vec<(Value, Value)> = Vec::new();
+                let mut keyed: Vec<(Value, Value)> = Vec::with_capacity(items.len());
                 for item in &items {
                     let key = call_fn_with_arg(key_fn, item, ctx)?;
                     keyed.push((key, item.clone()));
                 }
-                // Simple bubble sort (limited but functional)
-                let n = keyed.len();
-                for i in 0..n {
-                    for j in 0..n - 1 - i {
-                        if compare_values(&keyed[j].0, &keyed[j + 1].0, ctx.heap) == std::cmp::Ordering::Greater {
-                            keyed.swap(j, j + 1);
-                        }
-                    }
-                }
-                items = keyed.into_iter().map(|(_, v)| v).collect();
+                keyed.sort_by(|a, b| compare_values(&a.0, &b.0, ctx.heap));
+                let result: Vec<Value> = keyed.into_iter().map(|(_, v)| v).collect();
+                Ok(make_list(ctx.heap, result))
             } else {
-                items.sort_by(|a, b| compare_values(a, b, ctx.heap));
+                let mut result = items;
+                result.sort_by(|a, b| compare_values(a, b, ctx.heap));
+                Ok(make_list(ctx.heap, result))
             }
-            Ok(make_list(ctx.heap, items))
         }),
     })));
 
@@ -351,29 +331,21 @@ pub fn build_itertools() -> Vec<(String, Value)> {
     funcs.push(("identity".to_string(), Value::NativeFunc(NativeFunc {
         name: "<itertools.identity>".to_string(),
         func: Rc::new(|args, _ctx| {
-            if args.is_empty() { Ok(Value::Nil) } else { Ok(args[0].clone()) }
+            Ok(if args.is_empty() { Value::Nil } else { args[0].clone() })
         }),
     })));
 
     funcs.push(("compose".to_string(), Value::NativeFunc(NativeFunc {
         name: "<itertools.compose>".to_string(),
         func: Rc::new(|args, _ctx| {
-            if args.len() < 2 {
-                return Err("compose requires at least two functions".to_string());
-            }
+            if args.len() < 2 { return Err("compose requires at least two functions".to_string()); }
             let fns = args.to_vec();
-            let composed_name = format!("<composed[{}]>", fns.len());
             Ok(Value::NativeFunc(NativeFunc {
-                name: composed_name,
+                name: format!("<composed[{}]>", fns.len()),
                 func: Rc::new(move |inner_args, inner_ctx| {
                     let mut val = if inner_args.is_empty() { Value::Nil } else { inner_args[0].clone() };
-                    for (i, fn_val) in fns.iter().enumerate() {
-                        if i == fns.len() - 1 {
-                            val = call_fn_with_arg(fn_val, &val, inner_ctx)?;
-                        } else {
-                            // intermediate calls for non-last functions
-                            val = call_fn_with_arg(fn_val, &val, inner_ctx)?;
-                        }
+                    for fn_val in &fns {
+                        val = call_fn_with_arg(fn_val, &val, inner_ctx)?;
                     }
                     Ok(val)
                 }),
@@ -385,9 +357,8 @@ pub fn build_itertools() -> Vec<(String, Value)> {
         name: "<itertools.constantly>".to_string(),
         func: Rc::new(|args, _ctx| {
             let val = if args.is_empty() { Value::Nil } else { args[0].clone() };
-            let name = format!("<constantly>");
             Ok(Value::NativeFunc(NativeFunc {
-                name,
+                name: "<constantly>".to_string(),
                 func: Rc::new(move |_, _| Ok(val.clone())),
             }))
         }),
@@ -414,20 +385,14 @@ fn compare_values(a: &Value, b: &Value, heap: &GcHeap) -> std::cmp::Ordering {
 
 fn call_fn_with_arg(fn_val: &Value, arg: &Value, ctx: &mut VmContext) -> Result<Value, String> {
     match fn_val {
-        Value::NativeFunc(f) => {
-            (f.func)(&[arg.clone()], ctx)
-        }
-        // For Lion functions (closures), we'd need full VM integration
-        // For now, only support native functions in higher-order contexts
+        Value::NativeFunc(f) => (f.func)(&[arg.clone()], ctx),
         other => Err(format!("cannot call {} as a function", other.type_name())),
     }
 }
 
 fn call_fn_with_two_args(fn_val: &Value, arg1: &Value, arg2: &Value, ctx: &mut VmContext) -> Result<Value, String> {
     match fn_val {
-        Value::NativeFunc(f) => {
-            (f.func)(&[arg1.clone(), arg2.clone()], ctx)
-        }
+        Value::NativeFunc(f) => (f.func)(&[arg1.clone(), arg2.clone()], ctx),
         other => Err(format!("cannot call {} as a function", other.type_name())),
     }
 }
