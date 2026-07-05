@@ -200,17 +200,17 @@ Benchmarks comparing Lion 1.4.8 (release build) against Python 3.14 on the same 
 
 | Benchmark | Lion 1.4.8 | Python 3.14 | vs Python |
 |-----------|------------|-------------|-----------|
-| `re.find_all` — 10k lines | 2.1 ms | 2.2 ms | ~1× (on par) |
-| `re.sub_all` — 10k lines | 3.2 ms | 9.9 ms | ~3× faster |
+| `re.find_all` — 10k lines | 2.1 ms | 1.7 ms | ~1.2× slower |
+| `re.sub_all` — 10k lines | 3.2 ms | 9.8 ms | ~3× faster |
 | `re.split` — 10k lines | 1.0 ms | 0.5 ms | ~2× slower |
-| `collections.Counter` — 50k words | 1.8 ms | 1.3 ms | ~1.4× slower |
-| `itertools.unique` — 20k items | 1.2 ms | 0.2 ms | ~6× slower |
-| `itertools.sorted` — 10k items | 0.13 ms | 0.04 ms | ~3× slower |
-| `datetime.now` — 10k calls | 21.5 ms | 1.7 ms | ~13× slower |
-| `datetime.format` — 10k calls | 25.9 ms | 16.3 ms | ~1.6× slower |
-| `hashlib.sha256` — 1k strings | 6.4 ms | 0.9 ms | ~7× slower |
-| `hashlib.base64` — 1k strings | 6.1 ms | 0.4 ms | ~15× slower |
-| `subprocess.run_shell` — 100 calls | 1.41 s | 1.56 s | ~0.9× (Lion is faster) |
+| `collections.Counter` — 50k words | 2.9 ms | 1.2 ms | ~2.4× slower |
+| `itertools.unique` — 20k items | 1.5 ms | 0.2 ms | ~7.5× slower |
+| `itertools.sorted` — 10k items | 0.10 ms | 0.04 ms | ~2.5× slower |
+| `datetime.now` — 10k calls | 16.7 ms | 1.6 ms | ~10× slower |
+| `datetime.format` — 10k calls | 25.0 ms | 16.5 ms | ~1.5× slower |
+| `hashlib.sha256` — 1k strings | 6.4 ms | 0.7 ms | ~9× slower |
+| `hashlib.base64` — 1k strings | 6.0 ms | 0.4 ms | ~15× slower |
+| `subprocess.run_shell` — 100 calls | 1.46 s | 1.50 s | ~1× (on par) |
 
 Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.4.7/1.4.8 include: direct-threaded for-range loops (avoiding iterator GC allocation), combined jump/pop opcodes, increment/decrement opcodes for counters, constant folding in the compiler, single-pass datetime format (vs 7× `replace` calls), streamlined dict attribute lookup, drain-based Call opcode (eliminating arg vector clones in the main interpreter), `make_string_owned` across stdlib (removing one extra String clone per allocation), fast-path hex encoding with lookup table (bypassing per-byte `format!` and char conversion), optimized concat/add paths (avoiding `value_display` + `format!` double work), and direct GC byte access in hashlib (eliminating input string clones).
 
