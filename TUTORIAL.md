@@ -51,7 +51,7 @@ lion test path/              # Run test suite
 Inside the REPL:
 
 ```
-Lion REPL v1.5.5
+Lion REPL v1.5.6
 Type 'exit' to quit, 'help' for help.
 lion> print("hello world")
 hello world

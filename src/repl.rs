@@ -36,7 +36,7 @@ impl Repl {
     }
 
     pub fn run(&mut self) -> Result<(), String> {
-        println!("Lion REPL v1.5.5");
+        println!("Lion REPL v1.5.6");
         println!("Type 'exit' to quit, 'help' for help.");
 
         if io::stdin().is_terminal() {

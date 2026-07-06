@@ -2,11 +2,11 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.5-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.5.6-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
-Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.5.5). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional CUDA GPU acceleration.
+Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.5.6). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional CUDA GPU acceleration.
 
 ```
 print("Hello, Lion!");
@@ -486,9 +486,9 @@ cargo build --release
 
 ## Performance Benchmarks
 
-Benchmarks comparing Lion 1.5.5 (release build) against Python 3.14 on the same workloads. Lower is better.
+Benchmarks comparing Lion 1.5.6 (release build) against Python 3.14 on the same workloads. Lower is better.
 
-| Benchmark | Lion 1.5.5 | Python 3.14 | vs Python |
+| Benchmark | Lion 1.5.6 | Python 3.14 | vs Python |
 |-----------|-------------|-------------|-----------|
 | `re.find_all` — 10k lines | 2.6 ms | 1.8 ms | ~1.4× slower |
 | `re.sub_all` — 10k lines | 3.2 ms | 10.0 ms | ~3.1× faster |
@@ -502,7 +502,7 @@ Benchmarks comparing Lion 1.5.5 (release build) against Python 3.14 on the same 
 | `hashlib.base64` — 1k strings | 5.6 ms | 0.4 ms | ~14× slower |
 | `subprocess.run_shell` — 100 calls | 1.54 s | 1.47 s | ~1× (on par) |
 
-Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.5.5 include: direct `&str` access in string module (eliminating per-call string clones via `get_str`/`get_str_owned` helpers), optimized `String.join` (single-pass with pre-allocated capacity using `string_len`), single-pass HTML encode/decode (eliminating multi-pass `.replace()` chains), conditional path separator normalization (avoids unnecessary allocations on paths without backslashes), direct byte read in HTTP client (eliminating String→bytes round-trip via `into_reader`), shared HTTP `Agent` via `OnceLock` (connection pool reuse across requests), `Rc<Regex>` caching (eliminating `Regex::clone` on cache hit), direct buffer logging (eliminating intermediate `Vec<String>` allocation), inlining in stats module (avoiding `Vec<f64>` allocation for sum/mean/min/max via `fold_f64s`/`sum_len` helpers), borrow-based list iteration in itertools (avoiding `Vec<Value>::clone` per operation for chain/reverse/unique/take/drop/slice), `Value::string_len` method for capacity estimation, and all prior 1.4.x–1.5.01 optimizations.
+Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.5.6 include: direct `&str` access in string module (eliminating per-call string clones via `get_str`/`get_str_owned` helpers), optimized `String.join` (single-pass with pre-allocated capacity using `string_len`), single-pass HTML encode/decode (eliminating multi-pass `.replace()` chains), conditional path separator normalization (avoids unnecessary allocations on paths without backslashes), direct byte read in HTTP client (eliminating String→bytes round-trip via `into_reader`), shared HTTP `Agent` via `OnceLock` (connection pool reuse across requests), `Rc<Regex>` caching (eliminating `Regex::clone` on cache hit), direct buffer logging (eliminating intermediate `Vec<String>` allocation), inlining in stats module (avoiding `Vec<f64>` allocation for sum/mean/min/max via `fold_f64s`/`sum_len` helpers), borrow-based list iteration in itertools (avoiding `Vec<Value>::clone` per operation for chain/reverse/unique/take/drop/slice), `Value::string_len` method for capacity estimation, and all prior 1.4.x–1.5.01 optimizations.
 
 Benchmarks are in [`benchmarks/`](benchmarks/) and can be run with:
 ```bash
