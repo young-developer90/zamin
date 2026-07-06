@@ -490,19 +490,19 @@ Benchmarks comparing Lion 1.5.6 (release build) against Python 3.14 on the same 
 
 | Benchmark | Lion 1.5.6 | Python 3.14 | vs Python |
 |-----------|-------------|-------------|-----------|
-| `re.find_all` — 10k lines | 2.6 ms | 1.8 ms | ~1.4× slower |
-| `re.sub_all` — 10k lines | 3.2 ms | 10.0 ms | ~3.1× faster |
+| `re.find_all` — 10k lines | 2.2 ms | 1.8 ms | ~1.2× slower |
+| `re.sub_all` — 10k lines | 3.3 ms | 10.0 ms | ~3.0× faster |
 | `re.split` — 10k lines | 1.2 ms | 0.6 ms | ~2× slower |
 | `collections.Counter` — 50k words | 1.9 ms | 1.1 ms | ~1.7× slower |
 | `itertools.unique` — 20k items | 0.6 ms | 0.2 ms | ~3× slower |
-| `itertools.sorted` — 10k items | 0.09 ms | 0.04 ms | ~2× slower |
-| `datetime.now` — 10k calls | 18.2 ms | 1.7 ms | ~10.7× slower |
-| `datetime.format` — 10k calls | 26.9 ms | 16.5 ms | ~1.6× slower |
-| `hashlib.sha256` — 1k strings | 5.6 ms | 0.6 ms | ~9× slower |
-| `hashlib.base64` — 1k strings | 5.6 ms | 0.4 ms | ~14× slower |
-| `subprocess.run_shell` — 100 calls | 1.54 s | 1.47 s | ~1× (on par) |
+| `itertools.sorted` — 10k items | 0.13 ms | 0.04 ms | ~3× slower |
+| `datetime.now` — 10k calls | 16.8 ms | 1.7 ms | ~9.9× slower |
+| `datetime.format` — 10k calls | 28.3 ms | 16.5 ms | ~1.7× slower |
+| `hashlib.sha256` — 1k strings | 2.7 ms | 0.6 ms | ~4.5× slower |
+| `hashlib.base64` — 1k strings | 2.4 ms | 0.4 ms | ~6× slower |
+| `subprocess.run_shell` — 100 calls | 1.50 s | 1.47 s | ~1× (on par) |
 
-Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.5.6 include: direct `&str` access in string module (eliminating per-call string clones via `get_str`/`get_str_owned` helpers), optimized `String.join` (single-pass with pre-allocated capacity using `string_len`), single-pass HTML encode/decode (eliminating multi-pass `.replace()` chains), conditional path separator normalization (avoids unnecessary allocations on paths without backslashes), direct byte read in HTTP client (eliminating String→bytes round-trip via `into_reader`), shared HTTP `Agent` via `OnceLock` (connection pool reuse across requests), `Rc<Regex>` caching (eliminating `Regex::clone` on cache hit), direct buffer logging (eliminating intermediate `Vec<String>` allocation), inlining in stats module (avoiding `Vec<f64>` allocation for sum/mean/min/max via `fold_f64s`/`sum_len` helpers), borrow-based list iteration in itertools (avoiding `Vec<Value>::clone` per operation for chain/reverse/unique/take/drop/slice), `Value::string_len` method for capacity estimation, and all prior 1.4.x–1.5.01 optimizations.
+Lion is an interpreted bytecode VM while Python benefits from decades of optimization and C-backed native implementations. Optimizations in 1.5.6 include: `&str`-based lexer (replacing `Vec<char>` allocation in the lexer), `HashMap`-based string interning in the compiler (O(1) lookup vs O(n)), allocation-free `make_iterator`/`next_iterator` (stores original collection ref + index instead of cloning items into a `Vec`), allocation-free GC gray marking (inline marking instead of per-object `Vec` allocation), direct `&str` access in string module (eliminating per-call string clones via `get_str`/`get_str_owned` helpers), optimized `String.join` (single-pass with pre-allocated capacity using `string_len`), single-pass HTML encode/decode (eliminating multi-pass `.replace()` chains), conditional path separator normalization (avoids unnecessary allocations on paths without backslashes), direct byte read in HTTP client (eliminating String→bytes round-trip via `into_reader`), shared HTTP `Agent` via `OnceLock` (connection pool reuse across requests), `Rc<Regex>` caching (eliminating `Regex::clone` on cache hit), direct buffer logging (eliminating intermediate `Vec<String>` allocation), inlining in stats module (avoiding `Vec<f64>` allocation for sum/mean/min/max via `fold_f64s`/`sum_len` helpers), borrow-based list iteration in itertools (avoiding `Vec<Value>::clone` per operation for chain/reverse/unique/take/drop/slice), `Value::string_len` method for capacity estimation, and all prior 1.4.x–1.5.01 optimizations.
 
 Benchmarks are in [`benchmarks/`](benchmarks/) and can be run with:
 ```bash
