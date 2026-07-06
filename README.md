@@ -392,14 +392,14 @@ Supported types: `LION_NIL`, `LION_INT`, `LION_FLOAT`, `LION_BOOL`, `LION_STRING
 | Feature | Lion | Python | JavaScript | Lua | Mojo |
 |---------|------|--------|------------|-----|------|
 | Closures | Yes | Yes | Yes | Yes | Yes |
-| Pattern matching | Yes | 3.10+ | No | No | No |
+| Pattern matching | Yes | 3.10+ | No | No | **No** |
 | String interpolation | Native | f-strings | Template literals | No | Yes |
 | Type annotations | Optional | Optional | TypeScript | No | Yes |
-| Built-in HTTP | Yes | `requests` | `fetch` | No | No |
-| Built-in JSON | Yes | Yes | Yes | No | No |
-| Built-in CSV | Yes | `csv` | No | No | No |
-| Built-in HTML/parser | Yes | `bs4` | `DOMParser` | No | No |
-| File I/O | Yes (native) | Yes | Yes | Yes | **No** |
+| Built-in HTTP | Yes | `requests` | `fetch` | No | **No** |
+| Built-in JSON | Yes | Yes | Yes | No | **No** |
+| Built-in CSV | Yes | `csv` | No | No | **No** |
+| Built-in HTML/parser | Yes | `bs4` | `DOMParser` | No | **No** |
+| File I/O (native) | **Yes** | Yes | Yes | Yes | **No** ❌ |
 | GPU acceleration | Optional (CUDA) | NumPy/CuPy | WebGL | No | Yes |
 | REPL | Yes | Yes | Node.js | Yes | Yes |
 | LSP support | Yes | pylance | tsserver | No | Yes |
