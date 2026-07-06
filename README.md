@@ -389,19 +389,20 @@ Supported types: `LION_NIL`, `LION_INT`, `LION_FLOAT`, `LION_BOOL`, `LION_STRING
 
 ## Comparison
 
-| Feature | Lion | Python | JavaScript | Lua |
-|---------|------|--------|------------|-----|
-| Closures | Yes | Yes | Yes | Yes |
-| Pattern matching | Yes | 3.10+ | No | No |
-| String interpolation | Native | f-strings | Template literals | No |
-| Type annotations | Optional | Optional | TypeScript | No |
-| Built-in HTTP | Yes | `requests` | `fetch` | No |
-| Built-in JSON | Yes | Yes | Yes | No |
-| Built-in CSV | Yes | `csv` | No | No |
-| Built-in HTML/parser | Yes | `bs4` | `DOMParser` | No |
-| GPU acceleration | Optional (CUDA) | NumPy/CuPy | WebGL | No |
-| REPL | Yes | Yes | Node.js | Yes |
-| LSP support | Yes | pylance | tsserver | No |
+| Feature | Lion | Python | JavaScript | Lua | Mojo |
+|---------|------|--------|------------|-----|------|
+| Closures | Yes | Yes | Yes | Yes | Yes |
+| Pattern matching | Yes | 3.10+ | No | No | No |
+| String interpolation | Native | f-strings | Template literals | No | Yes |
+| Type annotations | Optional | Optional | TypeScript | No | Yes |
+| Built-in HTTP | Yes | `requests` | `fetch` | No | No |
+| Built-in JSON | Yes | Yes | Yes | No | No |
+| Built-in CSV | Yes | `csv` | No | No | No |
+| Built-in HTML/parser | Yes | `bs4` | `DOMParser` | No | No |
+| File I/O | Yes (native) | Yes | Yes | Yes | **No** |
+| GPU acceleration | Optional (CUDA) | NumPy/CuPy | WebGL | No | Yes |
+| REPL | Yes | Yes | Node.js | Yes | Yes |
+| LSP support | Yes | pylance | tsserver | No | Yes |
 
 ## CLI Usage
 
