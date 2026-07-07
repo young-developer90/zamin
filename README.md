@@ -2,11 +2,11 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.6.0-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.6.1-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
-Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.6.0). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
+Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.6.1). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
 
 ```
 print("Hello, Lion!");
@@ -310,7 +310,7 @@ let evens   = [x for x in 0..20 if x % 2 == 0];
 
 ## Performance Benchmarks
 
-Benchmarks comparing Lion 1.6.0 (release build) against Python 3.12 on the same workloads. Lower is better.
+Benchmarks comparing Lion 1.6.1 (release build) against Python 3.12 on the same workloads. Lower is better.
 
 | Benchmark | Lion (ms) | Python (ms) | vs Python |
 |-----------|-----------|-------------|-----------|

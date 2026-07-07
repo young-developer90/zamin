@@ -1,4 +1,7 @@
-use std::io::{self, IsTerminal, Read, Write};
+use std::collections::HashSet;
+use std::fs::{self, File};
+use std::io::{self, BufRead, BufReader, IsTerminal, Read, Write};
+use std::path::PathBuf;
 
 use crate::module::ModuleLoader;
 
@@ -20,30 +23,103 @@ macro_rules! flush {
     };
 }
 
+fn history_path() -> PathBuf {
+    let mut p = std::env::var("HOME").map(PathBuf::from).unwrap_or_default();
+    p.push(".lion_history");
+    p
+}
+
+fn load_history() -> Vec<String> {
+    let p = history_path();
+    let file = match File::open(&p) {
+        Ok(f) => f,
+        Err(_) => return Vec::new(),
+    };
+    BufReader::new(file).lines().filter_map(|l| l.ok()).filter(|l| !l.is_empty()).collect()
+}
+
+fn save_history(history: &[String]) {
+    if let Ok(mut file) = fs::File::create(history_path()) {
+        let max = history.len().saturating_sub(1000);
+        for line in history.iter().skip(max) {
+            let _ = writeln!(file, "{}", line);
+        }
+    }
+}
+
+fn build_completions() -> HashSet<String> {
+    let mut s = HashSet::new();
+    // Keywords
+    for kw in &["if", "else", "elif", "while", "for", "in", "match", "case",
+                 "func", "return", "let", "mut", "const", "true", "false",
+                 "nil", "import", "export", "as", "struct", "throw", "try",
+                 "catch", "or", "and", "not", "break", "continue"] {
+        s.insert(kw.to_string());
+    }
+    // Built-in functions & modules
+    for name in &[
+        "print", "assert", "type", "len", "str", "int", "float", "bool",
+        "range", "input", "tostr",
+        "math", "time", "rand", "fs", "os", "json", "csv", "html", "http",
+        "url", "stats", "re", "datetime", "logging", "subprocess", "path",
+        "hashlib", "string", "collections", "itertools", "test", "panda",
+    ] {
+        s.insert(name.to_string());
+    }
+    // linum module functions
+    for name in &[
+        "linum", "linum.Linear", "linum.ReLU", "linum.Sigmoid", "linum.Tanh",
+        "linum.Sequential", "linum.MSELoss", "linum.CrossEntropyLoss",
+        "linum.SGD", "linum.Adam", "linum.train", "linum.dense", "linum.relu",
+        "linum.sigmoid", "linum.sequential", "linum.get_device",
+    ] {
+        s.insert(name.to_string());
+    }
+    // panda module functions
+    for name in &[
+        "panda.arange", "panda.zeros", "panda.ones", "panda.linspace",
+        "panda.sum", "panda.mean", "panda.min", "panda.max", "panda.std",
+        "panda.abs", "panda.sin", "panda.cos", "panda.sqrt", "panda.pow",
+        "panda.add", "panda.sub", "panda.mul", "panda.dot", "panda.shape",
+        "panda.reshape", "panda.eye",
+    ] {
+        s.insert(name.to_string());
+    }
+    s
+}
+
 pub struct Repl {
     loader: ModuleLoader,
     history: Vec<String>,
+    history_idx: usize,
+    completions: HashSet<String>,
 }
 
 impl Repl {
     pub fn new() -> Self {
         let mut loader = ModuleLoader::new();
         loader.load_stdlib();
+        let history = load_history();
         Repl {
             loader,
-            history: Vec::new(),
+            history,
+            history_idx: 0,
+            completions: build_completions(),
         }
     }
 
     pub fn run(&mut self) -> Result<(), String> {
-        println!("Lion REPL v1.5.6");
+        println!("\x1b[1mLion REPL v{}\x1b[0m", env!("CARGO_PKG_VERSION"));
         println!("Type 'exit' to quit, 'help' for help.");
 
-        if io::stdin().is_terminal() {
+        let result = if io::stdin().is_terminal() {
             self.run_raw()
         } else {
             self.run_line_buffered()
-        }
+        };
+
+        save_history(&self.history);
+        result
     }
 
     fn run_line_buffered(&mut self) -> Result<(), String> {
@@ -63,7 +139,11 @@ impl Repl {
                 break;
             }
 
-            self.history.push(input.clone());
+            let trimmed = input.trim().to_string();
+            if !trimmed.is_empty() {
+                self.history.push(trimmed.clone());
+                self.history_idx = self.history.len();
+            }
 
             let full_input = if needs_more_input(&input) {
                 let mut full = input;
@@ -86,11 +166,11 @@ impl Repl {
             match self.loader.execute_source(&full_input) {
                 Ok(result) => {
                     if !result.is_empty() && result != "nil" {
-                        println!("=> {}", result);
+                        println!("\x1b[32m=> {}\x1b[0m", result);
                     }
                 }
                 Err(e) => {
-                    eprintln!("Error: {}", e);
+                    eprintln!("\x1b[31m(!) {}\x1b[0m", e);
                 }
             }
         }
@@ -122,8 +202,6 @@ impl Repl {
                 break;
             }
 
-            self.history.push(input.clone());
-
             let full_input = if needs_more_input(&input) {
                 self.read_continuation(&mut stdout, &input)?
             } else {
@@ -136,14 +214,19 @@ impl Repl {
                 break;
             }
 
+            if !full_input.trim().is_empty() {
+                self.history.push(full_input.trim().to_string());
+                self.history_idx = self.history.len();
+            }
+
             match self.loader.execute_source(&full_input) {
                 Ok(result) => {
                     if !result.is_empty() && result != "nil" {
-                        woutln!(stdout, "\r=> {}", result);
+                        woutln!(stdout, "\r\x1b[32m=> {}\x1b[0m", result);
                     }
                 }
                 Err(e) => {
-                    woutln!(stdout, "\rError: {}", e);
+                    woutln!(stdout, "\r\x1b[31m(!) {}\x1b[0m", e);
                 }
             }
             flush!(stdout);
@@ -200,8 +283,22 @@ impl Repl {
         }
     }
 
+    fn find_completions(&self, prefix: &str) -> Vec<String> {
+        let prefix = prefix.trim();
+        if prefix.is_empty() {
+            return Vec::new();
+        }
+
+        let mut matches: Vec<String> = self.completions.iter()
+            .filter(|c| c.starts_with(prefix))
+            .cloned()
+            .collect();
+        matches.sort();
+        matches
+    }
+
     fn read_line(
-        &self,
+        &mut self,
         stdout: &mut io::StdoutLock<'_>,
         prompt: &str,
     ) -> Result<String, String> {
@@ -229,6 +326,29 @@ impl Repl {
                     if cursor > 0 && !buf.is_empty() {
                         cursor -= 1;
                         buf.remove(cursor);
+                        redraw_line(stdout, prompt, &buf, cursor)?;
+                    }
+                }
+                b'\t' => {
+                    // tab completion: find word left of cursor
+                    let before = &buf[..cursor];
+                    let word_start = before.rfind(|c: char| c.is_whitespace() || c == '(' || c == ')' || c == ',' || c == '"' || c == '\'')
+                        .map(|i| i + 1)
+                        .unwrap_or(0);
+                    let prefix = &buf[word_start..cursor];
+                    let matches = self.find_completions(prefix);
+                    if matches.len() == 1 {
+                        // replace prefix with the full match
+                        let rest = &buf[cursor..];
+                        buf = format!("{}{}{}", &buf[..word_start], matches[0], rest);
+                        cursor = word_start + matches[0].len();
+                        redraw_line(stdout, prompt, &buf, cursor)?;
+                    } else if matches.len() > 1 {
+                        // show all matches
+                        woutln!(stdout, "");
+                        for m in &matches {
+                            woutln!(stdout, "\r\x1b[2m{}\x1b[0m", m);
+                        }
                         redraw_line(stdout, prompt, &buf, cursor)?;
                     }
                 }
@@ -320,7 +440,7 @@ impl Repl {
     }
 
     fn read_continuation(
-        &self,
+        &mut self,
         stdout: &mut io::StdoutLock<'_>,
         first: &str,
     ) -> Result<String, String> {

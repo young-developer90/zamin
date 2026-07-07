@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="1.6.0"
+VERSION="1.6.1"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 usage() {
