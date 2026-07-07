@@ -35,8 +35,12 @@ fn main() {
             // Tell cargo where to find CUDA libs
             let lib_dir = if cfg!(target_os = "windows") {
                 cuda_path.join("lib/x64")
-            } else {
+            } else if cuda_path.join("lib64").exists() {
                 cuda_path.join("lib64")
+            } else if cuda_path.join("lib/x86_64-linux-gnu").exists() {
+                cuda_path.join("lib/x86_64-linux-gnu")
+            } else {
+                cuda_path.join("lib")
             };
             println!("cargo:rustc-link-search={}", lib_dir.display());
 
@@ -95,6 +99,26 @@ fn find_cuda() -> Option<PathBuf> {
         for p in candidates {
             if p.exists() {
                 return Some(p);
+            }
+        }
+
+        // Fallback: detect system-packaged CUDA (e.g. nvidia-cuda-toolkit on Ubuntu)
+        // where nvcc is in PATH but no /usr/local/cuda directory exists.
+        if let Ok(output) = std::process::Command::new("which").arg("nvcc").output() {
+            if output.status.success() {
+                let path = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                let nvcc_path = PathBuf::from(&path);
+                // Walk up to find the CUDA root: nvcc lives at <root>/bin/nvcc
+                if let Some(parent) = nvcc_path.parent().and_then(|p| p.parent()) {
+                    if parent.join("include").join("cuda.h").exists()
+                        || parent.join("targets").exists()
+                    {
+                        return Some(parent.to_path_buf());
+                    }
+                    // For system packages, nvcc is at /usr/bin/nvcc.
+                    // No CUDA root dir exists, so use /usr and link against system libs.
+                    return Some(parent.to_path_buf());
+                }
             }
         }
     }

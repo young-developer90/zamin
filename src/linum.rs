@@ -770,6 +770,16 @@ pub fn build_linum() -> Vec<(String, Value)> {
             ]))
         }),
     })));
+    funcs.push(("get_device".to_string(), Value::NativeFunc(NativeFunc {
+        name: "<linum.get_device>".to_string(),
+        func: Rc::new(|_, ctx| {
+            let device = match cuda::device_count() {
+                Ok(n) if n > 0 => "cuda",
+                _ => "cpu",
+            };
+            Ok(make_string(ctx.heap, device))
+        }),
+    })));
 
     funcs
 }

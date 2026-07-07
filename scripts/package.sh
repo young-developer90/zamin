@@ -82,7 +82,7 @@ tar czf "${NAME}.tar.gz" "${NAME}/"
 
 echo "==> Done!"
 echo "    Package: dist/${NAME}.tar.gz"
-echo "    Size:    $(du -sh dist/${NAME}.tar.gz | cut -f1)"
+echo "    Size:    $(du -sh ${NAME}.tar.gz | cut -f1)"
 echo ""
 echo "    On target machine:"
 echo "      tar xzf dist/${NAME}.tar.gz"
