@@ -2,11 +2,11 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.6-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.6.0-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
-Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.5.6). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
+Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.6.0). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
 
 ```
 print("Hello, Lion!");
@@ -33,18 +33,11 @@ cargo build --release
 
 | Command | Description |
 |---------|-------------|
-| `cargo build` | Debug build (fast compile, slow execution) |
-| `cargo build --release` | Release build (slow compile, fast execution) |
+| `cargo build --release` | Optimised build (recommended) |
+| `cargo build` | Debug build (faster compile, ~50× slower execution) |
 | `cargo build --features panther` | Enable Linux GUI toolkit (GTK4) |
 | `cargo build --features python` | Enable Python interop via PyO3 |
 | `cargo build --features cuda` | Enable CUDA GPU acceleration |
-
-### Run Your First Script
-
-```bash
-echo 'print("Hello, Lion!")' > hello.lion
-./target/release/lion run hello.lion
-```
 
 ### Start the REPL
 
@@ -61,7 +54,20 @@ Lion> print(fib(20));
 6765
 ```
 
+## First Script
+
+```bash
+echo 'print("Hello, Lion!")' > hello.lion
+./target/release/lion run hello.lion
+```
+
 ## Examples
+
+### Hello World
+
+```lion
+print("Hello, Lion!");
+```
 
 ### Fibonacci
 
@@ -85,8 +91,27 @@ print(resp.json()["description"]);
 
 ```lion
 fs.write("hello.txt", "Hello, Lion!");
-print(fs.read("hello.txt"));
-fs.exists("hello.txt");  // true
+let content = fs.read("hello.txt");
+print(content);                       // Hello, Lion!
+print(fs.exists("hello.txt"));        // true
+```
+
+### Regular Expressions
+
+```lion
+let matches = re.find_all(r"\d+", "abc 123 def 456");
+print(matches);                       // ["123", "456"]
+let result = re.sub(r"\d+", "X", "abc 123 def 456");
+print(result);                        // "abc X def X"
+```
+
+### JSON
+
+```lion
+let data = json.parse('{"name": "Lion", "version": 1.0}');
+print(data["name"]);                  // Lion
+let encoded = json.stringify(data);
+print(encoded);
 ```
 
 ### GUI (Windows with leopard)
@@ -123,14 +148,7 @@ panther.pack(btn);
 panther.mainloop(root);
 ```
 
-### JSON
-
-```lion
-let data = json.parse('{"name": "Lion", "version": 1.0}');
-print(data["name"]);
-let encoded = json.stringify(data);
-print(encoded);
-```
+Full text editor example at `examples/textedit.lion`.
 
 ### Python Interop
 
@@ -168,6 +186,7 @@ let multi = """line one
 line two
 line three""";
 let interpolated = f"value: {s}, sum: {2 + 2}";
+let combined = "hello" + " world";  // concat with +
 ```
 
 ### Collections
@@ -189,13 +208,23 @@ for i in 0..100..5 { print(i); }
 let max = a > b ? a : b;
 ```
 
-### Functions
+### Functions & Closures
 
 ```lion
 func greet(name) { return f"Hello, {name}!"; }
 let double = |x| x * 2;
 func sum(...nums) { let t = 0; for n in nums { t += n; } return t; }
 func connect(host, port = 8080) { print(f"{host}:{port}"); }
+
+// closures
+func make_counter(start) {
+    let count = start;
+    func inc() { count = count + 1; return count; }
+    return inc;
+}
+let c = make_counter(0);
+print(c());  // 1
+print(c());  // 2
 ```
 
 ### Pattern Matching
@@ -224,7 +253,9 @@ struct Counter {
     func increment(self) { self.count += 1; }
     func value(self) { return self.count; }
 }
-let c = Counter.new();  c.increment();  print(c.value());  // 1
+let c = Counter.new();
+c.increment();
+print(c.value());  // 1
 ```
 
 ### Modules
@@ -232,49 +263,52 @@ let c = Counter.new();  c.increment();  print(c.value());  // 1
 ```lion
 // import.lion
 export func hello() { print("hi"); }
+
 // main.lion
-import "import.lion" as mymod;  mymod.hello();
+import "import.lion" as mymod;
+mymod.hello();
 ```
 
 ### Comprehensions
 
 ```lion
-let squares = [x * x for x in 0..10];
+let squares = [x * x for x in 0..10];       // [0, 1, 4, 9, 16, ...]
 let evens   = [x for x in 0..20 if x % 2 == 0];
 ```
 
 ## Standard Library Reference
 
-| Module | Functions | Description |
-|--------|-----------|-------------|
-| `math` | `abs`, `sqrt`, `sin`, `cos`, `tan`, `floor`, `ceil`, `round`, `min`, `max`, `pow`, `log`, `pi`, `e` | Math utilities |
-| `time` | `sleep`, `now` | Time utilities |
-| `rand` | `int`, `float`, `shuffle`, `choice` | Random number generation |
-| `fs` | `read`, `write`, `append`, `exists`, `remove`, `mkdir`, `read_dir`, `stat`, `copy`, `rename` | File system |
-| `os` | `args`, `env`, `set_env`, `cwd`, `chdir`, `exit`, `platform`, `type` | OS interface |
-| `json` | `parse`, `stringify` | JSON encoding/decoding |
-| `csv` | `parse`, `stringify` | CSV parsing |
-| `html` | `parse`, `query`, `inner_text`, `inner_html`, `attr`, `children` | HTML parsing |
-| `http` | `get`, `post`, `put`, `delete`, `patch`, `head`, `options` | HTTP client |
-| `url` | `encode`, `decode`, `parse`, `build` | URL utilities |
-| `stats` | `mean`, `median`, `mode`, `std`, `variance`, `min`, `max`, `sum`, `correlation`, `regression` | Statistics |
-| `re` | `find_all`, `sub`, `split`, `match`, `search` | Regular expressions |
-| `datetime` | `now`, `from_unix`, `format`, `parse`, `unix` | Date/time |
-| `logging` | `info`, `warn`, `error`, `debug`, `set_level` | Logging |
-| `subprocess` | `run`, `run_shell`, `capture` | Subprocess |
-| `path` | `join`, `basename`, `dirname`, `ext`, `exists`, `is_file`, `is_dir`, `abs` | Path manipulation |
-| `hashlib` | `sha256`, `sha512`, `sha1`, `md5`, `base64_encode`, `base64_decode`, `hex_encode`, `hex_decode` | Hashing & encoding |
-| `collections` | `Counter`, `deque` | Specialized collections |
-| `itertools` | `sorted`, `unique`, `group_by`, `flatten`, `chunks`, `zip`, `enumerate`, `cycle`, `repeat`, `take`, `skip` | Iterator utilities |
-| `test` | `assert_eq`, `assert_ne`, `assert_true`, `assert_false`, `assert_lt`, `assert_gt`, `assert_approx` | Unit testing |
-| **Windows** | | |
-| `leopard` | `Leo`, `Button`, `Label`, `Entry`, `Frame`, `pack`, `place`, `config`, `get`, `insert`, `delete`, `title`, `geometry`, `mainloop`, `destroy`, `messagebox` | Native GUI (Win32) |
-| **Linux** | | |
-| `panther` | `Leo`, `Button`, `Label`, `Entry`, `Frame`, `pack`, `place`, `config`, `get`, `insert`, `delete`, `title`, `geometry`, `mainloop`, `destroy`, `messagebox` | Native GUI (GTK4, feature=panther) |
+| Module | Description |
+|--------|-------------|
+| `math` | `abs`, `sqrt`, `sin`, `cos`, `tan`, `floor`, `ceil`, `round`, `min`, `max`, `pow`, `log`, `pi`, `e` |
+| `time` | `sleep`, `now` |
+| `rand` | `int`, `float`, `shuffle`, `choice` |
+| `fs` | `read`, `write`, `append`, `exists`, `remove`, `mkdir`, `read_dir`, `stat`, `copy`, `rename` |
+| `os` | `args`, `env`, `set_env`, `cwd`, `chdir`, `exit`, `platform`, `type` |
+| `json` | `parse`, `stringify`, `load`, `dump`, `pretty` |
+| `csv` | `parse`, `stringify`, `load`, `save`, `parse_header` |
+| `html` | `parse`, `query`, `inner_text`, `inner_html`, `attr`, `children` |
+| `http` | `get`, `post`, `put`, `delete`, `patch`, `head`, `options` |
+| `url` | `encode`, `decode`, `parse`, `build` |
+| `stats` | `mean`, `median`, `mode`, `std`, `variance`, `min`, `max`, `sum`, `correlation`, `regression`, `normalize`, `standardize` |
+| `re` | `find_all`, `sub`, `split`, `match`, `search` |
+| `datetime` | `now`, `from_unix`, `format`, `parse`, `unix` |
+| `logging` | `info`, `warn`, `error`, `debug`, `set_level` |
+| `subprocess` | `run`, `run_shell`, `run_output`, `run_shell_output` |
+| `path` | `join`, `basename`, `dirname`, `ext`, `abs`, `is_file`, `is_dir`, `size`, `rename`, `copy`, `remove`, `remove_dir`, `list_dir`, `walk`, `split` |
+| `hashlib` | `sha256`, `sha512`, `sha1`, `md5`, `base64_encode`, `base64_decode`, `hex_encode`, `hex_decode` |
+| `string` | `len`, `upper`, `lower`, `trim`, `trim_start`, `trim_end`, `split`, `join`, `contains`, `starts_with`, `ends_with`, `replace`, `reverse`, `repeat`, `substring`, `bytes`, `from_bytes` |
+| `collections` | `Counter`, `deque`, `push_left`, `push_right`, `pop_left`, `pop_right`, `flatten`, `group_by` |
+| `itertools` | `sorted`, `unique`, `reverse`, `enumerate`, `zip`, `map`, `filter`, `reduce`, `take`, `drop`, `slice`, `cycle`, `repeat`, `chunks`, `any`, `all`, `product`, `compose` |
+| `test` | `assert_eq`, `assert_ne`, `assert_true`, `assert_false`, `assert_lt`, `assert_gt`, `assert_approx` |
+| **Windows** | |
+| `leopard` | Native GUI toolkit (Win32) |
+| **Linux** | |
+| `panther` | Native GUI toolkit (GTK4, feature=panther) |
 
 ## Performance Benchmarks
 
-Benchmarks comparing Lion 1.5.6 (release build) against Python 3.12 on the same workloads. Lower is better.
+Benchmarks comparing Lion 1.6.0 (release build) against Python 3.12 on the same workloads. Lower is better.
 
 | Benchmark | Lion (ms) | Python (ms) | vs Python |
 |-----------|-----------|-------------|-----------|
@@ -290,7 +324,7 @@ Benchmarks comparing Lion 1.5.6 (release build) against Python 3.12 on the same 
 | `hashlib.base64` — 1k strings | 1.22 | 0.27 | ~4.5× slower |
 | `subprocess.run_shell` — 100 calls | 56.74 | 77.01 | **~1.4× faster** |
 
-Lion is a young interpreted bytecode VM while Python benefits from decades of optimization and C-backed native libraries. Optimizations include: `&str`-based lexer (replacing `Vec<char>` allocation), `HashMap`-based string interning in the compiler (O(1) lookup), allocation-free `make_iterator`/`next_iterator` (stores original collection ref + index), `Vec::swap_remove` in dict operations, `get_str`/`get_str_owned` helpers for borrow-based string access (eliminating per-call clones), optimized `String.join` (single-pass with pre-allocated capacity), single-pass HTML encode/decode, `Rc<Regex>` caching (eliminating `Regex::clone` on cache hit), shared HTTP `Agent` via `OnceLock`, and `Value::string_len` for capacity estimation.
+Lion is a young interpreted bytecode VM while Python benefits from decades of optimization and C-backed native libraries.
 
 Run benchmarks yourself:
 
@@ -299,36 +333,6 @@ cargo build --release --bin lion
 ./target/release/lion run benchmarks/bench_lion.lion
 python3 benchmarks/bench_python.py
 ```
-
-### Key Optimizations in 1.5.6
-
-| Optimization | Impact |
-|---|---|
-| `get_str` / `get_str_owned` helpers | Borrow strings from GC instead of cloning — speeds up datetime.format (~6%), sha256 (~12%), base64 (~5%) |
-| `&str`-based lexer | Eliminates `Vec<char>` allocation in tokenizer |
-| `HashMap`-based string interning | O(1) identifier lookup vs O(n) linear scan |
-| `#[inline(always)]` on VM hot paths | Reduces dispatch overhead in bytecode loop |
-| Shared HTTP `Agent` (OnceLock) | Connection pool reuse across requests |
-| Borrow-based list iteration | Avoids `Vec<Value>::clone` for chain/reverse/unique/take/drop/slice |
-
-## Comparison
-
-| Feature | Lion | Python | JavaScript | Lua |
-|---------|------|--------|------------|-----|
-| Closures | Yes | Yes | Yes | Yes |
-| Pattern matching | Yes | 3.10+ | No | No |
-| String interpolation | Native | f-strings | Template literals | No |
-| Type annotations | Optional | Optional | TypeScript | No |
-| Built-in HTTP | Yes | `requests` | `fetch` | No |
-| Built-in JSON | Yes | Yes | Yes | No |
-| Built-in CSV | Yes | `csv` | No | No |
-| Built-in HTML parser | Yes | `bs4` | `DOMParser` | No |
-| Cross-platform GUI | Win32 + Linux (GTK4) | tkinter/Qt | Web | No |
-| GPU acceleration | Optional CUDA | NumPy/CuPy | WebGL | No |
-| Python interop | Optional PyO3 | — | — | — |
-| Android / Termux | Yes | Yes | No | Yes |
-| REPL | Yes | Yes | Node.js | Yes |
-| LSP support | Yes | pylance | tsserver | No |
 
 ## CLI
 
@@ -356,17 +360,11 @@ sudo dnf install gtk4-devel
 sudo pacman -S gtk4
 ```
 
-Build:
+Build and run:
 
 ```bash
 cargo build --release --features panther
-```
-
-```lion
-let root = panther.Leo("Hello", 400, 300);
-let label = panther.Label(root, "Welcome to Panther!");
-panther.pack(label);
-panther.mainloop(root);
+./target/release/lion run examples/textedit.lion
 ```
 
 ### Python Interop
@@ -384,8 +382,7 @@ print(math.sqrt(144))  // 12.0
 ### CUDA Support
 
 ```bash
-set CUDA_PATH=/usr/local/cuda-12
-cargo build --release
+cargo build --release --features cuda
 ```
 
 ### LSP Server
@@ -424,9 +421,9 @@ modules/       # C extension shared libraries (.dll/.so/.dylib)
 
 | Problem | Solution |
 |---------|----------|
-| `cargo build` warns about CUDA | This is a warning, not an error. Build succeeds without CUDA. |
-| Python interop not working | Build with `--features python`, ensure Python dev headers installed. |
-| Slow performance | Always use `cargo build --release`. Debug builds are ~50× slower. |
+| `cargo build` warns about CUDA | Warning only — build succeeds without CUDA |
+| Python interop not working | Build with `--features python`, ensure Python dev headers installed |
+| Slow performance | Always use `cargo build --release` — debug builds are ~50× slower |
 | Tests fail | Build release binary first: `cargo build --release --bin lion` |
 
 ## License
