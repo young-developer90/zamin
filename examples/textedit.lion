@@ -1,0 +1,61 @@
+// Lion NotePad - a simple single-line text editor
+//
+// Usage:
+//   Enter a file path, edit the text, use Load/Save buttons
+//   Note: single-line Entry widget (multi-line not yet supported)
+
+let root = panther.Leo("Lion NotePad", 720, 320);
+panther.pack(panther.Label(root, "Lion NotePad  —  single-line text editor"));
+
+let file_frame = panther.Frame(root);
+panther.pack(panther.Label(file_frame, "File path"));
+let file_path = panther.Entry(file_frame);
+panther.config(file_path, "text", "untitled.txt");
+panther.pack(file_path);
+
+let body_frame = panther.Frame(root);
+panther.pack(panther.Label(body_frame, "Text content"));
+let body = panther.Entry(body_frame);
+panther.pack(body);
+
+let btn_frame = panther.Frame(root);
+panther.pack(panther.Label(btn_frame, "Actions"));
+
+let new_btn = panther.Button(btn_frame, "New", func() {
+    panther.config(file_path, "text", "untitled.txt");
+    panther.config(body, "text", "");
+    panther.title(root, "Lion NotePad — untitled.txt");
+    panther.config(status, "Ready — new file");
+});
+panther.pack(new_btn);
+
+let load_btn = panther.Button(btn_frame, "Load", func() {
+    let fpath = panther.get(file_path);
+    let text = fs.read(fpath);
+    panther.config(body, "text", text);
+    panther.title(root, f"Lion NotePad — {path.basename(fpath)}");
+    panther.config(status, f"Loaded {path.basename(fpath)} ({string.len(text)} chars)");
+});
+panther.pack(load_btn);
+
+let save_btn = panther.Button(btn_frame, "Save", func() {
+    let fpath = panther.get(file_path);
+    let text = panther.get(body);
+    let _ = fs.write(fpath, text);
+    panther.config(status, f"Saved to {path.basename(fpath)}");
+});
+panther.pack(save_btn);
+
+let sa_btn = panther.Button(btn_frame, "Save As", func() {
+    let fpath = panther.get(file_path);
+    let text = panther.get(body);
+    let _ = fs.write(fpath, text);
+    panther.title(root, f"Lion NotePad — {path.basename(fpath)}");
+    panther.config(status, f"Saved as {path.basename(fpath)}");
+});
+panther.pack(sa_btn);
+
+let status = panther.Label(root, "Ready");
+panther.pack(status);
+
+panther.mainloop(root);
