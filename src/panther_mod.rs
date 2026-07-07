@@ -13,6 +13,7 @@ use gtk4::Align;
 use gtk4::Orientation;
 
 
+use crate::bytecode::Chunk;
 use crate::gc::*;
 use crate::vm::call_func_closure;
 
@@ -23,6 +24,7 @@ thread_local! {
     static WIDGET_TYPES: RefCell<HashMap<usize, &'static str>> = RefCell::new(HashMap::new());
     static CONTENT_BOX: RefCell<HashMap<usize, usize>> = RefCell::new(HashMap::new());
     static CALLBACKS: RefCell<HashMap<usize, Value>> = RefCell::new(HashMap::new());
+    static CALLBACK_CTX: RefCell<Option<(*mut GcHeap, *mut HashMap<String, Value>, *const Vec<Chunk>)>> = RefCell::new(None);
 }
 
 fn alloc_id() -> usize {
@@ -188,19 +190,22 @@ pub fn build_panther() -> Vec<(String, Value)> {
                 btn.connect_clicked(move |_| {
                     let cmd_val = CALLBACKS.with(|cbs| cbs.borrow().get(&cb_id).cloned());
                     if let Some(cmd_val) = cmd_val {
-                        let mut heap = GcHeap::new();
-                        let mut globals = HashMap::new();
-                        let mut modules = Vec::new();
-                        let chunks = Vec::new();
-                        let mut try_frames = Vec::new();
-                        let mut ctx = VmContext {
-                            heap: &mut heap,
-                            globals: &mut globals,
-                            modules: &mut modules,
-                            chunks: &chunks,
-                            try_frames: &mut try_frames,
-                        };
-                        let _ = call_func_closure(&cmd_val, &[], &mut ctx);
+                        let ctx_opt = CALLBACK_CTX.with(|c| c.borrow().map(|(a, b, c_)| (a, b, c_)));
+                        if let Some((heap_ptr, globals_ptr, chunks_ptr)) = ctx_opt {
+                            let heap = unsafe { &mut *heap_ptr };
+                            let globals = unsafe { &mut *globals_ptr };
+                            let chunks = unsafe { &*chunks_ptr };
+                            let mut modules = Vec::new();
+                            let mut try_frames = Vec::new();
+                            let mut ctx = VmContext {
+                                heap,
+                                globals,
+                                modules: &mut modules,
+                                chunks,
+                                try_frames: &mut try_frames,
+                            };
+                            let _ = call_func_closure(&cmd_val, &[], &mut ctx);
+                        }
                     }
                 });
             }
@@ -373,6 +378,24 @@ pub fn build_panther() -> Vec<(String, Value)> {
         }),
     })));
 
+    funcs.push(("click".to_string(), Value::NativeFunc(NativeFunc {
+        name: "<panther.click>".to_string(),
+        func: Rc::new(|args, ctx| {
+            let id = get_ptr(&args[0], ctx.heap)?;
+            let widget = get_widget(id)?;
+            if let Ok(btn) = widget.downcast::<GtkButton>() {
+                CALLBACK_CTX.with(|c| {
+                    *c.borrow_mut() = Some((ctx.heap as *mut GcHeap, ctx.globals as *mut HashMap<String, Value>, ctx.chunks as *const Vec<Chunk>));
+                });
+                btn.emit_clicked();
+                CALLBACK_CTX.with(|c| {
+                    *c.borrow_mut() = None;
+                });
+            }
+            Ok(Value::Nil)
+        }),
+    })));
+
     funcs.push(("destroy".to_string(), Value::NativeFunc(NativeFunc {
         name: "<panther.destroy>".to_string(),
         func: Rc::new(|args, ctx| {
@@ -397,7 +420,13 @@ pub fn build_panther() -> Vec<(String, Value)> {
                     gtk4::glib::Propagation::Proceed
                 });
             }
+            CALLBACK_CTX.with(|c| {
+                *c.borrow_mut() = Some((ctx.heap as *mut GcHeap, ctx.globals as *mut HashMap<String, Value>, ctx.chunks as *const Vec<Chunk>));
+            });
             gtk4::glib::MainLoop::new(None, false).run();
+            CALLBACK_CTX.with(|c| {
+                *c.borrow_mut() = None;
+            });
             Ok(Value::Nil)
         }),
     })));
