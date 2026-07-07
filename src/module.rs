@@ -9,6 +9,8 @@ use crate::http_module;
 use crate::jaguar_mod;
 #[cfg(target_os = "windows")]
 use crate::leopard_mod;
+#[cfg(all(not(target_os = "windows"), feature = "panther"))]
+use crate::panther_mod;
 use crate::parser::Parser;
 use crate::stdlib;
 use crate::vm::Vm;
@@ -48,6 +50,15 @@ impl ModuleLoader {
                 leopard_items.push((make_string(heap, &key), val));
             }
             modules.insert("leopard".to_string(), Value::Dict(heap.alloc(GcObj::Dict(leopard_items))));
+        }
+
+        #[cfg(all(not(target_os = "windows"), feature = "panther"))]
+        {
+            let mut panther_items = Vec::new();
+            for (key, val) in panther_mod::build_panther() {
+                panther_items.push((make_string(heap, &key), val));
+            }
+            modules.insert("panther".to_string(), Value::Dict(heap.alloc(GcObj::Dict(panther_items))));
         }
 
         // jaguar and cheetah are registered as top-level globals in add_globals

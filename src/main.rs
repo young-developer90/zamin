@@ -17,6 +17,8 @@ mod jaguar_mod;
 mod json_mod;
 #[cfg(target_os = "windows")]
 mod leopard_mod;
+#[cfg(all(not(target_os = "windows"), feature = "panther"))]
+mod panther_mod;
 mod lexer;
 mod logging_mod;
 mod module;

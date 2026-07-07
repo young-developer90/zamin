@@ -16,9 +16,11 @@ base64 = "0.22"
 scraper = "0.27"
 url = "2"
 ureq = "2"
+gtk4 = { version = "0.9", optional = true }
 
 [features]
 python = ["pyo3"]
+panther = ["gtk4"]
 default = []
 
 [[bin]]
