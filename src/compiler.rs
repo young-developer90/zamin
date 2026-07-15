@@ -960,8 +960,9 @@ impl Compiler {
                 for part in parts {
                     match part {
                         crate::ast::FStringPart::Literal(s) => {
-                            let v = crate::gc::make_string(&mut crate::gc::GcHeap::new(), s);
-                            self.chunk().emit_const(v);
+                            let idx = self.chunk().add_string_constant(Value::Nil, s.clone());
+                            self.chunk().emit(OpCode::LoadConst);
+                            self.chunk().emit_u16(idx);
                         }
                         crate::ast::FStringPart::Expr(e) => {
                             self.compile_expr(e)?;

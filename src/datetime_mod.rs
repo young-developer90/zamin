@@ -3,36 +3,22 @@ use std::rc::Rc;
 use std::time::{SystemTime, UNIX_EPOCH};
 use crate::gc::*;
 
-pub fn build_datetime(heap: &mut GcHeap) -> Vec<(String, Value)> {
-    let key_year = make_string(heap, "year");
-    let key_month = make_string(heap, "month");
-    let key_day = make_string(heap, "day");
-    let key_hour = make_string(heap, "hour");
-    let key_minute = make_string(heap, "minute");
-    let key_second = make_string(heap, "second");
-    let key_unix = make_string(heap, "unix");
-
+pub fn build_datetime() -> Vec<(String, Value)> {
     let mut funcs = Vec::new();
 
-    let ky1 = key_year.clone(); let km1 = key_month.clone(); let kd1 = key_day.clone();
-    let kh1 = key_hour.clone(); let kmi1 = key_minute.clone(); let ks1 = key_second.clone(); let ku1 = key_unix.clone();
     funcs.push(("now".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.now>".to_string(),
         func: Rc::new(move |_, ctx| {
             let dur = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-            Ok(datetime_dict_from_ts(ctx.heap, dur.as_secs() as i64,
-                &ky1, &km1, &kd1, &kh1, &kmi1, &ks1, &ku1))
+            Ok(datetime_dict_from_ts(ctx.heap, dur.as_secs() as i64))
         }),
     })));
 
-    let ky2 = key_year.clone(); let km2 = key_month.clone(); let kd2 = key_day.clone();
-    let kh2 = key_hour.clone(); let kmi2 = key_minute.clone(); let ks2 = key_second.clone(); let ku2 = key_unix.clone();
     funcs.push(("from_unix".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.from_unix>".to_string(),
         func: Rc::new(move |args, ctx| {
             let ts = to_i64(&args[0])?;
-            Ok(datetime_dict_from_ts(ctx.heap, ts,
-                &ky2, &km2, &kd2, &kh2, &kmi2, &ks2, &ku2))
+            Ok(datetime_dict_from_ts(ctx.heap, ts))
         }),
     })));
 
@@ -66,8 +52,6 @@ pub fn build_datetime(heap: &mut GcHeap) -> Vec<(String, Value)> {
         }),
     })));
 
-    let ky3 = key_year.clone(); let km3 = key_month.clone(); let kd3 = key_day.clone();
-    let kh3 = key_hour.clone(); let kmi3 = key_minute.clone(); let ks3 = key_second.clone(); let ku3 = key_unix.clone();
     funcs.push(("parse".to_string(), Value::NativeFunc(NativeFunc {
         name: "<datetime.parse>".to_string(),
         func: Rc::new(move |args, ctx| {
@@ -103,8 +87,7 @@ pub fn build_datetime(heap: &mut GcHeap) -> Vec<(String, Value)> {
                 }
             }
             let unix = date_to_unix(year, month, day, hour, minute, second);
-            Ok(datetime_dict_from_ts(ctx.heap, unix,
-                &ky3, &km3, &kd3, &kh3, &kmi3, &ks3, &ku3))
+            Ok(datetime_dict_from_ts(ctx.heap, unix))
         }),
     })));
 
@@ -120,20 +103,23 @@ pub fn build_datetime(heap: &mut GcHeap) -> Vec<(String, Value)> {
     funcs
 }
 
-fn datetime_dict_from_ts(
-    heap: &mut GcHeap, unix_ts: i64,
-    key_year: &Value, key_month: &Value, key_day: &Value,
-    key_hour: &Value, key_minute: &Value, key_second: &Value, key_unix: &Value,
-) -> Value {
+fn datetime_dict_from_ts(heap: &mut GcHeap, unix_ts: i64) -> Value {
     let (year, month, day, hour, minute, second) = unix_to_date(unix_ts);
+    let k_year = make_string(heap, "year");
+    let k_month = make_string(heap, "month");
+    let k_day = make_string(heap, "day");
+    let k_hour = make_string(heap, "hour");
+    let k_minute = make_string(heap, "minute");
+    let k_second = make_string(heap, "second");
+    let k_unix = make_string(heap, "unix");
     let mut entries = Vec::with_capacity(7);
-    entries.push((key_year.clone(), Value::Int(year)));
-    entries.push((key_month.clone(), Value::Int(month)));
-    entries.push((key_day.clone(), Value::Int(day)));
-    entries.push((key_hour.clone(), Value::Int(hour)));
-    entries.push((key_minute.clone(), Value::Int(minute)));
-    entries.push((key_second.clone(), Value::Int(second)));
-    entries.push((key_unix.clone(), Value::Int(unix_ts)));
+    entries.push((k_year, Value::Int(year)));
+    entries.push((k_month, Value::Int(month)));
+    entries.push((k_day, Value::Int(day)));
+    entries.push((k_hour, Value::Int(hour)));
+    entries.push((k_minute, Value::Int(minute)));
+    entries.push((k_second, Value::Int(second)));
+    entries.push((k_unix, Value::Int(unix_ts)));
     make_dict(heap, entries)
 }
 

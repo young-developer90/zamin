@@ -92,6 +92,21 @@ impl Vm {
                 return Err("program counter out of bounds".to_string());
             }
 
+            // Periodically collect garbage
+            if self.heap.stats_total_allocated > 0
+                && self.heap.stats_total_allocated % 256 == 0
+            {
+                let stack_copy = self.stack.clone();
+                let globals_copy: Vec<Value> = self.globals.values().cloned().collect();
+                let mut roots = Vec::with_capacity(stack_copy.len() + globals_copy.len() + 64);
+                roots.extend(stack_copy);
+                roots.extend(globals_copy);
+                for chunk in &self.chunks {
+                    roots.extend(chunk.constants.iter().cloned());
+                }
+                self.heap.collect_garbage(&roots);
+            }
+
             let op = OpCode::from_u8(code[self.ip])
                 .ok_or(format!("unknown opcode at {}", self.ip))?;
             self.ip += 1;
@@ -558,7 +573,14 @@ impl Vm {
                     self.stack.push(Value::Function(func_ref));
                 }
                 OpCode::CloseUpvalue => {
+                    let idx = self.read_u16(self.ip) as usize;
                     self.ip += 2;
+                    let stack_idx = self.frames.last().map(|f| f.stack_start + idx).unwrap_or(idx);
+                    if stack_idx < self.stack.len() {
+                        let val = self.stack[stack_idx].clone();
+                        self.stack.truncate(stack_idx);
+                        self.stack.push(val);
+                    }
                 }
                 OpCode::MakeClosure => {
                     let chunk_idx = self.read_u16(self.ip) as usize;
@@ -830,10 +852,19 @@ impl Vm {
                     self.stack.push(instance);
                 }
                 OpCode::StructSetField => {
+                    let sidx = self.read_u16(self.ip) as usize;
                     self.ip += 2;
+                    let name = self.chunk().string_pool.get(sidx).ok_or("invalid field name index")?.clone();
+                    let val = self.stack.pop().ok_or("stack empty")?;
+                    let obj = self.stack.pop().ok_or("stack empty")?;
+                    store_attr(&obj, &name, val, &mut self.heap)?;
                 }
                 OpCode::StructGetField => {
+                    let sidx = self.read_u16(self.ip) as usize;
                     self.ip += 2;
+                    let name = self.chunk().string_pool.get(sidx).ok_or("invalid field name index")?.clone();
+                    let obj = self.stack.pop().ok_or("stack empty")?;
+                    self.stack.push(load_attr(&obj, &name, &mut self.heap)?);
                 }
                 OpCode::Len => {
                     self.ip += 2;
@@ -848,7 +879,9 @@ impl Vm {
                     };
                     self.stack.push(Value::Int(len));
                 }
-                _ => {}
+                _ => {
+                    return Err(format!("unimplemented opcode: {:?} at ip {}", op, self.ip - 1));
+                }
             }
         }
     }

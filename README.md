@@ -291,7 +291,7 @@ let evens   = [x for x in 0..20 if x % 2 == 0];
 | `http` | `get`, `post`, `put`, `delete`, `patch`, `head`, `options` |
 | `url` | `encode`, `decode`, `parse`, `build` |
 | `stats` | `mean`, `median`, `mode`, `std`, `variance`, `min`, `max`, `sum`, `correlation`, `regression`, `normalize`, `standardize` |
-| `re` | `find_all`, `sub`, `split`, `match`, `search` |
+| `re` | `find`, `find_all`, `sub`, `sub_all`, `split`, `is_match`, `captures` |
 | `datetime` | `now`, `from_unix`, `format`, `parse`, `unix` |
 | `logging` | `info`, `warn`, `error`, `debug`, `set_level` |
 | `subprocess` | `run`, `run_shell`, `run_output`, `run_shell_output` |
@@ -423,6 +423,27 @@ cd ..
 ```bash
 cargo build --release --bin lion
 ./target/release/lion test tests/
+```
+
+## Embedding Lion as a Library
+
+Lion can be embedded in other Rust applications via the `lion` crate:
+
+```rust
+use lion::{execute_source, execute_file};
+
+fn main() {
+    match execute_source("print(\"Hello from embedded Lion!\");") {
+        Ok(result) => println!("Result: {}", result),
+        Err(e) => eprintln!("Error: {}", e),
+    }
+}
+```
+
+Add to your `Cargo.toml`:
+```toml
+[dependencies]
+lion = { path = "/path/to/lion" }
 ```
 
 ## Project Structure

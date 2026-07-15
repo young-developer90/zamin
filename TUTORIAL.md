@@ -219,7 +219,7 @@ let config = {"host": "localhost", "port": 8080};
 print(config["host"]);                 // "localhost"
 config["port"] = 9090;                 // update
 config["ssl"] = true;                  // add key
-config.delete("ssl");                  // remove key
+config.remove("ssl");                  // remove key (via dict.contains + dict.keys)
 ```
 
 ### Sets

@@ -59,11 +59,11 @@ pub struct Upvalue {
 }
 
 pub struct GcHeap {
-    objects: Vec<Option<GcObj>>,
-    marks: Vec<bool>,
+    pub objects: Vec<Option<GcObj>>,
+    pub marks: Vec<bool>,
     free_list: Vec<usize>,
-    stats_total_allocated: usize,
-    stats_collections: usize,
+    pub stats_total_allocated: usize,
+    pub stats_collections: usize,
 }
 
 impl GcHeap {

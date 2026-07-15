@@ -228,6 +228,7 @@ impl ModuleLoader {
         struct LibInfo {
             stem: String,
             chunks: Vec<Chunk>,
+            #[allow(dead_code)]
             exports: Vec<String>,
         }
         let mut libs: Vec<LibInfo> = Vec::new();
@@ -235,7 +236,7 @@ impl ModuleLoader {
             let path = entry.path();
             if path.extension().and_then(|e| e.to_str()) != Some("lion") { continue; }
             let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string());
-            let stem = match stem { Some(n) if !modules.contains_key(&n) => n, _ => continue, };
+            let _ = match stem { Some(n) if !modules.contains_key(&n) => n, _ => continue, };
             if let Some((s, chunks, exports)) = crate::module::load_lion_library(&path) {
                 libs.push(LibInfo { stem: s, chunks, exports });
             } else {

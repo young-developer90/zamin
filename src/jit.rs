@@ -19,13 +19,18 @@ struct CompiledFn {
 pub struct JitCache {
     call_counts: Vec<usize>,
     compiled: HashMap<usize, CompiledFn>,
+    chunks: *const Vec<crate::bytecode::Chunk>,
 }
 
+unsafe impl Send for JitCache {}
+unsafe impl Sync for JitCache {}
+
 impl JitCache {
-    pub fn new(nchunks: usize) -> Self {
+    pub fn new(chunks: &Vec<crate::bytecode::Chunk>) -> Self {
         JitCache {
-            call_counts: vec![0; nchunks],
+            call_counts: vec![0; chunks.len()],
             compiled: HashMap::new(),
+            chunks: chunks as *const Vec<crate::bytecode::Chunk>,
         }
     }
 
@@ -81,7 +86,7 @@ impl JitCache {
     }
 
     fn try_compile(&mut self, chunk_idx: usize) -> Result<(), String> {
-        let chunks = unsafe { &*crate::vm::CHUNKS_PTR };
+        let chunks = unsafe { &*self.chunks };
         let chunk = chunks.get(chunk_idx).ok_or("invalid chunk index")?;
         let c_code = translate_chunk(chunk, chunk_idx)?;
         let (func_ptr, so_handle) = compile_c(&c_code, chunk_idx)?;
