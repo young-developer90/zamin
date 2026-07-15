@@ -29,16 +29,6 @@ cargo build --release
 ./target/release/lion run examples/hello.lion
 ```
 
-### Build Options
-
-| Command | Description |
-|---------|-------------|
-| `cargo build --release` | Optimised build (recommended) |
-| `cargo build` | Debug build (faster compile, ~50× slower execution) |
-| `cargo build --features panther` | Enable Linux GUI toolkit (GTK4) |
-| `cargo build --features python` | Enable Python interop via PyO3 |
-| `cargo build --features cuda` | Enable CUDA GPU acceleration |
-
 ### Start the REPL
 
 ```bash
@@ -326,7 +316,7 @@ Benchmarks comparing Lion 1.6.3 (release build) against Python 3.14 on the same 
 | `hashlib.base64` — 1k strings | 2.39 | 0.93 | ~2.6× slower |
 | `subprocess.run_shell` — 100 calls | 508.09 | 523.89 | **~1.0× faster** |
 
-Lion is a young interpreted bytecode VM while Python benefits from decades of optimization and C-backed native libraries. Performance has improved significantly in v1.6.3 — `datetime.now` is now only 1.6× slower (down from 7.3× in v1.6.2) thanks to GC pool pre-allocation and reduced allocation overhead.
+Performance improved significantly in v1.6.3 — `datetime.now` went from 7.3× slower than Python to 1.6× slower via GC pool pre-allocation.
 
 Run benchmarks yourself:
 
@@ -382,18 +372,6 @@ bash scripts/package.sh --panther
 ```
 
 The output appears in `dist/` and includes the binary, C extensions, examples, and a launcher script.
-
-### Python Interop
-
-```bash
-cargo build --release --features python
-```
-
-```lion
-import py
-let math = py.import("math")
-print(math.sqrt(144))  // 12.0
-```
 
 ### CUDA Support
 
