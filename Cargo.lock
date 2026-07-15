@@ -773,7 +773,7 @@ checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 
 [[package]]
 name = "lion"
-version = "1.6.2"
+version = "1.6.3"
 dependencies = [
  "base64",
  "gtk4",

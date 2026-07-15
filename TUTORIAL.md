@@ -59,7 +59,7 @@ cargo build --release --features panther
 ./target/release/lion version
 ```
 
-You should see `lion 1.6.2`.
+You should see `lion 1.6.3`.
 
 ---
 
