@@ -94,7 +94,7 @@ impl Vm {
 
             // Periodically collect garbage
             if self.heap.stats_total_allocated > 0
-                && self.heap.stats_total_allocated % 256 == 0
+                && self.heap.stats_total_allocated & 16383 == 0
             {
                 let stack_copy = self.stack.clone();
                 let globals_copy: Vec<Value> = self.globals.values().cloned().collect();
@@ -416,12 +416,11 @@ impl Vm {
                             let mut ctx = VmContext {
                                 heap: &mut self.heap,
                                 globals: &mut self.globals,
-                                modules: &mut Vec::new(),
                                 chunks: &self.chunks,
                                 try_frames: &mut self.try_frames,
                             };
-                            let result = (f.func)(&args, &mut ctx).map_err(|e| format!("{}", e));
-                            match result {
+                            let res = (f.func)(&args, &mut ctx);
+                            match res {
                                 Ok(val) => self.stack.push(val),
                                 Err(e) => {
                                     if let Some((depth, catch_ip)) = self.try_frames.pop() {
@@ -505,12 +504,11 @@ impl Vm {
                                     let mut ctx = VmContext {
                                         heap: &mut self.heap,
                                         globals: &mut self.globals,
-                                        modules: &mut Vec::new(),
                                         chunks: &self.chunks,
                                         try_frames: &mut self.try_frames,
                                     };
-                                    let result = (f.func)(&args, &mut ctx).map_err(|e| format!("{}", e));
-                                    match result {
+                                    let res = (f.func)(&args, &mut ctx);
+                                    match res {
                                         Ok(val) => self.stack.push(val),
                                         Err(e) => {
                                             if let Some((depth, catch_ip)) = self.try_frames.pop() {
@@ -547,7 +545,6 @@ impl Vm {
                                     let mut ctx = VmContext {
                                         heap: &mut self.heap,
                                         globals: &mut self.globals,
-                                        modules: &mut Vec::new(),
                                         chunks: &self.chunks,
                                         try_frames: &mut self.try_frames,
                                     };
@@ -840,7 +837,6 @@ impl Vm {
                             let mut ctx = VmContext {
                                 heap: &mut self.heap,
                                 globals: &mut self.globals,
-                                modules: &mut Vec::new(),
                                 chunks: &self.chunks,
                                 try_frames: &mut self.try_frames,
                             };
@@ -1454,11 +1450,11 @@ fn load_attr(obj: &Value, name: &str, heap: &mut GcHeap) -> Result<Value, String
                     }),
                 })),
                 _ => {
-                    let entries = match heap.get(r) {
-                        GcObj::Dict(ref e) => e.clone(),
+                    let dict_entries = match heap.get(r) {
+                        GcObj::Dict(ref e) => e,
                         _ => return Err("not a dict".to_string()),
                     };
-                    for (k, v) in &entries {
+                    for (k, v) in dict_entries {
                         if let Value::String(sr) = k {
                             if let GcObj::String(s) = heap.get(*sr) {
                                 if s == name {
@@ -1469,16 +1465,12 @@ fn load_attr(obj: &Value, name: &str, heap: &mut GcHeap) -> Result<Value, String
                     }
                     #[cfg(feature = "python")]
                     {
-                        let pyobj_id = entries.iter().find_map(|(k, v)| {
+                        for (k, v) in dict_entries {
                             if let (Value::String(sr), Value::Int(oid)) = (k, v) {
                                 if let GcObj::String(ref s) = heap.get(*sr) {
-                                    if s == "__pyobj__" { return Some(*oid); }
+                                    if s == "__pyobj__" { return crate::py::py_get_attr(*oid, name, heap); }
                                 }
                             }
-                            None
-                        });
-                        if let Some(oid) = pyobj_id {
-                            return crate::py::py_get_attr(oid, name, heap);
                         }
                     }
                     Err(format!("dict has no attribute '{}'", name))

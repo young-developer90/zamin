@@ -13,7 +13,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.sha256>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.sha256 requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             Ok(make_string_owned(ctx.heap, hex_encode(&Sha256::digest(s.as_bytes()))))
         }),
     })));
@@ -22,7 +28,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.sha512>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.sha512 requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             Ok(make_string_owned(ctx.heap, hex_encode(&Sha512::digest(s.as_bytes()))))
         }),
     })));
@@ -31,7 +43,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.md5>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.md5 requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             Ok(make_string_owned(ctx.heap, hex_encode(&Md5::digest(s.as_bytes()))))
         }),
     })));
@@ -40,7 +58,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.sha1>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.sha1 requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             let hash = sha1::Sha1::digest(s.as_bytes());
             Ok(make_string_owned(ctx.heap, hex_encode(&hash)))
         }),
@@ -50,7 +74,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.base64_encode>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.base64_encode requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             let result = base64::engine::general_purpose::STANDARD.encode(s.as_bytes());
             Ok(make_string_owned(ctx.heap, result))
         }),
@@ -60,7 +90,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.base64_decode>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.base64_decode requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.clone(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             match base64::engine::general_purpose::STANDARD.decode(s.as_bytes()) {
                 Ok(bytes) => Ok(make_string_owned(ctx.heap, String::from_utf8(bytes).map_err(|e| format!("base64_decode: invalid utf-8: {}", e))?)),
                 Err(e) => Err(format!("hashlib.base64_decode: {}", e)),
@@ -72,7 +108,13 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.hex_encode>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.hex_encode requires data")?;
-            let s = get_str(val, ctx.heap)?;
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.as_str(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
             Ok(make_string_owned(ctx.heap, hex_encode(s.as_bytes())))
         }),
     })));
@@ -81,8 +123,14 @@ pub fn build_hashlib() -> Vec<(String, Value)> {
         name: "<hashlib.hex_decode>".to_string(),
         func: Rc::new(|args, ctx| {
             let val = args.first().ok_or("hashlib.hex_decode requires hex string")?;
-            let data = get_str_owned(val, ctx.heap)?;
-            match hex_decode(&data) {
+            let s = match val {
+                Value::String(r) => match ctx.heap.get(*r) {
+                    GcObj::String(s) => s.clone(),
+                    _ => return Err("invalid string".to_string()),
+                },
+                _ => return Err("expected string".to_string()),
+            };
+            match hex_decode(&s) {
                 Ok(bytes) => Ok(make_string_owned(ctx.heap, String::from_utf8(bytes).map_err(|e| format!("hex_decode: invalid utf-8: {}", e))?)),
                 Err(e) => Err(format!("hashlib.hex_decode: {}", e)),
             }

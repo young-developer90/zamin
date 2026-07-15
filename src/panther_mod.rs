@@ -195,12 +195,10 @@ pub fn build_panther() -> Vec<(String, Value)> {
                             let heap = unsafe { &mut *heap_ptr };
                             let globals = unsafe { &mut *globals_ptr };
                             let chunks = unsafe { &*chunks_ptr };
-                            let mut modules = Vec::new();
                             let mut try_frames = Vec::new();
                             let mut ctx = VmContext {
                                 heap,
                                 globals,
-                                modules: &mut modules,
                                 chunks,
                                 try_frames: &mut try_frames,
                             };

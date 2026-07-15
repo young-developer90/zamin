@@ -62,6 +62,7 @@ pub struct GcHeap {
     pub objects: Vec<Option<GcObj>>,
     pub marks: Vec<bool>,
     free_list: Vec<usize>,
+    pub permanent_roots: Vec<Value>,
     pub stats_total_allocated: usize,
     pub stats_collections: usize,
 }
@@ -72,6 +73,7 @@ impl GcHeap {
             objects: Vec::new(),
             marks: Vec::new(),
             free_list: Vec::new(),
+            permanent_roots: Vec::new(),
             stats_total_allocated: 0,
             stats_collections: 0,
         }
@@ -159,6 +161,8 @@ impl GcHeap {
     pub fn collect_garbage(&mut self, roots: &[Value]) {
         self.stats_collections += 1;
         for v in roots { self.mark_value(v); }
+        let perm: Vec<Value> = self.permanent_roots.clone();
+        for v in &perm { self.mark_value(v); }
         let len = self.objects.len();
         for i in 0..len {
             if self.marks[i] { self.mark_gray(ObjRef(i)); }
@@ -431,7 +435,6 @@ impl Value {
 pub struct VmContext<'a> {
     pub heap: &'a mut GcHeap,
     pub globals: &'a mut HashMap<String, Value>,
-    pub modules: &'a mut Vec<Value>,
     pub chunks: &'a Vec<Chunk>,
     pub try_frames: &'a mut Vec<(usize, usize)>,
 }

@@ -2,11 +2,11 @@
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.6.1-green)](https://github.com/young-developer90/lion/releases)
+[![Version](https://img.shields.io/badge/version-1.6.2-green)](https://github.com/young-developer90/lion/releases)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
 
-Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.6.1). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
+Lion is a simple, expressive scripting language with a Rust-based interpreter (v1.6.2). It combines modern language features — closures, pattern matching, string interpolation, and a module system — with a lightweight bytecode VM and optional GPU acceleration.
 
 ```
 print("Hello, Lion!");
@@ -310,21 +310,23 @@ let evens   = [x for x in 0..20 if x % 2 == 0];
 
 ## Performance Benchmarks
 
-Benchmarks comparing Lion 1.6.1 (release build) against Python 3.12 on the same workloads. Lower is better.
+Benchmarks comparing Lion 1.6.2 (release build) against Python 3.14 on the same workloads. Lower is better.
 
 | Benchmark | Lion (ms) | Python (ms) | vs Python |
 |-----------|-----------|-------------|-----------|
-| `re.find_all` — 10k lines | 2.06 | 1.51 | ~1.4× slower |
-| `re.sub_all` — 10k lines | 4.10 | 8.88 | **~2.2× faster** |
-| `re.split` — 10k lines | 1.06 | 0.52 | ~2.0× slower |
-| `collections.Counter` — 50k words | 1.94 | 1.13 | ~1.7× slower |
-| `itertools.unique` — 20k items | 0.47 | 0.17 | ~2.8× slower |
-| `itertools.sorted` — 10k items | 0.07 | 0.07 | ~1.0× (on par) |
-| `datetime.now` — 10k calls | 10.60 | 2.04 | ~5.2× slower |
-| `datetime.format` — 10k calls | 15.24 | 13.98 | ~1.1× slower |
-| `hashlib.sha256` — 1k strings | 1.46 | 0.33 | ~4.4× slower |
-| `hashlib.base64` — 1k strings | 1.22 | 0.27 | ~4.5× slower |
-| `subprocess.run_shell` — 100 calls | 56.74 | 77.01 | **~1.4× faster** |
+| `re.find_all` — 10k lines | 5.64 | 5.53 | ~1.0× (on par) |
+| `re.sub_all` — 10k lines | 11.00 | 28.48 | **~2.6× faster** |
+| `re.split` — 10k lines | 2.43 | 1.50 | ~1.6× slower |
+| `collections.Counter` — 50k words | 5.33 | 3.56 | ~1.5× slower |
+| `itertools.unique` — 20k items | 1.56 | 0.52 | ~3.0× slower |
+| `itertools.sorted` — 10k items | 0.17 | 0.16 | ~1.1× slower |
+| `datetime.now` — 10k calls | 89.37 | 12.31 | ~7.3× slower |
+| `datetime.format` — 10k calls | 133.39 | 53.72 | ~2.5× slower |
+| `hashlib.sha256` — 1k strings | 1.98 | 1.10 | ~1.8× slower |
+| `hashlib.base64` — 1k strings | 2.24 | 0.96 | ~2.3× slower |
+| `subprocess.run_shell` — 100 calls | 506.35 | 522.30 | **~1.0× faster** |
+
+Lion is a young interpreted bytecode VM while Python benefits from decades of optimization and C-backed native libraries. Performance has improved significantly in v1.6.2 thanks to GC optimizations and reduced allocation overhead.
 
 Lion is a young interpreted bytecode VM while Python benefits from decades of optimization and C-backed native libraries.
 
