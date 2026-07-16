@@ -75,14 +75,14 @@ fn get_widget(id: usize) -> Result<gtk4::Widget, String> {
         .ok_or_else(|| "widget not found".to_string())
 }
 
-pub fn build_panther() -> Vec<(String, Value)> {
+pub fn build_luna() -> Vec<(String, Value)> {
     let mut funcs = Vec::new();
 
     funcs.push(("Leo".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.Leo>".to_string(),
+        name: "<luna.Leo>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
-            let title = args.first().map(|a| a.to_string(ctx.heap)).unwrap_or_else(|| "Panther".to_string());
+            let title = args.first().map(|a| a.to_string(ctx.heap)).unwrap_or_else(|| "Luna".to_string());
             let width = args.get(1).and_then(|a| to_i64(a).ok()).unwrap_or(640) as i32;
             let height = args.get(2).and_then(|a| to_i64(a).ok()).unwrap_or(480) as i32;
 
@@ -117,7 +117,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Frame".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.Frame>".to_string(),
+        name: "<luna.Frame>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
             let parent_ptr = get_ptr(&args[0], ctx.heap)?;
@@ -152,7 +152,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Label".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.Label>".to_string(),
+        name: "<luna.Label>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
             let parent_ptr = get_ptr(&args[0], ctx.heap)?;
@@ -173,7 +173,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Button".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.Button>".to_string(),
+        name: "<luna.Button>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
             let parent_ptr = get_ptr(&args[0], ctx.heap)?;
@@ -218,7 +218,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Entry".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.Entry>".to_string(),
+        name: "<luna.Entry>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
             let parent_ptr = get_ptr(&args[0], ctx.heap)?;
@@ -239,7 +239,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("pack".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.pack>".to_string(),
+        name: "<luna.pack>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -249,7 +249,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("place".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.place>".to_string(),
+        name: "<luna.place>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -259,7 +259,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("config".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.config>".to_string(),
+        name: "<luna.config>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -292,7 +292,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("get".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.get>".to_string(),
+        name: "<luna.get>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -305,7 +305,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("insert".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.insert>".to_string(),
+        name: "<luna.insert>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let pos = args.get(1).and_then(|a| to_i64(a).ok()).unwrap_or(0) as usize;
@@ -326,7 +326,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("delete".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.delete>".to_string(),
+        name: "<luna.delete>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let start = args.get(1).and_then(|a| to_i64(a).ok()).unwrap_or(0) as usize;
@@ -348,7 +348,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("title".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.title>".to_string(),
+        name: "<luna.title>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let text = args.get(1).map(|a| a.to_string(ctx.heap)).unwrap_or_default();
@@ -362,7 +362,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("geometry".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.geometry>".to_string(),
+        name: "<luna.geometry>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let w = args.get(1).and_then(|a| to_i64(a).ok()).unwrap_or(640) as i32;
@@ -377,7 +377,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("click".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.click>".to_string(),
+        name: "<luna.click>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -395,7 +395,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("destroy".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.destroy>".to_string(),
+        name: "<luna.destroy>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             if let Some(widget) = WIDGETS.with(|w| w.borrow_mut().remove(&id)) {
@@ -407,7 +407,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("mainloop".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.mainloop>".to_string(),
+        name: "<luna.mainloop>".to_string(),
         func: Rc::new(|args, ctx| {
             let id = get_ptr(&args[0], ctx.heap)?;
             let widget = get_widget(id)?;
@@ -430,7 +430,7 @@ pub fn build_panther() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("messagebox".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<panther.messagebox>".to_string(),
+        name: "<luna.messagebox>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_init()?;
             let text = args.get(0).map(|a| a.to_string(ctx.heap)).unwrap_or_default();

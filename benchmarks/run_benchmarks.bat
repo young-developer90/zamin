@@ -1,13 +1,13 @@
 @echo off
 echo ============================================
-echo   Lion vs Python Benchmarks
+echo   Zamin vs Python Benchmarks
 echo ============================================
 echo.
 
 echo.
-echo --- Running Lion benchmark ---
+echo --- Running Zamin benchmark ---
 echo.
-cargo run --bin lion -- run benchmarks/bench_lion.lion 2>&1
+cargo run --bin zamin -- run benchmarks/bench_lion.lion 2>&1
 
 echo.
 echo.

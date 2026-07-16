@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Performance - Lion Programming Language</title>
-  <meta name="description" content="Performance benchmarks, VM architecture details, optimization techniques, and tips for writing fast Lion code.">
+  <title>Performance - Zamin Programming Language</title>
+  <meta name="description" content="Performance benchmarks, VM architecture details, optimization techniques, and tips for writing fast Zamin code.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -56,10 +56,10 @@
         </div>
 
         <h1>Performance</h1>
-        <p>Lion is designed for speed. This page covers the VM architecture, benchmark comparisons, optimization techniques, and practical tips for writing performant Lion code.</p>
+        <p>Zamin is designed for speed. This page covers the VM architecture, benchmark comparisons, optimization techniques, and practical tips for writing performant Zamin code.</p>
 
         <h2 id="overview">Overview</h2>
-        <p>Lion's runtime is built around three key components:</p>
+        <p>Zamin's runtime is built around three key components:</p>
         <ul>
           <li><strong>Bytecode Compilation</strong> - Source code is compiled to compact bytecode before execution. The compiler performs constant folding, dead code elimination, and peephole optimizations at compile time.</li>
           <li><strong>Register-Based VM</strong> - The virtual machine executes bytecode using a register-based instruction set, reducing memory traffic compared to stack-based designs.</li>
@@ -70,7 +70,7 @@
         <p>All benchmarks run on identical hardware (AMD Ryzen 9 7950X, 64 GB DDR5, Linux 6.10). Lower is better.</p>
         <table>
           <thead>
-            <tr><th>Benchmark</th><th>Lion</th><th>Python 3.14</th><th>Speedup</th></tr>
+            <tr><th>Benchmark</th><th>Zamin</th><th>Python 3.14</th><th>Speedup</th></tr>
           </thead>
           <tbody>
             <tr><td>fibonacci(35)</td><td>0.12s</td><td>0.89s</td><td>7.4x</td></tr>
@@ -121,8 +121,8 @@
           <li><strong>Prefer local variables</strong> - Local variable access is ~10x faster than global variable access in the VM.</li>
           <li><strong>Use iterators over index loops</strong> - Iterator-based loops avoid bounds checking on each iteration.</li>
           <li><strong>Avoid repeated allocation in loops</strong> - Move invariant computations outside the loop body. Create strings and lists once and reuse them.</li>
-          <li><strong>Use <code>lion build</code> for production</strong> - Building a standalone binary enables additional AOT optimizations that the interpreter cannot perform.</li>
-          <li><strong>Profile before optimizing</strong> - Use <code>lion run --disassemble</code> to inspect bytecode and identify hotspots.</li>
+          <li><strong>Use <code>zamin build</code> for production</strong> - Building a standalone binary enables additional AOT optimizations that the interpreter cannot perform.</li>
+          <li><strong>Profile before optimizing</strong> - Use <code>zamin run --disassemble</code> to inspect bytecode and identify hotspots.</li>
         </ul>
 
         <div class="page-meta">

@@ -2,7 +2,7 @@
 // Demonstrates image I/O, filters, edge detection, and drawing
 //
 // Build: cargo build --release --features opencv
-// Run:   lion run examples/opencv_demo.lion
+// Run:   zamin run examples/opencv_demo.lion
 
 print("=== OpenCV Demo ===\n");
 

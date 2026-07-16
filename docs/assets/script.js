@@ -6,7 +6,7 @@
   'use strict';
 
   // === Theme Toggle ===
-  const THEME_KEY = 'lion-docs-theme';
+  const THEME_KEY = 'zamin-docs-theme';
   const html = document.documentElement;
 
   function getPreferredTheme() {
@@ -76,7 +76,7 @@
     let searchIndex = null;
 
     if (searchInput && searchResults) {
-      fetch('/lion/assets/search-index.json')
+      fetch('/zamin/assets/search-index.json')
         .then(function(r) { return r.json(); })
         .then(function(data) { searchIndex = data; })
         .catch(function() { /* Search unavailable */ });
@@ -193,7 +193,7 @@
     const editBtn = document.getElementById('edit-link');
     if (editBtn) {
       const page = window.location.pathname.split('/').pop() || 'index.html';
-      editBtn.href = 'https://github.com/anomalyco/lion/edit/master/docs/' + page;
+      editBtn.href = 'https://github.com/anomalyco/zamin/edit/master/docs/' + page;
     }
   });
 

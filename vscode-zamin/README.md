@@ -1,16 +1,16 @@
-# Lion Language — VS Code Extension
+# Zamin Language — VS Code Extension
 
-Syntax highlighting, snippets, and LSP support for the [Lion](https://github.com/young-developer90/lion) scripting language.
+Syntax highlighting, snippets, and LSP support for the [Zamin](https://github.com/young-developer90/zamin) scripting language.
 
 ## Features
 
 - **Syntax highlighting** — keywords, strings (including f-strings), numbers, comments, operators, built-in types and modules
 - **Code snippets** — `func`, `if`, `for`, `match`, `try`, `struct`, `import`, list comprehensions, f-strings, HTTP requests, file I/O, and GUI patterns
-- **Language Server** — diagnostics, completions, and hover info (requires `lion-lsp` binary)
+- **Language Server** — diagnostics, completions, and hover info (requires `zamin-lsp` binary)
 
 ## Install
 
-1. Build the extension: `cd vscode-lion && npm install`
+1. Build the extension: `cd vscode-zamin && npm install`
 2. Install in VS Code: `code --install-extension .`
 
 Or from the VS Code Marketplace (future).
@@ -20,10 +20,10 @@ Or from the VS Code Marketplace (future).
 For diagnostics and completions, build the language server:
 
 ```bash
-cargo build --bin lion-lsp
+cargo build --bin zamin-lsp
 ```
 
-The extension searches for `lion-lsp` in your `PATH`, then in `target/debug/` and `target/release/`.
+The extension searches for `zamin-lsp` in your `PATH`, then in `target/debug/` and `target/release/`.
 
 ## Snippets
 
@@ -44,4 +44,4 @@ The extension searches for `lion-lsp` in your `PATH`, then in `target/debug/` an
 | `fsread` / `fswrite` | File read/write |
 | `jsonparse` | JSON parse |
 | `assert` | Unit test assertion |
-| `panther` / `pbtn` | GUI window / button |
+| `luna` / `lbtn` | GUI window / button |

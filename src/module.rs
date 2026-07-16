@@ -4,26 +4,26 @@ use std::rc::Rc;
 
 use crate::bytecode::{Chunk, OpCode};
 use crate::cext;
-use crate::cheetah_mod;
+use crate::comet_mod;
 use crate::compiler::Compiler;
 use crate::gc::*;
 use crate::http_module;
-use crate::jaguar_mod;
+use crate::nova_mod;
 #[cfg(target_os = "windows")]
-use crate::leopard_mod;
-#[cfg(all(not(target_os = "windows"), feature = "panther"))]
-use crate::panther_mod;
+use crate::sol_mod;
+#[cfg(all(not(target_os = "windows"), feature = "luna"))]
+use crate::luna_mod;
 use crate::parser::Parser;
 use crate::stdlib;
 use crate::vm::Vm;
 
 fn builtin_names() -> HashSet<String> {
     [
-        "print", "main", "jaguar", "cheetah", "jaguar_version", "_jaguar_row",
+        "print", "main", "nova", "comet", "nova_version", "_nova_row",
     ].iter().map(|s| s.to_string()).collect()
 }
 
-fn load_lion_library(path: &Path) -> Option<(String, Vec<Chunk>, Vec<String>)> {
+fn load_zamin_library(path: &Path) -> Option<(String, Vec<Chunk>, Vec<String>)> {
     let source = std::fs::read_to_string(path).ok()?;
     let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string())?;
 
@@ -117,23 +117,23 @@ impl ModuleLoader {
 
         #[cfg(target_os = "windows")]
         {
-            let mut leopard_items = Vec::new();
-            for (key, val) in leopard_mod::build_leopard() {
-                leopard_items.push((make_string(heap, &key), val));
+            let mut sol_items = Vec::new();
+            for (key, val) in sol_mod::build_sol() {
+                sol_items.push((make_string(heap, &key), val));
             }
-            modules.insert("leopard".to_string(), Value::Dict(heap.alloc(GcObj::Dict(leopard_items))));
+            modules.insert("sol".to_string(), Value::Dict(heap.alloc(GcObj::Dict(sol_items))));
         }
 
-        #[cfg(all(not(target_os = "windows"), feature = "panther"))]
+        #[cfg(all(not(target_os = "windows"), feature = "luna"))]
         {
-            let mut panther_items = Vec::new();
-            for (key, val) in panther_mod::build_panther() {
-                panther_items.push((make_string(heap, &key), val));
+            let mut luna_items = Vec::new();
+            for (key, val) in luna_mod::build_luna() {
+                luna_items.push((make_string(heap, &key), val));
             }
-            modules.insert("panther".to_string(), Value::Dict(heap.alloc(GcObj::Dict(panther_items))));
+            modules.insert("luna".to_string(), Value::Dict(heap.alloc(GcObj::Dict(luna_items))));
         }
 
-        // jaguar and cheetah are registered as top-level globals in add_globals
+        // nova and comet are registered as top-level globals in add_globals
 
         #[cfg(cuda_support)]
         {
@@ -205,19 +205,19 @@ impl ModuleLoader {
             }),
         }));
 
-        // Add jaguar() as a top-level function
-        for (name, val) in jaguar_mod::build_jaguar() {
+        // Add nova() as a top-level function
+        for (name, val) in nova_mod::build_nova() {
             globals.insert(name, val);
         }
 
-        // Add cheetah() as a top-level function
-        for (name, val) in cheetah_mod::build_cheetah() {
+        // Add comet() as a top-level function
+        for (name, val) in comet_mod::build_comet() {
             globals.insert(name, val);
         }
     }
 
-    fn load_lion_libs(vm: &mut Vm, modules: &mut HashMap<String, Value>) {
-        let lib_dir = Path::new("/etc/lion/lib");
+    fn load_zamin_libs(vm: &mut Vm, modules: &mut HashMap<String, Value>) {
+        let lib_dir = Path::new("/etc/zamin/lib");
         if !lib_dir.is_dir() { return; }
 
         let builtins = builtin_names();
@@ -234,10 +234,10 @@ impl ModuleLoader {
         let mut libs: Vec<LibInfo> = Vec::new();
         for entry in &entries {
             let path = entry.path();
-            if path.extension().and_then(|e| e.to_str()) != Some("lion") { continue; }
+            if path.extension().and_then(|e| e.to_str()) != Some("zamin") { continue; }
             let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string());
             let _ = match stem { Some(n) if !modules.contains_key(&n) => n, _ => continue, };
-            if let Some((s, chunks, exports)) = crate::module::load_lion_library(&path) {
+            if let Some((s, chunks, exports)) = crate::module::load_zamin_library(&path) {
                 libs.push(LibInfo { stem: s, chunks, exports });
             } else {
                 eprintln!("warning: failed to compile library '{}'", path.display());
@@ -300,7 +300,7 @@ impl ModuleLoader {
         for (mod_name, val) in &modules {
             vm.globals.insert(mod_name.clone(), val.clone());
         }
-        Self::load_lion_libs(&mut vm, &mut modules);
+        Self::load_zamin_libs(&mut vm, &mut modules);
 
         for (mod_name, val) in modules {
             vm.globals.insert(mod_name, val);
@@ -325,7 +325,7 @@ impl ModuleLoader {
         for (mod_name, val) in &modules {
             vm.globals.insert(mod_name.clone(), val.clone());
         }
-        Self::load_lion_libs(&mut vm, &mut modules);
+        Self::load_zamin_libs(&mut vm, &mut modules);
 
         for (mod_name, val) in modules {
             vm.globals.insert(mod_name, val);

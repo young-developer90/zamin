@@ -1,7 +1,7 @@
 pub mod ast;
 pub mod bytecode;
 pub mod cext;
-pub mod cheetah_mod;
+pub mod comet_mod;
 pub mod cli;
 pub mod collections_mod;
 pub mod compiler;
@@ -13,12 +13,12 @@ pub mod html_mod;
 pub mod http;
 pub mod http_module;
 pub mod itertools_mod;
-pub mod jaguar_mod;
+pub mod nova_mod;
 pub mod json_mod;
 #[cfg(target_os = "windows")]
-pub mod leopard_mod;
-#[cfg(all(not(target_os = "windows"), feature = "panther"))]
-pub mod panther_mod;
+pub mod sol_mod;
+#[cfg(all(not(target_os = "windows"), feature = "luna"))]
+pub mod luna_mod;
 pub mod lexer;
 pub mod logging_mod;
 pub mod module;

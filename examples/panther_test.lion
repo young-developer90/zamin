@@ -1,17 +1,17 @@
-// Panther GUI test
-let root = panther.Leo("Panther Test", 400, 300);
-let label = panther.Label(root, "Hello from Panther!");
-panther.pack(label);
-let btn = panther.Button(root, "Click me", func() {
-    panther.config(label, "text", "Clicked!");
+// Luna GUI test
+let root = luna.Leo("Luna Test", 400, 300);
+let label = luna.Label(root, "Hello from Luna!");
+luna.pack(label);
+let btn = luna.Button(root, "Click me", func() {
+    luna.config(label, "text", "Clicked!");
 });
-panther.pack(btn);
-let entry = panther.Entry(root);
-panther.pack(entry);
-let get_btn = panther.Button(root, "Get text", func() {
-    let val = panther.get(entry);
-    panther.config(label, "text", val);
+luna.pack(btn);
+let entry = luna.Entry(root);
+luna.pack(entry);
+let get_btn = luna.Button(root, "Get text", func() {
+    let val = luna.get(entry);
+    luna.config(label, "text", val);
 });
-panther.pack(get_btn);
-print("Panther GUI loaded, starting mainloop...");
-panther.mainloop(root);
+luna.pack(get_btn);
+print("Luna GUI loaded, starting mainloop...");
+luna.mainloop(root);

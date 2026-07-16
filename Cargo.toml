@@ -1,8 +1,8 @@
 [package]
-name = "lion"
+name = "zamin"
 version = "1.7.0"
 edition = "2021"
-description = "The Lion programming language interpreter"
+description = "The Zamin programming language interpreter"
 
 [dependencies]
 pyo3 = { version = "0.29", features = ["auto-initialize"], optional = true }
@@ -21,18 +21,18 @@ opencv = { version = "0.99", optional = true }
 
 [features]
 python = ["dep:pyo3"]
-panther = ["dep:gtk4"]
+luna = ["dep:gtk4"]
 opencv = ["dep:opencv"]
 default = []
 
 [[bin]]
-name = "lion"
+name = "zamin"
 path = "src/main.rs"
 
 [[bin]]
-name = "lion-lsp"
+name = "zamin-lsp"
 path = "src/lsp.rs"
 
 [[bin]]
-name = "lion-rs"
-path = "src/lion_rs.rs"
+name = "zamin-rs"
+path = "src/zamin_rs.rs"

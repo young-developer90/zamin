@@ -1,28 +1,28 @@
-print("panda version: " + panda.version());
+print("astra version: " + astra.version());
 
-let a = panda.arange(0, 10, 1);
+let a = astra.arange(0, 10, 1);
 print("arange(0,10,1): " + a);
-print("zeros(5): " + panda.zeros(5));
-print("ones(3): " + panda.ones(3));
-print("linspace(0,1,5): " + panda.linspace(0, 1, 5));
+print("zeros(5): " + astra.zeros(5));
+print("ones(3): " + astra.ones(3));
+print("linspace(0,1,5): " + astra.linspace(0, 1, 5));
 
-print(f"sum: {panda.sum(a)}");
-print(f"mean: {panda.mean(a)}");
-print(f"min: {panda.min(a)}");
-print(f"max: {panda.max(a)}");
-print(f"std: {panda.std(a)}");
+print(f"sum: {astra.sum(a)}");
+print(f"mean: {astra.mean(a)}");
+print(f"min: {astra.min(a)}");
+print(f"max: {astra.max(a)}");
+print(f"std: {astra.std(a)}");
 
-print("abs(-5..5): " + panda.abs(panda.arange(-5, 5, 1)));
+print("abs(-5..5): " + astra.abs(astra.arange(-5, 5, 1)));
 
-print(f"dot prod: {panda.dot(a, panda.ones(10))}");
+print(f"dot prod: {astra.dot(a, astra.ones(10))}");
 
-print("sin(pi/2): " + panda.sin("1.5708"));
-print("cos(0): " + panda.cos("0"));
-print("sqrt(4 9 16): " + panda.sqrt("4 9 16"));
-print("pow(1 2 3, 2): " + panda.pow("1 2 3", 2));
+print("sin(pi/2): " + astra.sin("1.5708"));
+print("cos(0): " + astra.cos("0"));
+print("sqrt(4 9 16): " + astra.sqrt("4 9 16"));
+print("pow(1 2 3, 2): " + astra.pow("1 2 3", 2));
 
-print("shape: " + panda.shape(a));
-print("reshape(2,5): " + panda.reshape(a, 2, 5));
-print("eye(3): " + panda.eye(3));
+print("shape: " + astra.shape(a));
+print("reshape(2,5): " + astra.reshape(a, 2, 5));
+print("eye(3): " + astra.eye(3));
 
-print("panda OK!");
+print("astra OK!");

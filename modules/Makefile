@@ -2,14 +2,14 @@ CC = gcc
 CFLAGS = -shared -fPIC -O2 -I../include
 LDFLAGS = -lm
 
-MODULES = panda.so
+MODULES = astra.so
 SRCS = $(MODULES:.so=.c)
 
 .PHONY: all clean
 
 all: $(MODULES)
 
-panda.so: panda.c
+astra.so: astra.c
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:

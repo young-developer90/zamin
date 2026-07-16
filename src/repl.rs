@@ -25,7 +25,7 @@ macro_rules! flush {
 
 fn history_path() -> PathBuf {
     let mut p = std::env::var("HOME").map(PathBuf::from).unwrap_or_default();
-    p.push(".lion_history");
+    p.push(".zamin_history");
     p
 }
 
@@ -62,7 +62,7 @@ fn build_completions() -> HashSet<String> {
         "range", "input", "tostr",
         "math", "time", "rand", "fs", "os", "json", "csv", "html", "http",
         "url", "stats", "re", "datetime", "logging", "subprocess", "path",
-        "hashlib", "string", "collections", "itertools", "test", "panda",
+        "hashlib", "string", "collections", "itertools", "test", "astra",
     ] {
         s.insert(name.to_string());
     }
@@ -75,13 +75,13 @@ fn build_completions() -> HashSet<String> {
     ] {
         s.insert(name.to_string());
     }
-    // panda module functions
+    // astra module functions
     for name in &[
-        "panda.arange", "panda.zeros", "panda.ones", "panda.linspace",
-        "panda.sum", "panda.mean", "panda.min", "panda.max", "panda.std",
-        "panda.abs", "panda.sin", "panda.cos", "panda.sqrt", "panda.pow",
-        "panda.add", "panda.sub", "panda.mul", "panda.dot", "panda.shape",
-        "panda.reshape", "panda.eye",
+        "astra.arange", "astra.zeros", "astra.ones", "astra.linspace",
+        "astra.sum", "astra.mean", "astra.min", "astra.max", "astra.std",
+        "astra.abs", "astra.sin", "astra.cos", "astra.sqrt", "astra.pow",
+        "astra.add", "astra.sub", "astra.mul", "astra.dot", "astra.shape",
+        "astra.reshape", "astra.eye",
     ] {
         s.insert(name.to_string());
     }
@@ -109,7 +109,7 @@ impl Repl {
     }
 
     pub fn run(&mut self) -> Result<(), String> {
-        println!("\x1b[1mLion REPL v{}\x1b[0m", env!("CARGO_PKG_VERSION"));
+        println!("\x1b[1mZamin REPL v{}\x1b[0m", env!("CARGO_PKG_VERSION"));
         println!("Type 'exit' to quit, 'help' for help.");
 
         let result = if io::stdin().is_terminal() {
@@ -124,7 +124,7 @@ impl Repl {
 
     fn run_line_buffered(&mut self) -> Result<(), String> {
         loop {
-            print!("lion> ");
+            print!("zamin> ");
             io::stdout().flush().map_err(|e| e.to_string())?;
 
             let mut input = String::new();
@@ -189,7 +189,7 @@ impl Repl {
         let mut stdout = stdout.lock();
 
         loop {
-            let input = self.read_line(&mut stdout, "lion> ")?;
+            let input = self.read_line(&mut stdout, "zamin> ")?;
             let input = input.trim().to_string();
 
             if input.is_empty() {
@@ -241,7 +241,7 @@ impl Repl {
                 false
             }
             "help" => {
-                println!("Lion REPL commands:");
+                println!("Zamin REPL commands:");
                 println!("  exit/quit - Exit the REPL");
                 println!("  help      - Show this help");
                 println!("  history   - Show command history");
@@ -265,7 +265,7 @@ impl Repl {
         match input {
             "exit" | "quit" => Ok(false),
             "help" => {
-                woutln!(stdout, "\rLion REPL commands:");
+                woutln!(stdout, "\rZamin REPL commands:");
                 woutln!(stdout, "\r  exit/quit - Exit the REPL");
                 woutln!(stdout, "\r  help      - Show this help");
                 woutln!(stdout, "\r  history   - Show command history");

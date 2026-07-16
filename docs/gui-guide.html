@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GUI Toolkit Guide - Lion Programming Language</title>
-  <meta name="description" content="Build native desktop applications with Lion's GUI toolkits: Leopard on Windows and Panther on Linux. Widgets, layouts, events, and complete examples.">
+  <title>GUI Toolkit Guide - Zamin Programming Language</title>
+  <meta name="description" content="Build native desktop applications with Zamin's GUI toolkits: Sol on Windows and Luna on Linux. Widgets, layouts, events, and complete examples.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -77,32 +77,32 @@
         </div>
 
         <h1>GUI Toolkit Guide</h1>
-        <p class="subtitle">Build native desktop applications with Lion's cross-platform GUI toolkits.</p>
+        <p class="subtitle">Build native desktop applications with Zamin's cross-platform GUI toolkits.</p>
 
         <!-- Overview -->
         <h2 id="overview">Overview</h2>
-        <p>Lion ships with two GUI toolkits that share the same API surface, so code written for one works on the other with no changes:</p>
+        <p>Zamin ships with two GUI toolkits that share the same API surface, so code written for one works on the other with no changes:</p>
         <ul>
-          <li><strong>Leopard</strong> (Windows) &mdash; A Win32-based toolkit that ships as a built-in module on Windows. No external dependencies are required.</li>
-          <li><strong>Panther</strong> (Linux) &mdash; A GTK4-based toolkit available behind the <code>panther</code> feature flag. Requires GTK4 development libraries on the host system.</li>
+          <li><strong>Sol</strong> (Windows) &mdash; A Win32-based toolkit that ships as a built-in module on Windows. No external dependencies are required.</li>
+          <li><strong>Luna</strong> (Linux) &mdash; A GTK4-based toolkit available behind the <code>luna</code> feature flag. Requires GTK4 development libraries on the host system.</li>
         </ul>
         <p>Both toolkits expose the same function names and widget constructors. You pick the one that matches your platform, and the rest of your code stays the same.</p>
         <div class="callout callout-info">
           <div class="callout-title">&#128161; Note</div>
-          <p>On Windows, <code>leopard()</code> is always available. On Linux, use <code>panther()</code> and build with <code>--features panther</code>.</p>
+          <p>On Windows, <code>sol()</code> is always available. On Linux, use <code>luna()</code> and build with <code>--features luna</code>.</p>
         </div>
 
         <!-- Quick Start -->
         <h2 id="quick-start">Quick Start</h2>
         <p>Here is a minimal GUI application that displays a window with a label:</p>
-        <pre><code><span class="kw">let</span> gui = leopard()  <span class="cm">// or panther() on Linux</span>
+        <pre><code><span class="kw">let</span> gui = sol()  <span class="cm">// or luna() on Linux</span>
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"My App"</span>, <span class="num">400</span>, <span class="num">300</span>)
-<span class="kw">let</span> label = gui.<span class="fn">Label</span>(win, <span class="str">"Hello, Lion!"</span>)
+<span class="kw">let</span> label = gui.<span class="fn">Label</span>(win, <span class="str">"Hello, Zamin!"</span>)
 gui.<span class="fn">pack</span>(label)
 gui.<span class="fn">mainloop</span>(win)</code></pre>
-        <p>Save this as <code>app.lion</code> and run it:</p>
-        <pre><code>$ lion run app.lion</code></pre>
-        <p>A window titled "My App" appears with the text "Hello, Lion!" centered inside it.</p>
+        <p>Save this as <code>app.zamin</code> and run it:</p>
+        <pre><code>$ zamin run app.zamin</code></pre>
+        <p>A window titled "My App" appears with the text "Hello, Zamin!" centered inside it.</p>
 
         <!-- Widget Reference -->
         <h2 id="widget-reference">Widget Reference</h2>
@@ -121,7 +121,7 @@ gui.<span class="fn">mainloop</span>(win)</code></pre>
             </tr>
           </tbody>
         </table>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"Settings"</span>, <span class="num">800</span>, <span class="num">600</span>)</code></pre>
 
         <!-- Frame -->
@@ -138,7 +138,7 @@ gui.<span class="fn">mainloop</span>(win)</code></pre>
             </tr>
           </tbody>
         </table>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"App"</span>, <span class="num">400</span>, <span class="num">300</span>)
 <span class="kw">let</span> frame = gui.<span class="fn">Frame</span>(win)
 gui.<span class="fn">pack</span>(frame)</code></pre>
@@ -157,7 +157,7 @@ gui.<span class="fn">pack</span>(frame)</code></pre>
             </tr>
           </tbody>
         </table>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"App"</span>, <span class="num">400</span>, <span class="num">300</span>)
 <span class="kw">let</span> lbl = gui.<span class="fn">Label</span>(win, <span class="str">"Status: Ready"</span>)
 gui.<span class="fn">pack</span>(lbl)</code></pre>
@@ -176,7 +176,7 @@ gui.<span class="fn">pack</span>(lbl)</code></pre>
             </tr>
           </tbody>
         </table>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"App"</span>, <span class="num">400</span>, <span class="num">300</span>)
 
 <span class="kw">fn</span> on_click():
@@ -185,7 +185,7 @@ gui.<span class="fn">pack</span>(lbl)</code></pre>
 <span class="kw">let</span> btn = gui.<span class="fn">Button</span>(win, <span class="str">"Click Me"</span>, on_click)
 gui.<span class="fn">pack</span>(btn)
 gui.<span class="fn">mainloop</span>(win)</code></pre>
-        <p>Callbacks are plain Lion functions. They can accept arguments or be closures that capture local state.</p>
+        <p>Callbacks are plain Zamin functions. They can accept arguments or be closures that capture local state.</p>
 
         <!-- Entry -->
         <h3 id="entry">Entry</h3>
@@ -201,14 +201,14 @@ gui.<span class="fn">mainloop</span>(win)</code></pre>
             </tr>
           </tbody>
         </table>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"App"</span>, <span class="num">400</span>, <span class="num">300</span>)
 <span class="kw">let</span> entry = gui.<span class="fn">Entry</span>(win)
 gui.<span class="fn">pack</span>(entry)</code></pre>
 
         <!-- Layout Management -->
         <h2 id="layout-management">Layout Management</h2>
-        <p>Lion GUI toolkits provide two layout methods for arranging widgets:</p>
+        <p>Zamin GUI toolkits provide two layout methods for arranging widgets:</p>
 
         <h3>pack</h3>
         <table>
@@ -291,7 +291,7 @@ gui.<span class="fn">messagebox</span>(<span class="str">"Operation complete!"</
         <!-- Example: Calculator -->
         <h2 id="example-calculator">Example: Calculator</h2>
         <p>A complete calculator application with a display field and arithmetic buttons:</p>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"Calculator"</span>, <span class="num">280</span>, <span class="num">350</span>)
 
 <span class="kw">let</span> display = gui.<span class="fn">Entry</span>(win)
@@ -349,7 +349,7 @@ gui.<span class="fn">mainloop</span>(win)</code></pre>
         <!-- Example: Text Editor -->
         <h2 id="example-text-editor">Example: Text Editor</h2>
         <p>A basic text editor with an input field, open button, and save button:</p>
-        <pre><code><span class="kw">let</span> gui = leopard()
+        <pre><code><span class="kw">let</span> gui = sol()
 <span class="kw">let</span> win = gui.<span class="fn">Leo</span>(<span class="str">"Text Editor"</span>, <span class="num">600</span>, <span class="num">400</span>)
 
 <span class="cm">// File path entry</span>
@@ -397,14 +397,14 @@ gui.<span class="fn">mainloop</span>(win)</code></pre>
         <!-- Platform Notes -->
         <h2 id="platform-notes">Platform Notes</h2>
 
-        <h3>Leopard (Windows)</h3>
+        <h3>Sol (Windows)</h3>
         <ul>
           <li>Built on top of the Win32 API directly &mdash; no external dependencies or runtime libraries required.</li>
-          <li>Ships as a built-in module on Windows builds of Lion.</li>
+          <li>Ships as a built-in module on Windows builds of Zamin.</li>
           <li>Supports standard Windows look-and-feel with native widget rendering.</li>
         </ul>
 
-        <h3>Panther (Linux)</h3>
+        <h3>Luna (Linux)</h3>
         <ul>
           <li>Built on GTK4 for modern Linux desktop environments.</li>
           <li>Requires GTK4 development libraries to be installed:</li>
@@ -418,9 +418,9 @@ sudo dnf install gtk4-devel
 <span class="cm"># Arch</span>
 sudo pacman -S gtk4</code></pre>
         <ul>
-          <li>Build Lion with the <code>panther</code> feature enabled:</li>
+          <li>Build Zamin with the <code>luna</code> feature enabled:</li>
         </ul>
-        <pre><code>cargo build --release --features panther</code></pre>
+        <pre><code>cargo build --release --features luna</code></pre>
 
         <h3>macOS</h3>
         <ul>
@@ -429,7 +429,7 @@ sudo pacman -S gtk4</code></pre>
 
         <div class="callout callout-tip">
           <div class="callout-title">&#10004; Tip</div>
-          <p>Since both Leopard and Panther share the same API, you can write your GUI code once and compile it for different platforms by selecting the appropriate toolkit constructor at the top of your file.</p>
+          <p>Since both Sol and Luna share the same API, you can write your GUI code once and compile it for different platforms by selecting the appropriate toolkit constructor at the top of your file.</p>
         </div>
 
         <!-- Page Meta -->

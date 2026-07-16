@@ -1,5 +1,5 @@
 // Lion Extended Standard Library Examples
-// Run with: lion run examples/stdlib_extended.lion
+// Run with: zamin run examples/stdlib_extended.lion
 
 // ============ re (regex) ============
 print("=== re module ===");

@@ -6,14 +6,14 @@ use crate::gc::*;
 
 #[repr(C)]
 #[derive(Clone)]
-pub struct LionValue {
+pub struct ZaminValue {
     tag: i32,
-    data: LionValueData,
+    data: ZaminValueData,
 }
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-union LionValueData {
+union ZaminValueData {
     as_int: i64,
     as_float: f64,
     as_bool: u8,
@@ -27,40 +27,40 @@ struct StrData {
     len: usize,
 }
 
-fn lion_int(n: i64) -> LionValue {
-    LionValue { tag: 1, data: LionValueData { as_int: n } }
+fn zamin_int(n: i64) -> ZaminValue {
+    ZaminValue { tag: 1, data: ZaminValueData { as_int: n } }
 }
 
-fn lion_float(f: f64) -> LionValue {
-    LionValue { tag: 2, data: LionValueData { as_float: f } }
+fn zamin_float(f: f64) -> ZaminValue {
+    ZaminValue { tag: 2, data: ZaminValueData { as_float: f } }
 }
 
-fn lion_bool(b: bool) -> LionValue {
-    LionValue { tag: 3, data: LionValueData { as_bool: b as u8 } }
+fn zamin_bool(b: bool) -> ZaminValue {
+    ZaminValue { tag: 3, data: ZaminValueData { as_bool: b as u8 } }
 }
 
-fn lion_nil() -> LionValue {
-    LionValue { tag: 0, data: LionValueData { as_int: 0 } }
+fn zamin_nil() -> ZaminValue {
+    ZaminValue { tag: 0, data: ZaminValueData { as_int: 0 } }
 }
 
-fn value_to_lion(v: &Value, heap: &GcHeap) -> (LionValue, Option<Vec<u8>>) {
+fn value_to_zamin(v: &Value, heap: &GcHeap) -> (ZaminValue, Option<Vec<u8>>) {
     match v {
-        Value::Nil => (lion_nil(), None),
-        Value::Int(n) => (lion_int(*n), None),
-        Value::Float(f) => (lion_float(*f), None),
-        Value::Bool(b) => (lion_bool(*b), None),
+        Value::Nil => (zamin_nil(), None),
+        Value::Int(n) => (zamin_int(*n), None),
+        Value::Float(f) => (zamin_float(*f), None),
+        Value::Bool(b) => (zamin_bool(*b), None),
         Value::String(_) => {
             let s = v.to_string(heap);
             let owned = s.as_bytes().to_vec();
             let len = owned.len();
             let ptr = owned.as_ptr();
-            (LionValue { tag: 4, data: LionValueData { as_str: StrData { ptr, len } } }, Some(owned))
+            (ZaminValue { tag: 4, data: ZaminValueData { as_str: StrData { ptr, len } } }, Some(owned))
         }
-        _ => (lion_nil(), None),
+        _ => (zamin_nil(), None),
     }
 }
 
-unsafe fn lion_to_value(lv: &LionValue, heap: &mut GcHeap) -> Value {
+unsafe fn zamin_to_value(lv: &ZaminValue, heap: &mut GcHeap) -> Value {
     match lv.tag {
         0 => Value::Nil,
         1 => Value::Int(lv.data.as_int),
@@ -79,14 +79,14 @@ type InitFunc = unsafe extern "C" fn(count: *mut i32, funcs: *mut *mut LibFunc) 
 
 #[repr(C)]
 struct LibFunc {
-    name: *const i8,
-    func: Option<unsafe extern "C" fn(i32, *const LionValue) -> LionValue>,
+    name: *const u8,
+    func: Option<unsafe extern "C" fn(i32, *const ZaminValue) -> ZaminValue>,
 }
 
 #[cfg(unix)]
 extern "C" {
-    fn dlopen(filename: *const i8, flag: i32) -> *mut std::ffi::c_void;
-    fn dlsym(handle: *mut std::ffi::c_void, symbol: *const i8) -> *mut std::ffi::c_void;
+    fn dlopen(filename: *const u8, flag: i32) -> *mut std::ffi::c_void;
+    fn dlsym(handle: *mut std::ffi::c_void, symbol: *const u8) -> *mut std::ffi::c_void;
     fn dlclose(handle: *mut std::ffi::c_void) -> i32;
 }
 
@@ -182,7 +182,7 @@ static LOADED_LIBS: std::sync::Mutex<Vec<LibHandle>> = std::sync::Mutex::new(Vec
 pub fn load_extension(path: &Path, _heap: &mut GcHeap) -> Result<Vec<(String, Value)>, String> {
     let lib = open_lib(path)?;
 
-    let init_ptr = find_sym(&lib, "lion_module_init")?;
+    let init_ptr = find_sym(&lib, "zamin_module_init")?;
     let init: InitFunc = unsafe { std::mem::transmute(init_ptr) };
 
     let mut count: i32 = 0;
@@ -204,17 +204,17 @@ pub fn load_extension(path: &Path, _heap: &mut GcHeap) -> Result<Vec<(String, Va
             if let Some(c_func) = entry.func {
                 let native_name = format!("<ext.{}>", name);
                 let func = Rc::new(move |args: &[Value], ctx: &mut VmContext| {
-                    let mut c_args: Vec<LionValue> = Vec::with_capacity(args.len());
+                    let mut c_args: Vec<ZaminValue> = Vec::with_capacity(args.len());
                     let mut guards: Vec<Vec<u8>> = Vec::new();
                     for arg in args {
-                        let (lv, owned) = value_to_lion(arg, ctx.heap);
+                        let (lv, owned) = value_to_zamin(arg, ctx.heap);
                         if let Some(owned) = owned {
                             guards.push(owned);
                         }
                         c_args.push(lv);
                     }
                     let result = unsafe { (c_func)(c_args.len() as i32, c_args.as_ptr()) };
-                    Ok(unsafe { lion_to_value(&result, ctx.heap) })
+                    Ok(unsafe { zamin_to_value(&result, ctx.heap) })
                 });
                 registered.push((name, Value::NativeFunc(NativeFunc { name: native_name, func })));
             }

@@ -1,32 +1,32 @@
-// Leopard full demo with callbacks
-let root = leopard.Leo("Leopard Demo", 450, 350);
+// Sol full demo with callbacks
+let root = sol.Leo("Sol Demo", 450, 350);
 
-let label = leopard.Label(root, "Hello from Leopard GUI!");
-leopard.pack(label, "top", 0, 10);
+let label = sol.Label(root, "Hello from Sol GUI!");
+sol.pack(label, "top", 0, 10);
 
-let entry = leopard.Entry(root);
-leopard.pack(entry, "top", 0, 10);
-leopard.insert(entry, 0, "Type something");
+let entry = sol.Entry(root);
+sol.pack(entry, "top", 0, 10);
+sol.insert(entry, 0, "Type something");
 
 func on_click() {
-    let text = leopard.get(entry);
-    leopard.config(label, "text", "You typed: " .. text);
+    let text = sol.get(entry);
+    sol.config(label, "text", "You typed: " .. text);
     print("Button clicked, text=", text);
 }
 
-let btn = leopard.Button(root, "Print Entry", on_click);
-leopard.pack(btn, "top", 0, 5);
+let btn = sol.Button(root, "Print Entry", on_click);
+sol.pack(btn, "top", 0, 5);
 
 func on_quit() {
-    leopard.destroy(root);
+    sol.destroy(root);
 }
 
-let btn2 = leopard.Button(root, "Quit", on_quit);
-leopard.pack(btn2, "top", 0, 5);
+let btn2 = sol.Button(root, "Quit", on_quit);
+sol.pack(btn2, "top", 0, 5);
 
-let label2 = leopard.Label(root, "Press the button above");
-leopard.pack(label2, "top", 0, 10);
+let label2 = sol.Label(root, "Press the button above");
+sol.pack(label2, "top", 0, 10);
 
 print("Starting mainloop...");
-leopard.mainloop(root);
+sol.mainloop(root);
 print("Window closed!");

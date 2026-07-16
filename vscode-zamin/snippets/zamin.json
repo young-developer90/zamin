@@ -61,7 +61,7 @@
   },
   "Import module": {
     "prefix": "import",
-    "body": "import \"${1:module}.lion\" as ${2:name}",
+    "body": "import \"${1:module}.zamin\" as ${2:name}",
     "description": "Import a module"
   },
   "Lambda expression": {
@@ -109,14 +109,14 @@
     "body": "test.assert_eq(${1:actual}, ${2:expected}, \"${3:description}\")",
     "description": "Unit test assertion"
   },
-  "Panther window": {
-    "prefix": "panther",
-    "body": "let root = panther.Leo(\"${1:App}\", ${2:640}, ${3:480});\npanther.mainloop(root);",
+  "Luna window": {
+    "prefix": "luna",
+    "body": "let root = luna.Leo(\"${1:App}\", ${2:640}, ${3:480});\nluna.mainloop(root);",
     "description": "Create a GUI window"
   },
-  "Panther button": {
-    "prefix": "pbtn",
-    "body": "let ${1:btn} = panther.Button(${2:parent}, \"${3:Click}\", func() {\n\t${4}\n});\npanther.pack(${1:btn});",
+  "Luna button": {
+    "prefix": "lbtn",
+    "body": "let ${1:btn} = luna.Button(${2:parent}, \"${3:Click}\", func() {\n\t${4}\n});\nluna.pack(${1:btn});",
     "description": "GUI button with callback"
   }
 }

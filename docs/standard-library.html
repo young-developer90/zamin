@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Standard Library - Lion Programming Language</title>
-  <meta name="description" content="Complete reference for all Lion standard library modules">
+  <title>Standard Library - Zamin Programming Language</title>
+  <meta name="description" content="Complete reference for all Zamin standard library modules">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -56,7 +56,7 @@
         </div>
 
         <h1>Standard Library Reference</h1>
-        <p>Lion ships with a comprehensive standard library. Built-in functions are available globally, and all other modules are available without import. This page covers every module and every function in the standard library.</p>
+        <p>Zamin ships with a comprehensive standard library. Built-in functions are available globally, and all other modules are available without import. This page covers every module and every function in the standard library.</p>
 
         <!-- ============================================================ -->
         <!-- TABLE OF CONTENTS -->
@@ -91,7 +91,7 @@
         <!-- BUILT-IN FUNCTIONS -->
         <!-- ============================================================ -->
         <h2 id="built-in-functions">Built-in Functions</h2>
-        <p>These functions are available globally in every Lion script without any import.</p>
+        <p>These functions are available globally in every Zamin script without any import.</p>
         <h3>Functions</h3>
         <table>
           <thead><tr><th>Function</th><th>Signature</th><th>Description</th></tr></thead>
@@ -104,8 +104,8 @@
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>print("Hello, Lion!");
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>print("Hello, Zamin!");
 print("the answer is", 42);
 println("this has a newline");
 
@@ -140,7 +140,7 @@ print(len([1, 2, 3]));    // 3</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(math.sqrt(25));            // 5.0
 print(math.pow(2, 10));          // 1024.0
 print(math.abs(-42));            // 42.0
@@ -181,7 +181,7 @@ print(math.e);                   // 2.718281828459045</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(string.len("hello"));                          // 5
 print(string.upper("hello"));                        // "HELLO"
 print(string.lower("HELLO"));                        // "hello"
@@ -221,10 +221,10 @@ print(string.from_bytes(bytes));                     // "ABC"</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>fs.write("hello.txt", "Hello, Lion!");
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>fs.write("hello.txt", "Hello, Zamin!");
 let content = fs.read("hello.txt");
-print(content);                         // Hello, Lion!
+print(content);                         // Hello, Zamin!
 
 print(fs.exists("hello.txt"));          // true
 print(fs.exists("missing.txt"));        // false
@@ -249,7 +249,7 @@ fs.write("output/data/result.txt", "done");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(os.cwd());                        // /home/user/project
 print(os.name());                       // "linux"
 
@@ -271,9 +271,9 @@ print(f"Exit code: {status}");           // 0</code></pre>
         <table>
           <thead><tr><th>Function</th><th>Signature</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><code>parse</code></td><td><code>json.parse(s)</code></td><td>Parses a JSON string into a Lion value (dict, list, etc.).</td></tr>
+            <tr><td><code>parse</code></td><td><code>json.parse(s)</code></td><td>Parses a JSON string into a Zamin value (dict, list, etc.).</td></tr>
             <tr><td><code>loads</code></td><td><code>json.loads(s)</code></td><td>Alias for <code>json.parse</code>.</td></tr>
-            <tr><td><code>stringify</code></td><td><code>json.stringify(val)</code></td><td>Converts a Lion value to a JSON string.</td></tr>
+            <tr><td><code>stringify</code></td><td><code>json.stringify(val)</code></td><td>Converts a Zamin value to a JSON string.</td></tr>
             <tr><td><code>dumps</code></td><td><code>json.dumps(val)</code></td><td>Alias for <code>json.stringify</code>.</td></tr>
             <tr><td><code>dump</code></td><td><code>json.dump(val, path)</code></td><td>Writes <code>val</code> as JSON to the file at <code>path</code>.</td></tr>
             <tr><td><code>load</code></td><td><code>json.load(path)</code></td><td>Reads and parses a JSON file at <code>path</code>.</td></tr>
@@ -281,17 +281,17 @@ print(f"Exit code: {status}");           // 0</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>let data = json.parse('{"name": "Lion", "version": 1.0}');
-print(data["name"]);                    // Lion
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>let data = json.parse('{"name": "Zamin", "version": 1.0}');
+print(data["name"]);                    // Zamin
 
 let encoded = json.stringify(data);
-print(encoded);                         // {"name":"Lion","version":1.0}
+print(encoded);                         // {"name":"Zamin","version":1.0}
 
 let pretty = json.pretty(data);
 print(pretty);
 // {
-//   "name": "Lion",
+//   "name": "Zamin",
 //   "version": 1.0
 // }
 
@@ -317,7 +317,7 @@ let loaded = json.load("config.json");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let text = "Contact: user@example.com, admin@test.com";
 
 let emails = re.find_all(r"[\w.]+@[\w.]+", text);
@@ -364,8 +364,8 @@ print(caps);                           // ["user@example.com", "user", "example.
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>let resp = http.get("https://api.github.com/repos/young-developer90/lion");
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>let resp = http.get("https://api.github.com/repos/young-developer90/zamin");
 print(resp.status);                     // 200
 print(resp.body);                       // JSON string
 
@@ -395,7 +395,7 @@ print(resp3.headers["content-type"]);</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let parsed = url.parse("https://example.com:8080/path?q=1#section");
 print(parsed["scheme"]);                // "https"
 print(parsed["host"]);                  // "example.com"
@@ -426,7 +426,7 @@ print(joined);                          // "https://example.com/api/users/1"</co
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let csv_text = "name,age\nAlice,30\nBob,25";
 let rows = csv.parse(csv_text);
 print(rows);                            // [["name","age"],["Alice","30"],["Bob","25"]]
@@ -471,7 +471,7 @@ let data = csv.load("output.csv");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let now = datetime.now();
 print(now["year"]);                     // 2026
 print(now["month"]);                    // 7
@@ -517,7 +517,7 @@ print(datetime.unix(now));              // current timestamp</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let data = [1.0, 2.0, 3.0, 4.0, 5.0];
 
 print(stats.sum(data));                 // 15.0
@@ -559,7 +559,7 @@ print(stats.standardize(data));         // z-scored values</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(hashlib.sha256("hello"));
 // 2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
 
@@ -595,7 +595,7 @@ print(hashlib.hex_decode(hex));         // "ABC"</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>logging.set_level("DEBUG");
 
 logging.debug("Starting application");
@@ -634,7 +634,7 @@ logging.warn("this is visible");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let result = subprocess.run("echo hello");
 print(result["returncode"]);            // 0
 print(result["stdout"]);                // "hello\n"
@@ -676,7 +676,7 @@ print(err["returncode"]);               // non-zero</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(path.join("dir", "sub", "file.txt"));    // "dir/sub/file.txt"
 print(path.basename("/usr/local/bin/bash"));   // "bash"
 print(path.dirname("/usr/local/bin/bash"));    // "/usr/local/bin"
@@ -724,7 +724,7 @@ path.remove_dir("test_dir");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Counter
 let words = ["apple", "banana", "apple", "cherry", "banana", "apple"];
 let counts = collections.Counter(words);
@@ -782,7 +782,7 @@ print(collections.flatten(nested));     // [1, 2, 3, 4, 5, 6]</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>print(itertools.chain([1, 2], [3, 4], [5]));     // [1, 2, 3, 4, 5]
 
 print(itertools.zip([1, 2, 3], ["a", "b", "c"]));
@@ -828,7 +828,7 @@ print(always42("anything"));             // 42</code></pre>
         <!-- TEST MODULE -->
         <!-- ============================================================ -->
         <h2 id="test-module"><code>test</code> Module</h2>
-        <p>Unit testing utilities. Run with <code>lion test</code> to execute all tests in the <code>tests/</code> directory.</p>
+        <p>Unit testing utilities. Run with <code>zamin test</code> to execute all tests in the <code>tests/</code> directory.</p>
         <h3>Functions</h3>
         <table>
           <thead><tr><th>Function</th><th>Signature</th><th>Description</th></tr></thead>
@@ -843,7 +843,7 @@ print(always42("anything"));             // 42</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func add(a, b) { return a + b; }
 func divide(a, b) {
     if b == 0 { throw "division by zero"; }
@@ -886,7 +886,7 @@ test.run_test("addition", func() {
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let start = time.now();
 print(f"Current time: {start}");        // e.g. 1752705600.123
 
@@ -913,7 +913,7 @@ print(f"Elapsed: {elapsed}s");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Random integer between 1 and 100
 let dice = rand.int(1, 6);
 print(f"You rolled: {dice}");
@@ -944,7 +944,7 @@ print(f"Picked: {pick}");</code></pre>
           </tbody>
         </table>
         <h3>Examples</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Create from explicit rows
 let m = matrix.from_rows([
     [1.0, 2.0, 3.0],

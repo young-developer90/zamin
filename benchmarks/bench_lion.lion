@@ -1,5 +1,5 @@
-// Lion benchmark
-// Run with: lion run benchmarks/bench_lion.lion
+// Zamin benchmark
+// Run with: zamin run benchmarks/bench_lion.lion
 
 func bench(name, fn) {
     let start = time.now();
@@ -8,7 +8,7 @@ func bench(name, fn) {
     print(f"{name}: {elapsed} ms");
 }
 
-print("=== Lion Benchmarks ===\n");
+print("=== Zamin Benchmarks ===\n");
 
 // 1. Regex
 print("--- re (regex) ---");

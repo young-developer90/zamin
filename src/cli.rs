@@ -40,7 +40,7 @@ pub fn parse_args() -> Command {
                 if is_in_project() {
                     Command::ProjectRun { args: extra }
                 } else {
-                    eprintln!("Usage: lion run <file> [--disassemble]");
+                    eprintln!("Usage: zamin run <file> [--disassemble]");
                     std::process::exit(1);
                 }
             }
@@ -49,7 +49,7 @@ pub fn parse_args() -> Command {
         "version" | "--version" | "-v" => Command::Version,
         "fmt" => {
             if args.len() < 3 {
-                eprintln!("Usage: lion fmt <file>");
+                eprintln!("Usage: zamin fmt <file>");
                 std::process::exit(1);
             }
             Command::Fmt {
@@ -58,7 +58,7 @@ pub fn parse_args() -> Command {
         }
         "new" => {
             if args.len() < 3 {
-                eprintln!("Usage: lion new <project_name>");
+                eprintln!("Usage: zamin new <project_name>");
                 std::process::exit(1);
             }
             Command::ProjectNew { name: args[2].clone() }
@@ -83,7 +83,7 @@ fn is_in_project() -> bool {
         .and_then(|d| {
             let mut dir = Some(d.as_path());
             while let Some(p) = dir {
-                if p.join("lion.json").exists() {
+                if p.join("zamin.json").exists() {
                     return Some(true);
                 }
                 dir = p.parent();

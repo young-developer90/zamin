@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Getting Started - Lion Programming Language</title>
-  <meta name="description" content="Install Lion and write your first program. Learn about prerequisites, building from source, the REPL, and project setup.">
-  <meta property="og:title" content="Getting Started - Lion">
-  <meta property="og:description" content="Install Lion and write your first program. Learn about prerequisites, building from source, the REPL, and project setup.">
+  <title>Getting Started - Zamin Programming Language</title>
+  <meta name="description" content="Install Zamin and write your first program. Learn about prerequisites, building from source, the REPL, and project setup.">
+  <meta property="og:title" content="Getting Started - Zamin">
+  <meta property="og:description" content="Install Zamin and write your first program. Learn about prerequisites, building from source, the REPL, and project setup.">
   <meta property="og:type" content="website">
   <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -15,7 +15,7 @@
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -78,12 +78,12 @@
         </div>
 
         <h1>Getting Started</h1>
-        <p>This guide walks you through installing Lion from source, verifying your setup, writing your first script, and organizing larger projects.</p>
+        <p>This guide walks you through installing Zamin from source, verifying your setup, writing your first script, and organizing larger projects.</p>
 
         <h2 id="prerequisites">Prerequisites</h2>
-        <p>Before building Lion, make sure you have the following installed on your system:</p>
+        <p>Before building Zamin, make sure you have the following installed on your system:</p>
         <ul>
-          <li><strong>Rust 1.80+</strong> &mdash; Lion is written in Rust. Install it via <a href="https://rustup.rs">rustup</a>:</li>
+          <li><strong>Rust 1.80+</strong> &mdash; Zamin is written in Rust. Install it via <a href="https://rustup.rs">rustup</a>:</li>
         </ul>
         <pre><code>curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh</code></pre>
         <ul>
@@ -93,15 +93,15 @@
 
         <h2 id="installation">Installation</h2>
         <h3>Clone and build</h3>
-        <p>Clone the repository and build Lion in release mode:</p>
-        <pre><code>git clone https://github.com/anomalyco/lion.git
-cd lion
+        <p>Clone the repository and build Zamin in release mode:</p>
+        <pre><code>git clone https://github.com/anomalyco/zamin.git
+cd zamin
 cargo build --release</code></pre>
-        <p>The compiled binary will be at <code>target/release/lion</code>. Add it to your <code>PATH</code> for convenient access:</p>
+        <p>The compiled binary will be at <code>target/release/zamin</code>. Add it to your <code>PATH</code> for convenient access:</p>
         <pre><code>export PATH="$PWD/target/release:$PATH"</code></pre>
 
         <h3>Optional features</h3>
-        <p>Lion supports optional feature flags that enable additional capabilities:</p>
+        <p>Zamin supports optional feature flags that enable additional capabilities:</p>
         <pre><code>cargo build --release --features opencv</code></pre>
         <table>
           <thead>
@@ -109,30 +109,30 @@ cargo build --release</code></pre>
           </thead>
           <tbody>
             <tr><td><code>opencv</code></td><td>Enable OpenCV bindings for image processing and computer vision</td></tr>
-            <tr><td><code>panther</code></td><td>Enable the Panther GUI toolkit for Linux</td></tr>
+            <tr><td><code>luna</code></td><td>Enable the Luna GUI toolkit for Linux</td></tr>
             <tr><td><code>python</code></td><td>Enable Python interop for calling Python libraries directly</td></tr>
           </tbody>
         </table>
         <p>You can combine multiple features:</p>
-        <pre><code>cargo build --release --features "opencv,panther,python"</code></pre>
+        <pre><code>cargo build --release --features "opencv,luna,python"</code></pre>
 
         <h2 id="verify-installation">Verify Installation</h2>
-        <p>Check that Lion is installed and working:</p>
-        <pre><code>$ lion version
-lion 0.1.0</code></pre>
+        <p>Check that Zamin is installed and working:</p>
+        <pre><code>$ zamin version
+zamin 0.1.0</code></pre>
         <p>Launch the interactive REPL to confirm the runtime is functional:</p>
-        <pre><code>$ lion repl
-Lion 0.1.0 (interactive)
+        <pre><code>$ zamin repl
+Zamin 0.1.0 (interactive)
 Type "help" for more information.
-lion&gt;</code></pre>
+zamin&gt;</code></pre>
 
         <h2 id="your-first-script">Your First Script</h2>
-        <p>Create a file called <code>hello.lion</code> with the following content:</p>
-        <pre><code>print("Hello, Lion!")</code></pre>
+        <p>Create a file called <code>hello.zamin</code> with the following content:</p>
+        <pre><code>print("Hello, Zamin!")</code></pre>
         <p>Run it:</p>
-        <pre><code>$ lion run hello.lion
-Hello, Lion!</code></pre>
-        <p>Let's try something a bit more interesting. Replace the contents of <code>hello.lion</code> with:</p>
+        <pre><code>$ zamin run hello.zamin
+Hello, Zamin!</code></pre>
+        <p>Let's try something a bit more interesting. Replace the contents of <code>hello.zamin</code> with:</p>
         <pre><code><span class="kw">fn</span> greet(name):
     print(<span class="str">"Hello, </span>{name}<span class="str">!"</span>)
 
@@ -147,49 +147,49 @@ greet(<span class="str">"World"</span>)
     print(<span class="str">"fib(</span>{i}<span class="str">) = </span>{fibonacci(i)}<span class="str">"</span>)</code></pre>
 
         <h2 id="using-the-repl">Using the REPL</h2>
-        <p>The Lion REPL is great for experimenting with language features and testing code snippets:</p>
-        <pre><code>$ lion repl
-Lion 0.1.0 (interactive)
+        <p>The Zamin REPL is great for experimenting with language features and testing code snippets:</p>
+        <pre><code>$ zamin repl
+Zamin 0.1.0 (interactive)
 Type "help" for more information.
-lion&gt; print("Hello!")
+zamin&gt; print("Hello!")
 Hello!
-lion&gt; 2 + 2
+zamin&gt; 2 + 2
 4
-lion&gt; fn add(a, b): a + b
-lion&gt; add(10, 20)
+zamin&gt; fn add(a, b): a + b
+zamin&gt; add(10, 20)
 30
-lion&gt; [1, 2, 3].map(fn(x): x * 2)
+zamin&gt; [1, 2, 3].map(fn(x): x * 2)
 [2, 4, 6]
-lion&gt; .exit</code></pre>
+zamin&gt; .exit</code></pre>
 
         <h2 id="project-setup">Project Setup</h2>
-        <p>For larger applications, use Lion's built-in project scaffolding:</p>
-        <pre><code>$ lion new myproject
+        <p>For larger applications, use Zamin's built-in project scaffolding:</p>
+        <pre><code>$ zamin new myproject
 Created new project "myproject"
-  src/main.lion
-  lion.json</code></pre>
+  src/main.zamin
+  zamin.json</code></pre>
         <p>This generates a project directory with the following structure:</p>
         <pre><code>myproject/
-├── lion.json
+├── zamin.json
 └── src/
-    └── main.lion</code></pre>
+    └── main.zamin</code></pre>
 
-        <h3>lion.json</h3>
-        <p>The <code>lion.json</code> file defines your project's metadata and build configuration:</p>
+        <h3>zamin.json</h3>
+        <p>The <code>zamin.json</code> file defines your project's metadata and build configuration:</p>
         <pre><code>{
   "name": "myproject",
   "version": "0.1.0",
-  "entry": "src/main.lion",
+  "entry": "src/main.zamin",
   "dependencies": [],
   "features": []
 }</code></pre>
 
-        <h3>src/main.lion</h3>
+        <h3>src/main.zamin</h3>
         <p>The entry point for your application:</p>
         <pre><code>print(<span class="str">"Welcome to myproject!"</span>)</code></pre>
         <p>Build and run your project:</p>
         <pre><code>$ cd myproject
-$ lion run
+$ zamin run
 Welcome to myproject!</code></pre>
         <p>For more details on project management, see the <a href="project-management.html">Project CLI</a> reference.</p>
 

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Guide - Lion Programming Language</title>
-  <meta name="description" content="Advanced guide to the Lion programming language covering C extensions, Python interop, CUDA GPU acceleration, Rust embedding, and LSP support.">
+  <title>Advanced Guide - Zamin Programming Language</title>
+  <meta name="description" content="Advanced guide to the Zamin programming language covering C extensions, Python interop, CUDA GPU acceleration, Rust embedding, and LSP support.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -56,18 +56,18 @@
         </div>
 
         <h1>Advanced Guide</h1>
-        <p>This guide covers advanced features of the Lion language including extending Lion with C, interopping with Python, leveraging GPU acceleration via CUDA, embedding Lion in Rust applications, and using the built-in LSP server.</p>
+        <p>This guide covers advanced features of the Zamin language including extending Zamin with C, interopping with Python, leveraging GPU acceleration via CUDA, embedding Zamin in Rust applications, and using the built-in LSP server.</p>
 
         <h2 id="c-extensions">C Extensions</h2>
-        <p>Lion supports native C extensions for performance-critical code or wrapping existing C libraries. Extensions are compiled as shared objects and loaded automatically at runtime.</p>
+        <p>Zamin supports native C extensions for performance-critical code or wrapping existing C libraries. Extensions are compiled as shared objects and loaded automatically at runtime.</p>
 
         <h3>Header File</h3>
         <p>Include the main header in your C source:</p>
-        <pre><code>#include "lion.h"</code></pre>
-        <p>The header is located at <code>include/lion.h</code> in the Lion source tree.</p>
+        <pre><code>#include "zamin.h"</code></pre>
+        <p>The header is located at <code>include/zamin.h</code> in the Zamin source tree.</p>
 
-        <h3>Lion Types</h3>
-        <p>Lion exposes the following C type constants for use with the <code>LionValue</code> union:</p>
+        <h3>Zamin Types</h3>
+        <p>Zamin exposes the following C type constants for use with the <code>ZaminValue</code> union:</p>
         <table>
           <thead>
             <tr><th>Constant</th><th>Description</th></tr>
@@ -81,8 +81,8 @@
           </tbody>
         </table>
 
-        <h3>LionValue Struct</h3>
-        <p>The <code>LionValue</code> struct is a tagged union that represents all values that can cross the C/Lion boundary:</p>
+        <h3>ZaminValue Struct</h3>
+        <p>The <code>ZaminValue</code> struct is a tagged union that represents all values that can cross the C/Zamin boundary:</p>
         <pre><code>typedef struct {
     int type;
     union {
@@ -91,20 +91,20 @@
         int b;
         const char *s;
     } as;
-} LionValue;</code></pre>
+} ZaminValue;</code></pre>
 
-        <h3>LionModuleFunc Struct</h3>
-        <p>Each exported function is described by a <code>LionModuleFunc</code> entry:</p>
+        <h3>ZaminModuleFunc Struct</h3>
+        <p>Each exported function is described by a <code>ZaminModuleFunc</code> entry:</p>
         <pre><code>typedef struct {
     const char *name;
-    LionValue (*func)(int argc, LionValue *argv);
+    ZaminValue (*func)(int argc, ZaminValue *argv);
     int arity;  // -1 for variadic
-} LionModuleFunc;</code></pre>
+} ZaminModuleFunc;</code></pre>
 
         <h3>Exporting a Module</h3>
-        <p>Every C extension must export a <code>lion_module_init</code> function that returns a <code>LionModuleFunc</code> array and sets the count via the provided pointer:</p>
-        <pre><code> LionModuleFunc *lion_module_init(int *count) {
-    static LionModuleFunc funcs[] = { ... };
+        <p>Every C extension must export a <code>zamin_module_init</code> function that returns a <code>ZaminModuleFunc</code> array and sets the count via the provided pointer:</p>
+        <pre><code> ZaminModuleFunc *zamin_module_init(int *count) {
+    static ZaminModuleFunc funcs[] = { ... };
     *count = sizeof(funcs) / sizeof(funcs[0]);
     return funcs;
 }</code></pre>
@@ -112,38 +112,38 @@
         <h3>Building</h3>
         <p>Compile your extension as a shared library:</p>
         <pre><code>gcc -shared -fPIC -O2 -I../include -o mymod.so mymod.c</code></pre>
-        <p>Place the resulting <code>.so</code> file in your project's <code>modules/</code> directory. Lion will auto-load it when you write <code>use mymod</code>.</p>
+        <p>Place the resulting <code>.so</code> file in your project's <code>modules/</code> directory. Zamin will auto-load it when you write <code>use mymod</code>.</p>
 
         <h3>Full Example: math_ext</h3>
-        <pre><code>#include "lion.h"
+        <pre><code>#include "zamin.h"
 
-static LionValue math_add(int argc, LionValue *argv) {
+static ZaminValue math_add(int argc, ZaminValue *argv) {
     if (argc != 2) {
-        return (LionValue){ LION_NIL, { .i = 0 } };
+        return (ZaminValue){ LION_NIL, { .i = 0 } };
     }
     int64_t a = argv[0].as.i;
     int64_t b = argv[1].as.i;
-    return (LionValue){ LION_INT, { .i = a + b } };
+    return (ZaminValue){ LION_INT, { .i = a + b } };
 }
 
-static LionValue math_multiply(int argc, LionValue *argv) {
+static ZaminValue math_multiply(int argc, ZaminValue *argv) {
     if (argc != 2) {
-        return (LionValue){ LION_NIL, { .i = 0 } };
+        return (ZaminValue){ LION_NIL, { .i = 0 } };
     }
     int64_t a = argv[0].as.i;
     int64_t b = argv[1].as.i;
-    return (LionValue){ LION_INT, { .i = a * b } };
+    return (ZaminValue){ LION_INT, { .i = a * b } };
 }
 
-LionModuleFunc *lion_module_init(int *count) {
-    static LionModuleFunc funcs[] = {
+ZaminModuleFunc *zamin_module_init(int *count) {
+    static ZaminModuleFunc funcs[] = {
         { "add",      math_add,      2 },
         { "multiply",  math_multiply,  2 },
     };
     *count = sizeof(funcs) / sizeof(funcs[0]);
     return funcs;
 }</code></pre>
-        <p>Usage in Lion:</p>
+        <p>Usage in Zamin:</p>
         <pre><code>use math_ext
 
 let result = math_ext.add(10, 20)
@@ -153,7 +153,7 @@ let product = math_ext.multiply(6, 7)
 print(product)  // 42</code></pre>
 
         <h2 id="python-interop">Python Interop</h2>
-        <p>Lion can call Python modules directly when compiled with the <code>python</code> feature. This enables reusing the vast Python ecosystem from Lion code.</p>
+        <p>Zamin can call Python modules directly when compiled with the <code>python</code> feature. This enables reusing the vast Python ecosystem from Zamin code.</p>
 
         <h3>Building with Python Support</h3>
         <pre><code>cargo build --features python</code></pre>
@@ -169,10 +169,10 @@ print(arr.mean())  // 3.0</code></pre>
         <pre><code>print(py.version())  // e.g. "3.14.0"</code></pre>
 
         <h3>Type Marshalling</h3>
-        <p>Lion automatically converts types between the two languages:</p>
+        <p>Zamin automatically converts types between the two languages:</p>
         <table>
           <thead>
-            <tr><th>Lion Type</th><th>Python Type</th></tr>
+            <tr><th>Zamin Type</th><th>Python Type</th></tr>
           </thead>
           <tbody>
             <tr><td><code>int</code></td><td><code>int</code></td></tr>
@@ -204,13 +204,13 @@ print(c)
 //  [43 50]]</code></pre>
 
         <h2 id="cuda">CUDA / GPU Acceleration</h2>
-        <p>Lion can leverage NVIDIA GPUs for computation when CUDA is available. The build system automatically detects CUDA during compilation via <code>build.rs</code>.</p>
+        <p>Zamin can leverage NVIDIA GPUs for computation when CUDA is available. The build system automatically detects CUDA during compilation via <code>build.rs</code>.</p>
 
         <h3>Automatic Detection</h3>
         <p>During <code>cargo build</code>, <code>build.rs</code> checks for the <code>nvcc</code> compiler and CUDA toolkit. If found, GPU modules are compiled and linked automatically. No extra flags are needed.</p>
 
         <h3>LINUM Module</h3>
-        <p>The <code>LINUM</code> (Lion Numerical) module provides GPU-accelerated neural network primitives:</p>
+        <p>The <code>LINUM</code> (Zamin Numerical) module provides GPU-accelerated neural network primitives:</p>
         <ul>
           <li><code>linum.tensor()</code> - Create GPU tensors</li>
           <li><code>linum.matmul()</code> - Matrix multiplication on GPU</li>
@@ -249,44 +249,44 @@ for epoch in 0..10 {
 }</code></pre>
 
         <h2 id="embedding-in-rust">Embedding in Rust</h2>
-        <p>Lion can be embedded as a library in Rust applications. This is useful for building tools, IDEs, or applications that need scripting capabilities.</p>
+        <p>Zamin can be embedded as a library in Rust applications. This is useful for building tools, IDEs, or applications that need scripting capabilities.</p>
 
         <h3>Cargo.toml Dependency</h3>
         <pre><code>[dependencies]
-lion = { path = "../lion" }</code></pre>
+zamin = { path = "../zamin" }</code></pre>
 
         <h3>API</h3>
         <p>Two primary functions are provided:</p>
         <ul>
-          <li><code>lion::execute_source(code: &amp;str)</code> - Execute a Lion source string</li>
-          <li><code>lion::execute_file(path: &amp;str)</code> - Execute a Lion file from disk</li>
+          <li><code>zamin::execute_source(code: &amp;str)</code> - Execute a Zamin source string</li>
+          <li><code>zamin::execute_file(path: &amp;str)</code> - Execute a Zamin file from disk</li>
         </ul>
 
         <h3>Full Rust Embedding Example</h3>
         <pre><code>fn main() {
-    // Execute a Lion source string
-    lion::execute_source(r#"
-        let greeting = "Hello from Lion!"
+    // Execute a Zamin source string
+    zamin::execute_source(r#"
+        let greeting = "Hello from Zamin!"
         print(greeting)
         let result = 2 + 3
         print("2 + 3 = {result}")
-    "#).expect("Failed to execute Lion source");
+    "#).expect("Failed to execute Zamin source");
 
-    // Execute a Lion file
-    lion::execute_file("scripts/app.lion").expect("Failed to execute file");
+    // Execute a Zamin file
+    zamin::execute_file("scripts/app.zamin").expect("Failed to execute file");
 
-    // Access Lion values from Rust
-    let mut vm = lion::Vm::new();
+    // Access Zamin values from Rust
+    let mut vm = zamin::Vm::new();
     vm.execute("let x = 42").unwrap();
     let value = vm.get_global("x").unwrap();
-    println!("Lion returned: {:?}", value);
+    println!("Zamin returned: {:?}", value);
 }</code></pre>
 
         <h2 id="lsp-server">LSP Server</h2>
-        <p>Lion ships with a built-in Language Server Protocol (LSP) implementation that provides IDE features for any editor with LSP support.</p>
+        <p>Zamin ships with a built-in Language Server Protocol (LSP) implementation that provides IDE features for any editor with LSP support.</p>
 
-        <h3>The lion-lsp Binary</h3>
-        <p>After building Lion, the <code>lion-lsp</code> binary will be available in the output directory. It communicates over stdio using the LSP protocol.</p>
+        <h3>The zamin-lsp Binary</h3>
+        <p>After building Zamin, the <code>zamin-lsp</code> binary will be available in the output directory. It communicates over stdio using the LSP protocol.</p>
 
         <h3>Features</h3>
         <ul>
@@ -298,7 +298,7 @@ lion = { path = "../lion" }</code></pre>
         <h3>VS Code Extension</h3>
         <p>A VS Code extension is available. Install it from the marketplace and add the following to your <code>settings.json</code>:</p>
         <pre><code>{
-  "lion.server.path": "/path/to/lion-lsp"
+  "zamin.server.path": "/path/to/zamin-lsp"
 }</code></pre>
 
         <p>The extension provides syntax highlighting, error squiggles, autocompletion popups, and hover documentation out of the box.</p>

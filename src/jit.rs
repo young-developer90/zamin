@@ -478,10 +478,10 @@ fn translate_chunk(chunk: &Chunk, chunk_idx: usize) -> Result<String, String> {
 
 fn compile_c(source: &str, chunk_idx: usize) -> Result<(JitFn, *mut std::ffi::c_void), String> {
     let tmp = std::env::temp_dir();
-    let lib_name = format!("lion_jit_{}", chunk_idx);
+    let lib_name = format!("zamin_jit_{}", chunk_idx);
     let lib_ext = if cfg!(target_os = "windows") { "dll" } else { "so" };
     let lib_path = tmp.join(format!("{}.{}", lib_name, lib_ext));
-    let c_path = tmp.join(format!("lion_jit_{}.c", chunk_idx));
+    let c_path = tmp.join(format!("zamin_jit_{}.c", chunk_idx));
 
     std::fs::write(&c_path, source).map_err(|e| format!("write C source: {}", e))?;
 

@@ -1,11 +1,11 @@
-// Cheetah UI Framework Tests
+// Comet UI Framework Tests
 func main() {
-    let ui = cheetah()
-    print("=== Cheetah Tests ===")
+    let ui = comet()
+    print("=== Comet Tests ===")
 
     // Test 1: Basic paragraph
     let p = ui.p("hello")
-    print("PASS: cheetah creates elements")
+    print("PASS: comet creates elements")
 
     // Test 2: Style chaining
     let styled = ui.p("test").style("color: red;")
@@ -32,5 +32,5 @@ func main() {
     print("h2: " + h2_html)
     print("PASS: heading tags work")
 
-    print("=== ALL CHEETAH TESTS PASSED ===")
+    print("=== ALL COMET TESTS PASSED ===")
 }

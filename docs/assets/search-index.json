@@ -16,10 +16,10 @@
   {"title":"re Module","url":"standard-library.html#re-module","section":"Standard Library","content":"regex pattern match find split sub replace"},
   {"title":"string Module","url":"standard-library.html#string-module","section":"Standard Library","content":"string len upper lower trim split join contains replace reverse substring"},
   {"title":"http Module","url":"standard-library.html#http-module","section":"Standard Library","content":"http get post request url fetch api"},
-  {"title":"GUI Guide","url":"gui-guide.html","section":"GUI","content":"gui leopard panther window button label entry widget layout gtk4 win32"},
+  {"title":"GUI Guide","url":"gui-guide.html","section":"GUI","content":"gui sol luna window button label entry widget layout gtk4 win32"},
   {"title":"OpenCV Guide","url":"opencv-guide.html","section":"Computer Vision","content":"opencv image processing filter blur edge detection threshold color resize crop draw ascii"},
   {"title":"Advanced Guide","url":"advanced-guide.html","section":"Advanced","content":"c extension python interop cuda gpu embedding rust linum neural network machine learning"},
-  {"title":"Project Management","url":"project-management.html","section":"CLI","content":"lion new init build test run fmt repl project lion.json cli command"},
+  {"title":"Project Management","url":"project-management.html","section":"CLI","content":"zamin new init build test run fmt repl project zamin.json cli command"},
   {"title":"Performance","url":"performance.html","section":"Benchmarks","content":"performance benchmark optimization speed bytecode vm gc garbage collection"},
   {"title":"FAQ","url":"faq.html","section":"Help","content":"faq frequently asked questions troubleshooting error help debug"}
 ]

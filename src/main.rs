@@ -1,7 +1,7 @@
 mod ast;
 mod bytecode;
 mod cext;
-mod cheetah_mod;
+mod comet_mod;
 mod cli;
 mod collections_mod;
 mod compiler;
@@ -13,12 +13,12 @@ mod html_mod;
 mod http;
 mod http_module;
 mod itertools_mod;
-mod jaguar_mod;
+mod nova_mod;
 mod json_mod;
 #[cfg(target_os = "windows")]
-mod leopard_mod;
-#[cfg(all(not(target_os = "windows"), feature = "panther"))]
-mod panther_mod;
+mod sol_mod;
+#[cfg(all(not(target_os = "windows"), feature = "luna"))]
+mod luna_mod;
 mod lexer;
 mod logging_mod;
 mod module;
@@ -81,7 +81,7 @@ fn main() {
             }
         }
         Command::Version => {
-            println!("Lion v{}", env!("CARGO_PKG_VERSION"));
+            println!("Zamin v{}", env!("CARGO_PKG_VERSION"));
         }
         Command::Fmt { file } => {
             match fmt_file(&file) {
@@ -91,7 +91,7 @@ fn main() {
         }
         Command::Test { filter } => {
             let test_path = filter.as_deref().unwrap_or(
-                if std::path::Path::new("lion.json").exists() && std::path::Path::new("tests").is_dir() {
+                if std::path::Path::new("zamin.json").exists() && std::path::Path::new("tests").is_dir() {
                     "tests"
                 } else {
                     "."
@@ -144,18 +144,18 @@ fn main() {
             }
         }
         Command::Help => {
-            println!("Lion v{}", env!("CARGO_PKG_VERSION"));
+            println!("Zamin v{}", env!("CARGO_PKG_VERSION"));
             println!("Usage:");
-            println!("  lion run <file>           Run a Lion source file");
-            println!("  lion run --disassemble    Show bytecode disassembly");
-            println!("  lion repl                 Start interactive REPL");
-            println!("  lion version              Show version");
-            println!("  lion fmt <file>           Format a source file");
-            println!("  lion test [filter]        Run tests");
-            println!("  lion new <name>           Create a new project");
-            println!("  lion init                 Initialize project in current dir");
-            println!("  lion build                Check project for errors");
-            println!("  lion-rs <file>            Quick-run a file");
+            println!("  zamin run <file>           Run a Zamin source file");
+            println!("  zamin run --disassemble    Show bytecode disassembly");
+            println!("  zamin repl                 Start interactive REPL");
+            println!("  zamin version              Show version");
+            println!("  zamin fmt <file>           Format a source file");
+            println!("  zamin test [filter]        Run tests");
+            println!("  zamin new <name>           Create a new project");
+            println!("  zamin init                 Initialize project in current dir");
+            println!("  zamin build                Check project for errors");
+            println!("  zamin-rs <file>            Quick-run a file");
         }
     }
 }
@@ -166,12 +166,12 @@ fn project_root() -> Result<std::path::PathBuf, String> {
     let cwd = std::env::current_dir().map_err(|e| e.to_string())?;
     let mut dir = Some(cwd.as_path());
     while let Some(d) = dir {
-        if d.join("lion.json").exists() {
+        if d.join("zamin.json").exists() {
             return Ok(d.to_path_buf());
         }
         dir = d.parent();
     }
-    Err("no lion.json found in current or parent directories".to_string())
+    Err("no zamin.json found in current or parent directories".to_string())
 }
 
 fn project_new(name: &str) -> Result<(), String> {
@@ -185,25 +185,25 @@ fn project_new(name: &str) -> Result<(), String> {
     let manifest = serde_json::json!({
         "name": name,
         "version": "0.1.0",
-        "entry": "src/main.lion",
+        "entry": "src/main.zamin",
         "dependencies": {}
     });
-    std::fs::write(dir.join("lion.json"), serde_json::to_string_pretty(&manifest).unwrap())
-        .map_err(|e| format!("cannot write lion.json: {}", e))?;
+    std::fs::write(dir.join("zamin.json"), serde_json::to_string_pretty(&manifest).unwrap())
+        .map_err(|e| format!("cannot write zamin.json: {}", e))?;
 
     let main_code = format!("print(\"Hello from {}!\")\n", name);
-    std::fs::write(dir.join("src/main.lion"), &main_code)
-        .map_err(|e| format!("cannot write main.lion: {}", e))?;
+    std::fs::write(dir.join("src/main.zamin"), &main_code)
+        .map_err(|e| format!("cannot write main.zamin: {}", e))?;
 
     println!("Created project '{}'", name);
-    println!("  cd {} && lion run", name);
+    println!("  cd {} && zamin run", name);
     Ok(())
 }
 
 fn project_init() -> Result<(), String> {
     let cwd = std::env::current_dir().map_err(|e| e.to_string())?;
-    if cwd.join("lion.json").exists() {
-        return Err("lion.json already exists".to_string());
+    if cwd.join("zamin.json").exists() {
+        return Err("zamin.json already exists".to_string());
     }
     let name = cwd.file_name().and_then(|s| s.to_str()).unwrap_or("project");
     std::fs::create_dir_all(cwd.join("src"))
@@ -212,35 +212,35 @@ fn project_init() -> Result<(), String> {
     let manifest = serde_json::json!({
         "name": name,
         "version": "0.1.0",
-        "entry": "src/main.lion",
+        "entry": "src/main.zamin",
         "dependencies": {}
     });
-    std::fs::write(cwd.join("lion.json"), serde_json::to_string_pretty(&manifest).unwrap())
-        .map_err(|e| format!("cannot write lion.json: {}", e))?;
+    std::fs::write(cwd.join("zamin.json"), serde_json::to_string_pretty(&manifest).unwrap())
+        .map_err(|e| format!("cannot write zamin.json: {}", e))?;
 
-    let main_path = cwd.join("src/main.lion");
+    let main_path = cwd.join("src/main.zamin");
     if !main_path.exists() {
         std::fs::write(&main_path, format!("print(\"Hello from {}!\")\n", name))
-            .map_err(|e| format!("cannot write main.lion: {}", e))?;
+            .map_err(|e| format!("cannot write main.zamin: {}", e))?;
     }
-    println!("Initialized Lion project in {}", cwd.display());
+    println!("Initialized Zamin project in {}", cwd.display());
     Ok(())
 }
 
 fn read_manifest(dir: &std::path::Path) -> Result<serde_json::Value, String> {
-    let text = std::fs::read_to_string(dir.join("lion.json"))
-        .map_err(|e| format!("cannot read lion.json: {}", e))?;
+    let text = std::fs::read_to_string(dir.join("zamin.json"))
+        .map_err(|e| format!("cannot read zamin.json: {}", e))?;
     serde_json::from_str(&text)
-        .map_err(|e| format!("invalid lion.json: {}", e))
+        .map_err(|e| format!("invalid zamin.json: {}", e))
 }
 
-fn collect_lion_files(dir: &std::path::Path, files: &mut Vec<std::path::PathBuf>) -> Result<(), String> {
+fn collect_zamin_files(dir: &std::path::Path, files: &mut Vec<std::path::PathBuf>) -> Result<(), String> {
     for entry in std::fs::read_dir(dir).map_err(|e| e.to_string())? {
         let entry = entry.map_err(|e| e.to_string())?;
         let path = entry.path();
         if path.is_dir() {
-            collect_lion_files(&path, files)?;
-        } else if path.extension().and_then(|s| s.to_str()) == Some("lion") {
+            collect_zamin_files(&path, files)?;
+        } else if path.extension().and_then(|s| s.to_str()) == Some("zamin") {
             files.push(path);
         }
     }
@@ -253,10 +253,10 @@ fn project_build() -> Result<(), String> {
     let name = manifest.get("name").and_then(|v| v.as_str()).unwrap_or("project");
 
     let mut files = Vec::new();
-    collect_lion_files(&root, &mut files)?;
+    collect_zamin_files(&root, &mut files)?;
 
     if files.is_empty() {
-        return Err("no .lion files found in project".to_string());
+        return Err("no .zamin files found in project".to_string());
     }
 
     let mut errors = 0;
@@ -291,7 +291,7 @@ fn project_build() -> Result<(), String> {
 fn project_run(_args: &[String]) -> Result<(), String> {
     let root = project_root()?;
     let manifest = read_manifest(&root)?;
-    let entry = manifest.get("entry").and_then(|v| v.as_str()).unwrap_or("src/main.lion");
+    let entry = manifest.get("entry").and_then(|v| v.as_str()).unwrap_or("src/main.zamin");
     let entry_path = root.join(entry);
 
     if !entry_path.exists() {
@@ -352,7 +352,7 @@ fn run_tests(path: &str) -> Result<Vec<(String, bool, String)>, String> {
         for entry in std::fs::read_dir(path).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
             let entry_path = entry.path();
-            if entry_path.extension().and_then(|s| s.to_str()) == Some("lion") {
+            if entry_path.extension().and_then(|s| s.to_str()) == Some("zamin") {
                 let fname = entry_path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
                 if !skip_tests.iter().any(|s| fname.starts_with(s)) {
                     files.push(entry_path.to_string_lossy().to_string());
@@ -372,7 +372,7 @@ fn run_tests(path: &str) -> Result<Vec<(String, bool, String)>, String> {
             .to_string();
 
         // Run as subprocess to capture all output (stdout + stderr)
-        let exe_path = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("lion"));
+        let exe_path = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("zamin"));
         let output = match std::process::Command::new(&exe_path)
             .arg("run")
             .arg(file)

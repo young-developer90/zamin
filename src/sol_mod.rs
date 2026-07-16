@@ -165,10 +165,10 @@ fn utf8_to_wide(s: &str) -> Vec<u16> {
     s.encode_utf16().chain(std::iter::once(0)).collect()
 }
 
-static mut LEOPARD_HINSTANCE: HINSTANCE = 0;
-static mut LEOPARD_INITIALIZED: bool = false;
+static mut SOL_HINSTANCE: HINSTANCE = 0;
+static mut SOL_INITIALIZED: bool = false;
 
-unsafe extern "system" fn leopard_wndproc(
+unsafe extern "system" fn sol_wndproc(
     hwnd: HWND, msg: UINT, wparam: WPARAM, lparam: LPARAM,
 ) -> LRESULT {
     match msg {
@@ -190,7 +190,7 @@ unsafe extern "system" fn leopard_wndproc(
 
 fn ensure_registered() -> Result<(), String> {
     unsafe {
-        if LEOPARD_INITIALIZED {
+        if SOL_INITIALIZED {
             return Ok(());
         }
 
@@ -200,8 +200,8 @@ fn ensure_registered() -> Result<(), String> {
         };
         InitCommonControlsEx(&icex);
 
-        LEOPARD_HINSTANCE = GetModuleHandleW(std::ptr::null());
-        if LEOPARD_HINSTANCE == 0 {
+        SOL_HINSTANCE = GetModuleHandleW(std::ptr::null());
+        if SOL_HINSTANCE == 0 {
             return Err("failed to get module handle".to_string());
         }
 
@@ -209,18 +209,18 @@ fn ensure_registered() -> Result<(), String> {
         let _cursor_ibeam = LoadCursorW(0, 32513 as LPCWSTR);
 
         let classes = [
-            ("Leopard_Tk",  COLOR_WINDOW + 1),
-            ("Leopard_Frame", COLOR_WINDOW + 1),
+            ("Sol_Tk",  COLOR_WINDOW + 1),
+            ("Sol_Frame", COLOR_WINDOW + 1),
         ];
 
         for (name, bg) in &classes {
             let wname = utf8_to_wide(name);
             let wc = WNDCLASSW {
                 style: 0,
-                lpfnWndProc: Some(leopard_wndproc),
+                lpfnWndProc: Some(sol_wndproc),
                 cbClsExtra: 0,
                 cbWndExtra: 0,
-                hInstance: LEOPARD_HINSTANCE,
+                hInstance: SOL_HINSTANCE,
                 hIcon: 0,
                 hCursor: cursor_arrow,
                 hbrBackground: *bg as HBRUSH,
@@ -236,19 +236,19 @@ fn ensure_registered() -> Result<(), String> {
             }
         }
 
-        LEOPARD_INITIALIZED = true;
+        SOL_INITIALIZED = true;
         Ok(())
     }
 }
 
-pub fn build_leopard() -> Vec<(String, Value)> {
+pub fn build_sol() -> Vec<(String, Value)> {
     let mut funcs = Vec::new();
 
     funcs.push(("Leo".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.Leo>".to_string(),
+        name: "<sol.Leo>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_registered()?;
-            let title = args.first().map(|a| a.to_string(ctx.heap)).unwrap_or_else(|| "Leopard".to_string());
+            let title = args.first().map(|a| a.to_string(ctx.heap)).unwrap_or_else(|| "Sol".to_string());
             let width = args.get(1).and_then(|a| to_i64(a).ok()).unwrap_or(640) as i32;
             let height = args.get(2).and_then(|a| to_i64(a).ok()).unwrap_or(480) as i32;
 
@@ -262,10 +262,10 @@ pub fn build_leopard() -> Vec<(String, Value)> {
 
                 let hwnd = CreateWindowExW(
                     0,
-                    utf8_to_wide("Leopard_Tk").as_ptr(),
+                    utf8_to_wide("Sol_Tk").as_ptr(),
                     utf8_to_wide(&title).as_ptr(),
                     WS_OVERLAPPEDWINDOW, x, y, win_w, win_h,
-                    0, 0, LEOPARD_HINSTANCE, std::ptr::null_mut(),
+                    0, 0, SOL_HINSTANCE, std::ptr::null_mut(),
                 );
                 if hwnd == 0 {
                     return Err("Failed to create Tk window".to_string());
@@ -276,7 +276,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Frame".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.Frame>".to_string(),
+        name: "<sol.Frame>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_registered()?;
             let parent_hwnd = {
@@ -287,11 +287,11 @@ pub fn build_leopard() -> Vec<(String, Value)> {
             unsafe {
                 let hwnd = CreateWindowExW(
                     0,
-                    utf8_to_wide("Leopard_Frame").as_ptr(),
+                    utf8_to_wide("Sol_Frame").as_ptr(),
                     std::ptr::null(),
                     WS_CHILD | WS_VISIBLE | WS_BORDER,
                     0, 0, 100, 100,
-                    parent_hwnd, 0, LEOPARD_HINSTANCE, std::ptr::null_mut(),
+                    parent_hwnd, 0, SOL_HINSTANCE, std::ptr::null_mut(),
                 );
                 if hwnd == 0 {
                     return Err("Failed to create Frame".to_string());
@@ -302,7 +302,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Label".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.Label>".to_string(),
+        name: "<sol.Label>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_registered()?;
             let parent_hwnd = {
@@ -318,7 +318,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
                     utf8_to_wide(&text).as_ptr(),
                     WS_CHILD | WS_VISIBLE | SS_LEFT,
                     0, 0, 100, 20,
-                    parent_hwnd, 0, LEOPARD_HINSTANCE, std::ptr::null_mut(),
+                    parent_hwnd, 0, SOL_HINSTANCE, std::ptr::null_mut(),
                 );
                 if hwnd == 0 {
                     return Err("Failed to create Label".to_string());
@@ -329,7 +329,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Button".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.Button>".to_string(),
+        name: "<sol.Button>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_registered()?;
             let parent_hwnd = {
@@ -346,7 +346,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
                     utf8_to_wide(&text).as_ptr(),
                     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                     0, 0, 80, 30,
-                    parent_hwnd, 0, LEOPARD_HINSTANCE, std::ptr::null_mut(),
+                    parent_hwnd, 0, SOL_HINSTANCE, std::ptr::null_mut(),
                 );
                 if hwnd == 0 {
                     return Err("Failed to create Button".to_string());
@@ -362,7 +362,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("Entry".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.Entry>".to_string(),
+        name: "<sol.Entry>".to_string(),
         func: Rc::new(|args, ctx| {
             ensure_registered()?;
             let parent_hwnd = {
@@ -377,7 +377,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
                     std::ptr::null(),
                     WS_CHILD | WS_VISIBLE | ES_LEFT | ES_AUTOHSCROLL,
                     0, 0, 150, 24,
-                    parent_hwnd, 0, LEOPARD_HINSTANCE, std::ptr::null_mut(),
+                    parent_hwnd, 0, SOL_HINSTANCE, std::ptr::null_mut(),
                 );
                 if hwnd == 0 {
                     return Err("Failed to create Entry".to_string());
@@ -388,7 +388,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("pack".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.pack>".to_string(),
+        name: "<sol.pack>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("pack requires a widget")?;
@@ -410,7 +410,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
                 let w = widget_rect.right - widget_rect.left;
                 let h = widget_rect.bottom - widget_rect.top;
 
-                let prop_name = utf8_to_wide("LeopardPackOffset");
+                let prop_name = utf8_to_wide("SolPackOffset");
                 let raw = GetPropW(parent_hwnd, prop_name.as_ptr());
                 let mut offset = raw as i32;
 
@@ -450,7 +450,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("place".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.place>".to_string(),
+        name: "<sol.place>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("place requires a widget")?;
@@ -473,7 +473,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("config".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.config>".to_string(),
+        name: "<sol.config>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("config requires a widget")?;
@@ -504,7 +504,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("get".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.get>".to_string(),
+        name: "<sol.get>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("get requires an Entry widget")?;
@@ -522,7 +522,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("insert".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.insert>".to_string(),
+        name: "<sol.insert>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("insert requires an Entry widget")?;
@@ -541,7 +541,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("delete".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.delete>".to_string(),
+        name: "<sol.delete>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("delete requires an Entry widget")?;
@@ -561,7 +561,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("title".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.title>".to_string(),
+        name: "<sol.title>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("title requires a Tk window")?;
@@ -575,7 +575,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("geometry".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.geometry>".to_string(),
+        name: "<sol.geometry>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("geometry requires a Tk window")?;
@@ -595,7 +595,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("destroy".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.destroy>".to_string(),
+        name: "<sol.destroy>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("destroy requires a widget")?;
@@ -608,7 +608,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("mainloop".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.mainloop>".to_string(),
+        name: "<sol.mainloop>".to_string(),
         func: Rc::new(|args, ctx| {
             let hwnd = {
                 let w = args.get(0).ok_or("mainloop requires a Tk window")?;
@@ -642,7 +642,7 @@ pub fn build_leopard() -> Vec<(String, Value)> {
     })));
 
     funcs.push(("messagebox".to_string(), Value::NativeFunc(NativeFunc {
-        name: "<leopard.messagebox>".to_string(),
+        name: "<sol.messagebox>".to_string(),
         func: Rc::new(|args, ctx| {
             let text = args.get(0).map(|a| a.to_string(ctx.heap)).unwrap_or_default();
             let title = args.get(1).map(|a| a.to_string(ctx.heap)).unwrap_or_else(|| "Message".to_string());

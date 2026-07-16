@@ -1,15 +1,15 @@
-# Lion Programming Language
+# Zamin Programming Language
 
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.7.0-green)](https://github.com/young-developer90/lion/releases)
-[![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/lion/actions)
-[![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/lion/pulls)
+[![Version](https://img.shields.io/badge/version-1.7.0-green)](https://github.com/young-developer90/zamin/releases)
+[![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/zamin/actions)
+[![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/zamin/pulls)
 
-Lion is a simple, expressive scripting language with a Rust-based interpreter. It combines modern language features -- closures, pattern matching, string interpolation, and a module system -- with a lightweight bytecode VM, optional GPU acceleration, and a built-in project manager.
+Zamin is a simple, expressive scripting language with a Rust-based interpreter. It combines modern language features -- closures, pattern matching, string interpolation, and a module system -- with a lightweight bytecode VM, optional GPU acceleration, and a built-in project manager.
 
 ```
-print("Hello, Lion!");
+print("Hello, Zamin!");
 ```
 
 ## Documentation
@@ -21,7 +21,7 @@ print("Hello, Lion!");
 | [Getting Started](docs/getting-started.html) | Installation, setup, and first script |
 | [Language Guide](docs/language-guide.html) | Complete language reference |
 | [Standard Library](docs/standard-library.html) | All 25+ built-in modules |
-| [GUI Toolkit](docs/gui-guide.html) | Leopard (Windows) and Panther (Linux) |
+| [GUI Toolkit](docs/gui-guide.html) | Sol (Windows) and Luna (Linux) |
 | [OpenCV](docs/opencv-guide.html) | Computer vision and image processing |
 | [Advanced Guide](docs/advanced-guide.html) | C extensions, Python interop, CUDA, embedding |
 | [Project Management](docs/project-management.html) | CLI commands and project structure |
@@ -31,24 +31,24 @@ print("Hello, Lion!");
 ## Quick Start
 
 ```bash
-git clone https://github.com/young-developer90/lion.git
-cd lion
+git clone https://github.com/young-developer90/zamin.git
+cd zamin
 cargo build --release
-./target/release/lion run examples/hello.lion
+./target/release/zamin run examples/hello.zamin
 ```
 
 ### Start the REPL
 
 ```bash
-./target/release/lion repl
+./target/release/zamin repl
 ```
 
 ```
-Lion> let x = 42;
-Lion> print(f"the answer is {x}");
+Zamin> let x = 42;
+Zamin> print(f"the answer is {x}");
 the answer is 42
-Lion> func fib(n) { if n <= 1 { return n; } return fib(n-1) + fib(n-2); }
-Lion> print(fib(20));
+Zamin> func fib(n) { if n <= 1 { return n; } return fib(n-1) + fib(n-2); }
+Zamin> print(fib(20));
 6765
 ```
 
@@ -67,53 +67,53 @@ for i in 0..10 { print(f"fib({i}) = {fibonacci(i)}"); }
 ### HTTP Request
 
 ```lion
-let resp = http.get("https://api.github.com/repos/young-developer90/lion");
+let resp = http.get("https://api.github.com/repos/young-developer90/zamin");
 print(resp.status);
 ```
 
 ### File I/O
 
 ```lion
-fs.write("hello.txt", "Hello, Lion!");
+fs.write("hello.txt", "Hello, Zamin!");
 let content = fs.read("hello.txt");
 print(content);
 ```
 
-### GUI (Linux with Panther)
+### GUI (Linux with Luna)
 
 ```bash
 sudo apt install libgtk-4-dev
-cargo build --release --features panther
+cargo build --release --features luna
 ```
 
 ```lion
-let win = panther.Leo("App", 400, 300);
-let label = panther.Label(win, "Hello from Panther!");
-panther.pack(label);
-let btn = panther.Button(win, "Click", func() {
-    panther.config(label, "text", "Clicked!");
+let win = luna.Leo("App", 400, 300);
+let label = luna.Label(win, "Hello from Luna!");
+luna.pack(label);
+let btn = luna.Button(win, "Click", func() {
+    luna.config(label, "text", "Clicked!");
 });
-panther.pack(btn);
-panther.mainloop(win);
+luna.pack(btn);
+luna.mainloop(win);
 ```
 
 ## CLI
 
 | Command | Description |
 |---------|-------------|
-| `lion run <file>` | Run a script |
-| `lion repl` | Interactive REPL |
-| `lion fmt <file>` | Format source code |
-| `lion test [filter]` | Run tests |
-| `lion new <name>` | Create a new project |
-| `lion init` | Initialize project in current dir |
-| `lion build` | Type-check all `.lion` files |
-| `lion version` | Show version |
-| `lion-rs <file>` | Quick-run without subcommands |
+| `zamin run <file>` | Run a script |
+| `zamin repl` | Interactive REPL |
+| `zamin fmt <file>` | Format source code |
+| `zamin test [filter]` | Run tests |
+| `zamin new <name>` | Create a new project |
+| `zamin init` | Initialize project in current dir |
+| `zamin build` | Type-check all `.zamin` files |
+| `zamin version` | Show version |
+| `zamin-rs <file>` | Quick-run without subcommands |
 
 ## Performance
 
-Lion's bytecode VM achieves significant speedups through raw byte dispatch, specialized integer opcodes, and a peephole optimizer:
+Zamin's bytecode VM achieves significant speedups through raw byte dispatch, specialized integer opcodes, and a peephole optimizer:
 
 | Benchmark | Speedup |
 |-----------|---------|
@@ -134,8 +134,8 @@ cargo build --release
 # With OpenCV
 cargo build --release --features opencv
 
-# With Panther (Linux GUI)
-cargo build --release --features panther
+# With Luna (Linux GUI)
+cargo build --release --features luna
 
 # With Python interop
 cargo build --release --features python

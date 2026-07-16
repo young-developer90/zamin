@@ -1,8 +1,8 @@
-// Basic Cheetah UI test
-// Run with: lion run examples/cheetah_basic.lion
+// Basic Comet UI test
+// Run with: zamin run examples/comet_basic.lion
 
 func main() {
-    let ui = cheetah();
+    let ui = comet();
 
     // Simple element rendering
     let el = ui.p("Hello Lion!").style("color: orange; font-size: 20px;");
@@ -20,5 +20,5 @@ func main() {
     print("Div with content:");
     print(ui.raw(div_content));
 
-    print("PASS: cheetah tests completed");
+    print("PASS: comet tests completed");
 }

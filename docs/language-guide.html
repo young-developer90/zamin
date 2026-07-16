@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Language Guide - Lion Programming Language</title>
-  <meta name="description" content="Complete language reference for the Lion programming language">
+  <title>Language Guide - Zamin Programming Language</title>
+  <meta name="description" content="Complete language reference for the Zamin programming language">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -57,15 +57,15 @@
         </nav>
 
         <h1>Language Guide</h1>
-        <p>A complete reference for the Lion programming language. This guide covers every core feature — from variables and types to structs, pattern matching, and modules. Each section includes explanations and runnable code examples.</p>
+        <p>A complete reference for the Zamin programming language. This guide covers every core feature — from variables and types to structs, pattern matching, and modules. Each section includes explanations and runnable code examples.</p>
 
         <!-- ========== Variables and Types ========== -->
         <h2 id="variables-and-types">Variables and Types</h2>
-        <p>Lion uses <code>let</code> for mutable variables and <code>const</code> for constants. You never write explicit type annotations — the compiler infers types from the assigned value.</p>
+        <p>Zamin uses <code>let</code> for mutable variables and <code>const</code> for constants. You never write explicit type annotations — the compiler infers types from the assigned value.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let x = 42;
-let name = "Lion";
+let name = "Zamin";
 let pi = 3.14159;
 let active = true;
 
@@ -73,7 +73,7 @@ const MAX_SIZE = 1024;
 const GREETING = "hello";</code></pre>
 
         <h3>Core Types</h3>
-        <p>Lion provides these built-in types:</p>
+        <p>Zamin provides these built-in types:</p>
         <ul>
           <li><code>int</code> — signed 64-bit integer (<code>i64</code>)</li>
           <li><code>uint</code> — unsigned 64-bit integer (<code>u64</code>)</li>
@@ -89,7 +89,7 @@ const GREETING = "hello";</code></pre>
 
         <h3>Type Conversion</h3>
         <p>Use built-in conversion functions to change between types:</p>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let n = int("42");       // 42
 let f = float("3.14");   // 3.14
 let s = string(100);     // "100"
@@ -100,28 +100,28 @@ let b2 = bool(0);        // false</code></pre>
 
         <!-- ========== Strings ========== -->
         <h2 id="strings">Strings</h2>
-        <p>Strings in Lion are UTF-8 encoded. Both double quotes and single quotes create identical strings.</p>
+        <p>Strings in Zamin are UTF-8 encoded. Both double quotes and single quotes create identical strings.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let s1 = "hello";
 let s2 = 'hello';
 // s1 and s2 are equivalent</code></pre>
 
         <h3>F-Strings</h3>
         <p>Prefix a string with <code>f</code> to embed expressions inside <code>{}</code>:</p>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>let name = "Lion";
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>let name = "Zamin";
 let version = 2;
 
 println(f"Welcome to {name} v{version}!");
-// Output: Welcome to Lion v2!
+// Output: Welcome to Zamin v2!
 
 let x = 10;
 println(f"Result: {x * 2 + 1}");
 // Output: Result: 21</code></pre>
 
         <h3>Concatenation and Repetition</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let greeting = "Hello" + ", " + "world!";
 println(greeting);
 // Output: Hello, world!
@@ -136,7 +136,7 @@ println(pattern);
         <h2 id="numbers">Numbers</h2>
 
         <h3>Integer Literals</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let decimal = 42;
 let negative = -7;
 let hex = 0xff;
@@ -144,12 +144,12 @@ let binary = 0b1010;
 let octal = 0o77;</code></pre>
 
         <h3>Unsigned Integers</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let count = 42u;
 let size = 1024u;</code></pre>
 
         <h3>Floating-Point Literals</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let pi = 3.14159;
 let negative = -0.5;
 let huge = 1e10;</code></pre>
@@ -170,7 +170,7 @@ let huge = 1e10;</code></pre>
           </tbody>
         </table>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>println(10 / 3);      // 3.33333...
 println(10 // 3);     // 3
 println(10 % 3);      // 1
@@ -183,10 +183,10 @@ println(2 ** 8);      // 256</code></pre>
 
         <!-- ========== Booleans ========== -->
         <h2 id="booleans">Booleans</h2>
-        <p>Lion has two boolean literals: <code>true</code> and <code>false</code>.</p>
+        <p>Zamin has two boolean literals: <code>true</code> and <code>false</code>.</p>
 
         <h3>Logical Operators</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let a = true;
 let b = false;
 
@@ -209,7 +209,7 @@ if not b {
         </ul>
         <p>Everything else is <strong>truthy</strong>, including non-empty strings, non-zero numbers, and non-empty collections.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>if "hello" {
     println("truthy!");
 }
@@ -228,7 +228,7 @@ if [] {
         <h3 id="lists">Lists</h3>
         <p>Lists are ordered, heterogeneous, and growable. Create them with square brackets.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let fruits = ["apple", "banana", "cherry"];
 let mixed = [1, "two", true, 3.0];
 
@@ -254,7 +254,7 @@ if "apple" in fruits {
         <h3 id="dicts">Dicts</h3>
         <p>Dicts map keys to values. Use curly-brace syntax and dot-notation for access.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let user = {
     name: "Alice",
     age: 30,
@@ -289,7 +289,7 @@ for key, value in user.items() {
         <h3 id="sets">Sets</h3>
         <p>Sets store unique, unordered values. Use curly-brace syntax with distinct elements.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let colors = {"red", "green", "blue"};
 
 colors.add("yellow");
@@ -311,7 +311,7 @@ if 2 in a {
         <h3 id="tuples">Tuples</h3>
         <p>Tuples are fixed-size, immutable collections. Once created, they cannot be changed.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let point = (3, 4);
 println(point[0]);  // 3
 println(point[1]);  // 4
@@ -331,7 +331,7 @@ println(f"min={lo}, max={hi}");</code></pre>
         <h3 id="comprehensions">List Comprehensions</h3>
         <p>Create lists with concise expressions that iterate, filter, and transform in a single line.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let doubled = [x * 2 for x in 0..10];
 // [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
 
@@ -349,7 +349,7 @@ let filtered = [x * x for x in nums if x > 2];
         <h3>Range Expressions</h3>
         <p>Ranges generate sequences of integers. They are commonly used in <code>for</code> loops and comprehensions.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Exclusive end (0 to 9)
 for i in 0..10 {
     print(f"{i} ");
@@ -371,7 +371,7 @@ println(list); // [10, 11, 12, 13, 14, 15]</code></pre>
         <h2 id="control-flow">Control Flow</h2>
 
         <h3>If / Elif / Else</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let score = 85;
 
 if score >= 90 {
@@ -388,7 +388,7 @@ if score >= 90 {
         <h3>Ternary Expressions</h3>
         <p>Assign the result of a conditional expression to a variable:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let age = 20;
 let status = if age >= 18 { "adult" } else { "minor" };
 println(status); // "adult"
@@ -398,7 +398,7 @@ let label = if x > 0 { "positive" } else if x < 0 { "negative" } else { "zero" }
 println(label); // "positive"</code></pre>
 
         <h3>While Loops</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let count = 0;
 while count < 5 {
     println(count);
@@ -416,7 +416,7 @@ while true {
 }</code></pre>
 
         <h3>For Loops</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Iterate over a list
 let items = ["a", "b", "c"];
 for item in items {
@@ -445,7 +445,7 @@ for key, value in map {
 }</code></pre>
 
         <h3>Break and Continue</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// break exits the innermost loop
 for i in 0..100 {
     if i == 5 {
@@ -467,7 +467,7 @@ for i in 0..10 {
         <h3>Match (Pattern Matching)</h3>
         <p>The <code>match</code> statement compares a value against multiple patterns and executes the matching branch. Use <code>_</code> as the wildcard for a default case.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let command = "start";
 
 match command {
@@ -508,7 +508,7 @@ match point {
         <h3>Named Functions</h3>
         <p>Define functions with the <code>func</code> keyword and a block body:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func add(a, b) {
     return a + b;
 }
@@ -518,18 +518,18 @@ println(add(3, 4)); // 7</code></pre>
         <h3>Expression Bodies</h3>
         <p>For short functions, use an expression body instead of a block:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func add(a, b) = a + b;
 func square(n) = n ** 2;
 func greet(name) = f"Hello, {name}!";
 
 println(square(5));  // 25
-println(greet("Lion")); // "Hello, Lion!"</code></pre>
+println(greet("Zamin")); // "Hello, Zamin!"</code></pre>
 
         <h3>Lambda / Closure Expressions</h3>
         <p>Anonymous functions can be assigned to variables:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let add = func(a, b) {
     return a + b;
 };
@@ -540,7 +540,7 @@ println(add(2, 3));       // 5
 println(multiply(4, 5));  // 20</code></pre>
 
         <h3>Default Arguments</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func greet(name = "World") {
     println(f"Hello, {name}!");
 }
@@ -551,7 +551,7 @@ greet("Alice"); // "Hello, Alice!"</code></pre>
         <h3>Variadic Arguments</h3>
         <p>Prefix a parameter with <code>*</code> to accept any number of arguments:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func sum(*nums) {
     let total = 0;
     for n in nums {
@@ -565,7 +565,7 @@ println(sum(1, 2, 3, 4)); // 10</code></pre>
         <h3>Closures</h3>
         <p>Functions can capture and use variables from their enclosing scope:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func make_counter() {
     let count = 0;
     return func() {
@@ -582,7 +582,7 @@ println(counter()); // 3</code></pre>
         <h3>Higher-Order Functions</h3>
         <p>Functions can be passed as arguments to other functions:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func apply(f, value) {
     return f(value);
 }
@@ -597,14 +597,14 @@ let nums = [1, 2, 3, 4, 5];
 let doubled = [apply(double, x) for x in nums];
 println(doubled); // [2, 4, 6, 8, 10]</code></pre>
 
-        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Lion supports common functional operations like <code>map</code>, <code>filter</code>, and <code>reduce</code> — either as built-in functions or methods on lists. List comprehensions are often preferred for readability.</p></div>
+        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Zamin supports common functional operations like <code>map</code>, <code>filter</code>, and <code>reduce</code> — either as built-in functions or methods on lists. List comprehensions are often preferred for readability.</p></div>
 
         <!-- ========== Structs ========== -->
         <h2 id="structs">Structs</h2>
-        <p>Structs are Lion's primary mechanism for creating custom types with named fields.</p>
+        <p>Structs are Zamin's primary mechanism for creating custom types with named fields.</p>
 
         <h3>Defining and Instantiating</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>struct Point {
     x,
     y,
@@ -617,7 +617,7 @@ println(p.y);  // 4</code></pre>
         <h3>Init Method</h3>
         <p>Define an <code>init</code> function on a struct to run custom logic during construction. The <code>init</code> function receives the struct instance and can set default or computed field values.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>struct Rectangle {
     width,
     height,
@@ -635,7 +635,7 @@ println(rect.perimeter);  // 30</code></pre>
         <h3>Methods</h3>
         <p>Assign closures to struct fields to create methods:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>struct Circle {
     radius,
 }
@@ -652,7 +652,7 @@ println(c.describe());       // "Circle with radius 5"</code></pre>
         <h3>Struct Comparison</h3>
         <p>Structs of the same type compare by value when all their fields are comparable:</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>let a = Point(1, 2);
 let b = Point(1, 2);
 let c = Point(3, 4);
@@ -661,21 +661,21 @@ println(a == b); // true
 println(a == c); // false
 println(a != c); // true</code></pre>
 
-        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Structs in Lion are reference types by default. Two variables assigned from the same struct instance will share the same data. Use explicit copying when independent copies are needed.</p></div>
+        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Structs in Zamin are reference types by default. Two variables assigned from the same struct instance will share the same data. Use explicit copying when independent copies are needed.</p></div>
 
         <!-- ========== Error Handling ========== -->
         <h2 id="error-handling">Error Handling</h2>
-        <p>Lion provides structured error handling with <code>try</code>/<code>catch</code> blocks and the <code>throw</code> keyword.</p>
+        <p>Zamin provides structured error handling with <code>try</code>/<code>catch</code> blocks and the <code>throw</code> keyword.</p>
 
         <h3>Throwing Errors</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>throw "something went wrong";
 
 // Or use a structured error object
 throw Error("invalid input");</code></pre>
 
         <h3>Try / Catch</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>try {
     let result = risky_operation();
     println(result);
@@ -686,7 +686,7 @@ throw Error("invalid input");</code></pre>
         <h3>Error Propagation</h3>
         <p>When a function can fail, errors automatically propagate up the call stack unless caught. This lets you handle errors at the appropriate level.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>func parse_number(s) {
     let n = int(s);
     if n == nil {
@@ -718,10 +718,10 @@ try {
 
         <!-- ========== Modules and Imports ========== -->
         <h2 id="modules-and-imports">Modules and Imports</h2>
-        <p>Lion's module system lets you split code across files and reuse shared libraries.</p>
+        <p>Zamin's module system lets you split code across files and reuse shared libraries.</p>
 
         <h3>Importing Modules</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>import math
 import string
 import os
@@ -733,7 +733,7 @@ let upper = string.to_upper("hello");
 println(upper); // "HELLO"</code></pre>
 
         <h3>Aliased Imports</h3>
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>import math as m
 import string as str
 
@@ -743,8 +743,8 @@ println(str.to_upper("hi")); // "HI"</code></pre>
         <h3>Creating Modules with Export</h3>
         <p>Mark items as <code>export</code> to make them available when the module is imported.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>// my_module.lion
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>// my_module.zamin
 export func greet(name) = f"Hello, {name}!";
 
 export let VERSION = "1.0.0";
@@ -754,8 +754,8 @@ struct export User {
     email,
 }</code></pre>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
-        <pre><code>// main.lion
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
+        <pre><code>// main.zamin
 import my_module
 
 println(my_module.greet("Alice")); // "Hello, Alice!"
@@ -764,21 +764,21 @@ println(my_module.VERSION);        // "1.0.0"
 let user = my_module.User("Bob", "bob@example.com");</code></pre>
 
         <h3>Module Loading Paths</h3>
-        <p>Lion searches for modules in these locations, in order:</p>
+        <p>Zamin searches for modules in these locations, in order:</p>
         <ol>
           <li>The current file's directory</li>
           <li>The project's <code>lib/</code> directory</li>
-          <li>The Lion standard library path</li>
-          <li>Paths specified in <code>lion.json</code> configuration</li>
+          <li>The Zamin standard library path</li>
+          <li>Paths specified in <code>zamin.json</code> configuration</li>
         </ol>
 
-        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Use the <code>lion project</code> CLI to manage dependencies and module paths. See <a href="project-management.html">Project CLI</a> for details.</p></div>
+        <div class="callout callout-tip"><div class="callout-title">&#128161; Tip</div><p>Use the <code>zamin project</code> CLI to manage dependencies and module paths. See <a href="project-management.html">Project CLI</a> for details.</p></div>
 
         <!-- ========== Comments ========== -->
         <h2 id="comments">Comments</h2>
-        <p>Lion supports single-line comments. Everything after <code>//</code> to the end of the line is ignored by the compiler.</p>
+        <p>Zamin supports single-line comments. Everything after <code>//</code> to the end of the line is ignored by the compiler.</p>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// This is a comment
 let x = 42; // Inline comment
 
@@ -790,7 +790,7 @@ let x = 42; // Inline comment
 
         <!-- ========== Operators ========== -->
         <h2 id="operators">Operators</h2>
-        <p>Below is a complete reference of all operators in Lion, listed from highest precedence to lowest.</p>
+        <p>Below is a complete reference of all operators in Zamin, listed from highest precedence to lowest.</p>
 
         <table>
           <thead>
@@ -815,7 +815,7 @@ let x = 42; // Inline comment
           </tbody>
         </table>
 
-        <div class="code-header"><span>Lion</span><button class="copy-btn">Copy</button></div>
+        <div class="code-header"><span>Zamin</span><button class="copy-btn">Copy</button></div>
         <pre><code>// Arithmetic
 println(2 ** 10);       // 1024
 println(7 / 2);         // 3.5

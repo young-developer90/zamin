@@ -135,11 +135,11 @@ fn make_route_func(
     })
 }
 
-pub fn build_jaguar() -> Vec<(String, Value)> {
+pub fn build_nova() -> Vec<(String, Value)> {
     vec![(
-        "jaguar".to_string(),
+        "nova".to_string(),
         Value::NativeFunc(NativeFunc {
-            name: "<jaguar>".to_string(),
+            name: "<nova>".to_string(),
             func: Rc::new(|_args, ctx| {
                 let routes_ref = ctx.heap.alloc(GcObj::List(Vec::new()));
                 let app_ref = ctx.heap.alloc(GcObj::Dict(Vec::new()));
@@ -179,7 +179,7 @@ pub fn build_jaguar() -> Vec<(String, Value)> {
 
                             SERVER_RUNNING.store(true, Ordering::SeqCst);
 
-                            println!("Jaguar server running on http://localhost:{}", port);
+                            println!("Nova server running on http://localhost:{}", port);
                             println!("Press Ctrl+C to stop");
 
                             let routes_snapshot: Vec<(String, String, Value)> = {

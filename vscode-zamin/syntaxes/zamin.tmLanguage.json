@@ -1,0 +1,160 @@
+{
+  "scopeName": "source.zamin",
+  "name": "Zamin",
+  "fileTypes": [".zamin"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#fstrings" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#builtins" },
+    { "include": "#modules" },
+    { "include": "#numbers" },
+    { "include": "#lambda" },
+    { "include": "#operators" },
+    { "include": "#constants" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "begin": "/\\*", "end": "\\*/", "name": "comment.block.zamin" },
+        { "match": "(?<![\\w)\\]}])//.*$", "name": "comment.line.double-slash.zamin" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "begin": "\"\"\"",
+          "end": "\"\"\"",
+          "name": "string.quoted.triple.zamin",
+          "patterns": [{ "include": "#escape" }]
+        },
+        {
+          "begin": "\"",
+          "end": "\"",
+          "name": "string.quoted.double.zamin",
+          "patterns": [{ "include": "#escape" }]
+        }
+      ]
+    },
+    "fstrings": {
+      "patterns": [
+        {
+          "begin": "f\"\"\"",
+          "beginCaptures": { "0": { "name": "support.function.interpolation.zamin" } },
+          "end": "\"\"\"",
+          "name": "string.interpolated.zamin",
+          "patterns": [
+            { "include": "#escape" },
+            {
+              "begin": "\\{",
+              "end": "\\}",
+              "name": "meta.interpolation.zamin",
+              "patterns": [{ "include": "source.zamin" }]
+            }
+          ]
+        },
+        {
+          "begin": "f\"",
+          "beginCaptures": { "0": { "name": "support.function.interpolation.zamin" } },
+          "end": "\"",
+          "name": "string.interpolated.zamin",
+          "patterns": [
+            { "include": "#escape" },
+            {
+              "begin": "\\{",
+              "end": "\\}",
+              "name": "meta.interpolation.zamin",
+              "patterns": [{ "include": "source.zamin" }]
+            }
+          ]
+        }
+      ]
+    },
+    "escape": {
+      "patterns": [
+        { "match": "\\\\[nrt0\"'\\\\]", "name": "constant.character.escape.zamin" },
+        { "match": "\\\\x[0-9a-fA-F]{2}", "name": "constant.character.escape.zamin" },
+        { "match": "\\\\u[0-9a-fA-F]{4}", "name": "constant.character.escape.zamin" },
+        { "match": "\\\\U[0-9a-fA-F]{8}", "name": "constant.character.escape.zamin" }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(?:let|const|func|export|import|from|as|if|else|elif|while|for|in|return|true|false|nil|match|throw|try|catch|break|continue|and|or|not|struct)\\b",
+          "name": "keyword.control.zamin"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(?:Int|UInt|Float|String|Bool|List|Dict|Set|Tuple|Nil)\\b",
+          "name": "support.type.zamin"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "match": "\\b(?:print|input|len|str|int|float|bool|type|range|to_string|string_len)\\b",
+          "name": "support.function.zamin"
+        }
+      ]
+    },
+    "modules": {
+      "patterns": [
+        {
+          "match": "\\b(?:math|time|rand|fs|os|json|csv|html|http|url|stats|re|datetime|logging|subprocess|path|hashlib|string|collections|itertools|test|luna|sol|astra|nova|comet)\\b",
+          "name": "support.class.module.zamin"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        { "match": "\\b[0-9]+\\.[0-9]+(?:[eE][+-]?[0-9]+)?\\b", "name": "constant.numeric.float.zamin" },
+        { "match": "\\b[0-9]+[uU]\\b", "name": "constant.numeric.integer.unsigned.zamin" },
+        { "match": "\\b0[xX][0-9a-fA-F]+\\b", "name": "constant.numeric.hex.zamin" },
+        { "match": "\\b0[bB][01]+\\b", "name": "constant.numeric.binary.zamin" },
+        { "match": "\\b[0-9]+\\b", "name": "constant.numeric.integer.zamin" }
+      ]
+    },
+    "lambda": {
+      "patterns": [
+        {
+          "begin": "\\|",
+          "end": "\\|",
+          "name": "meta.lambda.zamin",
+          "patterns": [{ "include": "source.zamin" }]
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        { "match": "=>", "name": "keyword.operator.arrow.zamin" },
+        { "match": "->", "name": "keyword.operator.arrow.zamin" },
+        { "match": "\\.\\.", "name": "keyword.operator.range.zamin" },
+        { "match": "==", "name": "keyword.operator.comparison.zamin" },
+        { "match": "!=", "name": "keyword.operator.comparison.zamin" },
+        { "match": "<=", "name": "keyword.operator.comparison.zamin" },
+        { "match": ">=", "name": "keyword.operator.comparison.zamin" },
+        { "match": "\\+=", "name": "keyword.operator.assignment.zamin" },
+        { "match": "-=", "name": "keyword.operator.assignment.zamin" },
+        { "match": "\\*=", "name": "keyword.operator.assignment.zamin" },
+        { "match": "/=", "name": "keyword.operator.assignment.zamin" },
+        { "match": "\\+\\+", "name": "keyword.operator.increment.zamin" },
+        { "match": "--", "name": "keyword.operator.decrement.zamin" },
+        { "match": "\\*\\*", "name": "keyword.operator.power.zamin" },
+        { "match": "(?<=[\\w)\\]}])//(?=[\\w(\\[\\{])", "name": "keyword.operator.integer-division.zamin" },
+        { "match": "[+\\-*/%<>=!&|]", "name": "keyword.operator.zamin" }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        { "match": "\\b(?:pi|e)\\b", "name": "constant.language.zamin" }
+      ]
+    }
+  }
+}

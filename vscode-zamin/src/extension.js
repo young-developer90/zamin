@@ -13,19 +13,19 @@ function activate(ctx) {
     const ext = process.platform === 'win32' ? '.exe' : '';
 
     const candidates = [
-        'lion-lsp',
-        path.join(wsDir, 'target', 'debug', `lion-lsp${ext}`),
-        path.join(wsDir, 'target', 'release', `lion-lsp${ext}`),
-        path.join(extDir, `lion-lsp${ext}`),
-        path.join(extDir, '..', 'target', 'debug', `lion-lsp${ext}`),
-        path.join(extDir, '..', 'target', 'release', `lion-lsp${ext}`),
+        'zamin-lsp',
+        path.join(wsDir, 'target', 'debug', `zamin-lsp${ext}`),
+        path.join(wsDir, 'target', 'release', `zamin-lsp${ext}`),
+        path.join(extDir, `zamin-lsp${ext}`),
+        path.join(extDir, '..', 'target', 'debug', `zamin-lsp${ext}`),
+        path.join(extDir, '..', 'target', 'release', `zamin-lsp${ext}`),
     ];
 
     let serverModule = null;
     for (const c of candidates) {
-        if (c === 'lion-lsp') {
+        if (c === 'zamin-lsp') {
             try {
-                cp.execSync('lion-lsp --version', { stdio: 'ignore' });
+                cp.execSync('zamin-lsp --version', { stdio: 'ignore' });
                 serverModule = c;
                 break;
             } catch (_) {}
@@ -36,7 +36,7 @@ function activate(ctx) {
     }
 
     if (!serverModule) {
-        vscode.window.showErrorMessage('lion-lsp not found. Build it with: cargo build --bin lion-lsp');
+        vscode.window.showErrorMessage('zamin-lsp not found. Build it with: cargo build --bin zamin-lsp');
         return;
     }
 
@@ -46,11 +46,11 @@ function activate(ctx) {
     };
 
     const clientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'lion' }],
-        diagnosticCollectionName: 'lion'
+        documentSelector: [{ scheme: 'file', language: 'zamin' }],
+        diagnosticCollectionName: 'zamin'
     };
 
-    client = new lc.LanguageClient('lion-lsp', 'Lion Language Server', serverOptions, clientOptions);
+    client = new lc.LanguageClient('zamin-lsp', 'Zamin Language Server', serverOptions, clientOptions);
     client.start();
 }
 

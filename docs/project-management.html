@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Management - Lion Programming Language</title>
-  <meta name="description" content="Complete reference for the Lion CLI: project scaffolding, running code, the REPL, formatting, testing, and the lion.json manifest.">
+  <title>Project Management - Zamin Programming Language</title>
+  <meta name="description" content="Complete reference for the Zamin CLI: project scaffolding, running code, the REPL, formatting, testing, and the zamin.json manifest.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -56,7 +56,7 @@
         </div>
 
         <h1>Project Management</h1>
-        <p>Lion ships with a full CLI toolchain for creating, running, formatting, and testing projects. This page covers every command and the project manifest format.</p>
+        <p>Zamin ships with a full CLI toolchain for creating, running, formatting, and testing projects. This page covers every command and the project manifest format.</p>
 
         <h2 id="cli-commands">CLI Commands</h2>
         <table>
@@ -64,42 +64,42 @@
             <tr><th>Command</th><th>Description</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>lion run &lt;file&gt; [--disassemble]</code></td><td>Run a Lion source file. Pass <code>--disassemble</code> to print the bytecode before execution.</td></tr>
-            <tr><td><code>lion repl</code></td><td>Start the interactive Read-Eval-Print Loop.</td></tr>
-            <tr><td><code>lion version</code></td><td>Print the Lion version, build date, and LLVM version.</td></tr>
-            <tr><td><code>lion fmt &lt;file&gt;</code></td><td>Format a Lion source file in place.</td></tr>
-            <tr><td><code>lion test [filter]</code></td><td>Run all tests, or only tests matching <code>filter</code>.</td></tr>
-            <tr><td><code>lion new &lt;name&gt;</code></td><td>Scaffold a new project directory with the standard layout.</td></tr>
-            <tr><td><code>lion init</code></td><td>Initialize a <code>lion.json</code> manifest in the current directory.</td></tr>
-            <tr><td><code>lion build</code></td><td>Build the project into a standalone executable.</td></tr>
-            <tr><td><code>lion-rs &lt;file&gt;</code></td><td>Quick runner - compiles and executes a single file in one step.</td></tr>
+            <tr><td><code>zamin run &lt;file&gt; [--disassemble]</code></td><td>Run a Zamin source file. Pass <code>--disassemble</code> to print the bytecode before execution.</td></tr>
+            <tr><td><code>zamin repl</code></td><td>Start the interactive Read-Eval-Print Loop.</td></tr>
+            <tr><td><code>zamin version</code></td><td>Print the Zamin version, build date, and LLVM version.</td></tr>
+            <tr><td><code>zamin fmt &lt;file&gt;</code></td><td>Format a Zamin source file in place.</td></tr>
+            <tr><td><code>zamin test [filter]</code></td><td>Run all tests, or only tests matching <code>filter</code>.</td></tr>
+            <tr><td><code>zamin new &lt;name&gt;</code></td><td>Scaffold a new project directory with the standard layout.</td></tr>
+            <tr><td><code>zamin init</code></td><td>Initialize a <code>zamin.json</code> manifest in the current directory.</td></tr>
+            <tr><td><code>zamin build</code></td><td>Build the project into a standalone executable.</td></tr>
+            <tr><td><code>zamin-rs &lt;file&gt;</code></td><td>Quick runner - compiles and executes a single file in one step.</td></tr>
           </tbody>
         </table>
 
         <h2 id="project-structure">Project Structure</h2>
         <p>Create a new project with:</p>
-        <pre><code>lion new my_project</code></pre>
+        <pre><code>zamin new my_project</code></pre>
         <p>This generates the following layout:</p>
         <pre><code>my_project/
-├── lion.json
+├── zamin.json
 ├── src/
-│   └── main.lion
+│   └── main.zamin
 ├── tests/
-│   └── main_test.lion
+│   └── main_test.zamin
 └── modules/</code></pre>
         <p>You can also initialize a manifest in an existing directory:</p>
         <pre><code>mkdir my_project &amp;&amp; cd my_project
-lion init</code></pre>
+zamin init</code></pre>
 
-        <h2 id="lion-json">lion.json Manifest</h2>
-        <p>The <code>lion.json</code> file describes your project. Here is the full format with all supported fields:</p>
+        <h2 id="zamin-json">zamin.json Manifest</h2>
+        <p>The <code>zamin.json</code> file describes your project. Here is the full format with all supported fields:</p>
         <pre><code>{
   "name": "my_project",
   "version": "0.1.0",
   "description": "A short description of the project.",
   "author": "Your Name",
   "license": "MIT",
-  "entry": "src/main.lion",
+  "entry": "src/main.zamin",
   "dependencies": {
     "http": "^1.0.0",
     "json": "^2.1.0"
@@ -108,9 +108,9 @@ lion init</code></pre>
     "test_utils": "^0.5.0"
   },
   "scripts": {
-    "start": "lion run src/main.lion",
-    "test": "lion test",
-    "fmt": "lion fmt src/"
+    "start": "zamin run src/main.zamin",
+    "test": "zamin test",
+    "fmt": "zamin fmt src/"
   },
   "modules_path": "modules/",
   "target": "linux-x86_64",
@@ -126,10 +126,10 @@ lion init</code></pre>
             <tr><td><code>description</code></td><td>string</td><td>Short description</td></tr>
             <tr><td><code>author</code></td><td>string</td><td>Author name</td></tr>
             <tr><td><code>license</code></td><td>string</td><td>License identifier (SPDX)</td></tr>
-            <tr><td><code>entry</code></td><td>string</td><td>Entry point file (default: <code>src/main.lion</code>)</td></tr>
+            <tr><td><code>entry</code></td><td>string</td><td>Entry point file (default: <code>src/main.zamin</code>)</td></tr>
             <tr><td><code>dependencies</code></td><td>object</td><td>Runtime dependencies</td></tr>
             <tr><td><code>dev_dependencies</code></td><td>object</td><td>Development-only dependencies</td></tr>
-            <tr><td><code>scripts</code></td><td>object</td><td>Named scripts runnable with <code>lion run --script &lt;name&gt;</code></td></tr>
+            <tr><td><code>scripts</code></td><td>object</td><td>Named scripts runnable with <code>zamin run --script &lt;name&gt;</code></td></tr>
             <tr><td><code>modules_path</code></td><td>string</td><td>Path to load native modules from (default: <code>modules/</code>)</td></tr>
             <tr><td><code>target</code></td><td>string</td><td>Build target triple</td></tr>
             <tr><td><code>optimization</code></td><td>string</td><td><code>"debug"</code> or <code>"release"</code></td></tr>
@@ -138,7 +138,7 @@ lion init</code></pre>
 
         <h2 id="repl">REPL</h2>
         <p>Start the interactive REPL with:</p>
-        <pre><code>lion repl</code></pre>
+        <pre><code>zamin repl</code></pre>
         <p>The REPL supports the following built-in commands:</p>
         <table>
           <thead>
@@ -155,14 +155,14 @@ lion init</code></pre>
         <p>Press <code>Tab</code> to auto-complete keywords, built-in functions, and previously used identifiers. Press <code>Tab</code> twice to see all possible completions.</p>
 
         <h2 id="formatter">Formatter</h2>
-        <p>Lion includes a built-in code formatter. Use it to enforce consistent style:</p>
-        <pre><code>lion fmt src/main.lion</code></pre>
+        <p>Zamin includes a built-in code formatter. Use it to enforce consistent style:</p>
+        <pre><code>zamin fmt src/main.zamin</code></pre>
         <p>You can also format all files in a directory:</p>
-        <pre><code>lion fmt src/</code></pre>
+        <pre><code>zamin fmt src/</code></pre>
         <p>The formatter is idempotent - running it multiple times produces the same output. It respects existing indentation and does not reorder imports.</p>
 
         <h2 id="testing">Testing</h2>
-        <p>Lion has a built-in test framework. Write tests using the <code>test</code> module:</p>
+        <p>Zamin has a built-in test framework. Write tests using the <code>test</code> module:</p>
         <pre><code>use test
 
 fn test_addition() {
@@ -183,9 +183,9 @@ fn test_error_handling() {
     }, "accessing nil should raise an error")
 }</code></pre>
         <p>Run your tests with:</p>
-        <pre><code>lion test</code></pre>
+        <pre><code>zamin test</code></pre>
         <p>Run only tests whose names match a filter:</p>
-        <pre><code>lion test addition</code></pre>
+        <pre><code>zamin test addition</code></pre>
         <p>This will run only <code>test_addition</code>. The filter is matched as a substring against all test function names.</p>
 
         <div class="page-meta">

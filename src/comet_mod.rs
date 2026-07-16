@@ -123,7 +123,7 @@ fn push_tag(entries: &mut Vec<(Value, Value)>, heap: &mut GcHeap, tag: &str) {
     let t = tag.to_string();
     let key = make_string(heap, tag);
     let func = Value::NativeFunc(NativeFunc {
-        name: format!("<cheetah.{}>", t),
+        name: format!("<comet.{}>", t),
         func: Rc::new(move |args2, ctx2| {
             let content = args2.first().cloned().unwrap_or(Value::Nil);
             Ok(make_element(&t, content, ctx2.heap))
@@ -132,13 +132,13 @@ fn push_tag(entries: &mut Vec<(Value, Value)>, heap: &mut GcHeap, tag: &str) {
     entries.push((key, func));
 }
 
-pub fn build_cheetah() -> Vec<(String, Value)> {
+pub fn build_comet() -> Vec<(String, Value)> {
     vec![(
-        "cheetah".to_string(),
+        "comet".to_string(),
         Value::NativeFunc(NativeFunc {
-            name: "<cheetah>".to_string(),
+            name: "<comet>".to_string(),
             func: Rc::new(|_args, ctx| {
-                let cheetah_ref = ctx.heap.alloc(GcObj::Dict(Vec::new()));
+                let comet_ref = ctx.heap.alloc(GcObj::Dict(Vec::new()));
                 let mut builder_entries = Vec::new();
 
                 let block_tags = ["body", "center", "div", "span", "section", "article",
@@ -165,7 +165,7 @@ pub fn build_cheetah() -> Vec<(String, Value)> {
                 let render_key = make_string(ctx.heap, "render");
 
                 let raw_func = Value::NativeFunc(NativeFunc {
-                    name: "<cheetah.raw>".to_string(),
+                    name: "<comet.raw>".to_string(),
                     func: Rc::new(|args2, ctx2| {
                         let val = args2.first().cloned().unwrap_or(Value::Nil);
                         let html = render_element(&val, ctx2.heap);
@@ -174,7 +174,7 @@ pub fn build_cheetah() -> Vec<(String, Value)> {
                 });
 
                 let html_func = Value::NativeFunc(NativeFunc {
-                    name: "<cheetah.html>".to_string(),
+                    name: "<comet.html>".to_string(),
                     func: Rc::new(|args2, ctx2| {
                         let val = args2.first().cloned().unwrap_or(Value::Nil);
                         let html = render_element(&val, ctx2.heap);
@@ -183,7 +183,7 @@ pub fn build_cheetah() -> Vec<(String, Value)> {
                 });
 
                 let render_func = Value::NativeFunc(NativeFunc {
-                    name: "<cheetah.render>".to_string(),
+                    name: "<comet.render>".to_string(),
                     func: Rc::new(|args2, ctx2| {
                         let val = args2.first().cloned().unwrap_or(Value::Nil);
                         let html = render_element(&val, ctx2.heap);
@@ -191,14 +191,14 @@ pub fn build_cheetah() -> Vec<(String, Value)> {
                     }),
                 });
 
-                if let GcObj::Dict(entries) = ctx.heap.get_mut(cheetah_ref) {
+                if let GcObj::Dict(entries) = ctx.heap.get_mut(comet_ref) {
                     entries.extend(builder_entries);
                     entries.push((raw_key, raw_func));
                     entries.push((html_key, html_func));
                     entries.push((render_key, render_func));
                 }
 
-                Ok(Value::Dict(cheetah_ref))
+                Ok(Value::Dict(comet_ref))
             }),
         }),
     )]

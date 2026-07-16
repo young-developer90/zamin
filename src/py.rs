@@ -72,7 +72,7 @@ fn value_to_py(val: &Value, py: Python<'_>, heap: &GcHeap) -> PyObj {
     result
 }
 
-fn py_value_to_lion(obj: &Bound<'_, PyAny>, heap: &mut GcHeap, py: Python<'_>) -> Result<Value, String> {
+fn py_value_to_zamin(obj: &Bound<'_, PyAny>, heap: &mut GcHeap, py: Python<'_>) -> Result<Value, String> {
     if let Ok(s) = obj.extract::<String>() {
         return Ok(make_string(heap, &s));
     }
@@ -89,11 +89,11 @@ fn py_value_to_lion(obj: &Bound<'_, PyAny>, heap: &mut GcHeap, py: Python<'_>) -
         return Ok(Value::Nil);
     }
     if let Ok(items) = obj.cast::<PyList>() {
-        let mut lion_items = Vec::new();
+        let mut zamin_items = Vec::new();
         for item in items.iter() {
-            lion_items.push(py_value_to_lion(&item, heap, py)?);
+            zamin_items.push(py_value_to_zamin(&item, heap, py)?);
         }
-        return Ok(make_list(heap, lion_items));
+        return Ok(make_list(heap, zamin_items));
     }
     Ok(wrap_py_callable(obj, heap, py))
 }
@@ -126,7 +126,7 @@ fn call_py_function(obj_id: usize, args: &[Value], ctx: &mut VmContext) -> Resul
             .map_err(|e| format!("Python tuple error: {}", e))?;
         let result = bound.call(py_tuple, None)
             .map_err(|e| format!("Python error: {}", e))?;
-        py_value_to_lion(&result, ctx.heap, py)
+        py_value_to_zamin(&result, ctx.heap, py)
     })
 }
 
@@ -150,7 +150,7 @@ pub fn py_get_attr(obj_id: i64, name: &str, heap: &mut GcHeap) -> Result<Value, 
         let bound: Borrowed<'_, '_, PyAny> = unsafe { Borrowed::from_ptr(py, raw_ptr) };
         let attr = bound.getattr(name)
             .map_err(|e| format!("Python error accessing '{}': {}", name, e))?;
-        py_value_to_lion(&attr, heap, py)
+        py_value_to_zamin(&attr, heap, py)
     })
 }
 

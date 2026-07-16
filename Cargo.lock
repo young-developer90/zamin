@@ -827,25 +827,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 
 [[package]]
-name = "lion"
-version = "1.7.0"
-dependencies = [
- "base64",
- "gtk4",
- "lsp-server",
- "lsp-types",
- "md-5",
- "opencv",
- "pyo3",
- "regex",
- "scraper",
- "serde_json",
- "sha2",
- "ureq",
- "url",
-]
-
-[[package]]
 name = "litemap"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1968,6 +1949,25 @@ dependencies = [
  "quote",
  "syn",
  "synstructure",
+]
+
+[[package]]
+name = "zamin"
+version = "1.7.0"
+dependencies = [
+ "base64",
+ "gtk4",
+ "lsp-server",
+ "lsp-types",
+ "md-5",
+ "opencv",
+ "pyo3",
+ "regex",
+ "scraper",
+ "serde_json",
+ "sha2",
+ "ureq",
+ "url",
 ]
 
 [[package]]

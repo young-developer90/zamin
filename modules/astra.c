@@ -1,4 +1,4 @@
-#include "lion.h"
+#include "zamin.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -50,59 +50,59 @@ static int cols_from_row(const char* s, int len) {
     return n;
 }
 
-static LionValue make_str(const char* data) {
+static ZaminValue make_str(const char* data) {
     int len = strlen(data);
     static char buf[16384];
     int cp = len < 16383 ? len : 16383;
     memcpy(buf, data, cp);
     buf[cp] = '\0';
-    LionValue r;
-    r.tag = LION_STRING;
+    ZaminValue r;
+    r.tag = ZAMIN_STRING;
     r.data.as_str.ptr = (const uint8_t*)buf;
     r.data.as_str.len = cp;
     return r;
 }
 
-static LionValue make_int(int64_t v) {
-    LionValue r;
-    r.tag = LION_INT;
+static ZaminValue make_int(int64_t v) {
+    ZaminValue r;
+    r.tag = ZAMIN_INT;
     r.data.as_int = v;
     return r;
 }
 
-static LionValue make_float(double v) {
-    LionValue r;
-    r.tag = LION_FLOAT;
+static ZaminValue make_float(double v) {
+    ZaminValue r;
+    r.tag = ZAMIN_FLOAT;
     r.data.as_float = v;
     return r;
 }
 
-static LionValue make_nil() {
-    LionValue r;
-    r.tag = LION_NIL;
+static ZaminValue make_nil() {
+    ZaminValue r;
+    r.tag = ZAMIN_NIL;
     return r;
 }
 
-static const char* get_str(int argc, const LionValue* args, int i, int* out_len) {
-    if (i >= argc || args[i].tag != LION_STRING) { *out_len = 0; return ""; }
+static const char* get_str(int argc, const ZaminValue* args, int i, int* out_len) {
+    if (i >= argc || args[i].tag != ZAMIN_STRING) { *out_len = 0; return ""; }
     *out_len = (int)args[i].data.as_str.len;
     return (const char*)args[i].data.as_str.ptr;
 }
 
-static double get_num(int argc, const LionValue* args, int i, double def) {
+static double get_num(int argc, const ZaminValue* args, int i, double def) {
     if (i >= argc) return def;
-    if (args[i].tag == LION_INT) return (double)args[i].data.as_int;
-    if (args[i].tag == LION_FLOAT) return args[i].data.as_float;
+    if (args[i].tag == ZAMIN_INT) return (double)args[i].data.as_int;
+    if (args[i].tag == ZAMIN_FLOAT) return args[i].data.as_float;
     return def;
 }
 
-static int get_int(int argc, const LionValue* args, int i, int def) {
+static int get_int(int argc, const ZaminValue* args, int i, int def) {
     if (i >= argc) return def;
-    if (args[i].tag == LION_INT) return (int)args[i].data.as_int;
+    if (args[i].tag == ZAMIN_INT) return (int)args[i].data.as_int;
     return def;
 }
 
-static LionValue panda_arange(int argc, const LionValue* args) {
+static ZaminValue astra_arange(int argc, const ZaminValue* args) {
     double start = get_num(argc, args, 0, 0.0);
     double end = get_num(argc, args, 1, 1.0);
     double step = get_num(argc, args, 2, 1.0);
@@ -119,7 +119,7 @@ static LionValue panda_arange(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_zeros(int argc, const LionValue* args) {
+static ZaminValue astra_zeros(int argc, const ZaminValue* args) {
     int n = get_int(argc, args, 0, 1);
     if (n > MAX_POOL) n = MAX_POOL;
     static char buf[16384];
@@ -131,7 +131,7 @@ static LionValue panda_zeros(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_ones(int argc, const LionValue* args) {
+static ZaminValue astra_ones(int argc, const ZaminValue* args) {
     int n = get_int(argc, args, 0, 1);
     if (n > MAX_POOL) n = MAX_POOL;
     static char buf[16384];
@@ -143,7 +143,7 @@ static LionValue panda_ones(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_linspace(int argc, const LionValue* args) {
+static ZaminValue astra_linspace(int argc, const ZaminValue* args) {
     double a = get_num(argc, args, 0, 0.0);
     double b = get_num(argc, args, 1, 1.0);
     int n = get_int(argc, args, 2, 50);
@@ -158,7 +158,7 @@ static LionValue panda_linspace(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_sum(int argc, const LionValue* args) {
+static ZaminValue astra_sum(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -169,7 +169,7 @@ static LionValue panda_sum(int argc, const LionValue* args) {
     return make_float(total);
 }
 
-static LionValue panda_mean(int argc, const LionValue* args) {
+static ZaminValue astra_mean(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -180,7 +180,7 @@ static LionValue panda_mean(int argc, const LionValue* args) {
     return make_float(total / n);
 }
 
-static LionValue panda_min(int argc, const LionValue* args) {
+static ZaminValue astra_min(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -191,7 +191,7 @@ static LionValue panda_min(int argc, const LionValue* args) {
     return make_float(v);
 }
 
-static LionValue panda_max(int argc, const LionValue* args) {
+static ZaminValue astra_max(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -202,7 +202,7 @@ static LionValue panda_max(int argc, const LionValue* args) {
     return make_float(v);
 }
 
-static LionValue panda_abs(int argc, const LionValue* args) {
+static ZaminValue astra_abs(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -216,7 +216,7 @@ static LionValue panda_abs(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_sin(int argc, const LionValue* args) {
+static ZaminValue astra_sin(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -229,7 +229,7 @@ static LionValue panda_sin(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_cos(int argc, const LionValue* args) {
+static ZaminValue astra_cos(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -242,7 +242,7 @@ static LionValue panda_cos(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_sqrt(int argc, const LionValue* args) {
+static ZaminValue astra_sqrt(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -255,7 +255,7 @@ static LionValue panda_sqrt(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_pow(int argc, const LionValue* args) {
+static ZaminValue astra_pow(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     double power = get_num(argc, args, 1, 1.0);
@@ -269,7 +269,7 @@ static LionValue panda_pow(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_add(int argc, const LionValue* args) {
+static ZaminValue astra_add(int argc, const ZaminValue* args) {
     int l1, l2;
     const char* s1 = get_str(argc, args, 0, &l1);
     const char* s2 = get_str(argc, args, 1, &l2);
@@ -287,7 +287,7 @@ static LionValue panda_add(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_sub(int argc, const LionValue* args) {
+static ZaminValue astra_sub(int argc, const ZaminValue* args) {
     int l1, l2;
     const char* s1 = get_str(argc, args, 0, &l1);
     const char* s2 = get_str(argc, args, 1, &l2);
@@ -305,7 +305,7 @@ static LionValue panda_sub(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_mul(int argc, const LionValue* args) {
+static ZaminValue astra_mul(int argc, const ZaminValue* args) {
     int l1, l2;
     const char* s1 = get_str(argc, args, 0, &l1);
     const char* s2 = get_str(argc, args, 1, &l2);
@@ -323,7 +323,7 @@ static LionValue panda_mul(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_dot(int argc, const LionValue* args) {
+static ZaminValue astra_dot(int argc, const ZaminValue* args) {
     int l1, l2;
     const char* s1 = get_str(argc, args, 0, &l1);
     const char* s2 = get_str(argc, args, 1, &l2);
@@ -338,7 +338,7 @@ static LionValue panda_dot(int argc, const LionValue* args) {
     return make_float(total);
 }
 
-static LionValue panda_std(int argc, const LionValue* args) {
+static ZaminValue astra_std(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int n = count_elements(s, len);
@@ -352,7 +352,7 @@ static LionValue panda_std(int argc, const LionValue* args) {
     return make_float(sqrt(var / (n - 1)));
 }
 
-static LionValue panda_shape(int argc, const LionValue* args) {
+static ZaminValue astra_shape(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     if (len == 0) return make_str("(0,)");
@@ -366,7 +366,7 @@ static LionValue panda_shape(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_reshape(int argc, const LionValue* args) {
+static ZaminValue astra_reshape(int argc, const ZaminValue* args) {
     int len;
     const char* s = get_str(argc, args, 0, &len);
     int r = get_int(argc, args, 1, 1);
@@ -391,7 +391,7 @@ static LionValue panda_reshape(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_eye(int argc, const LionValue* args) {
+static ZaminValue astra_eye(int argc, const ZaminValue* args) {
     int n = get_int(argc, args, 0, 3);
     if (n > MAX_POOL) n = MAX_POOL;
     static char buf[16384];
@@ -405,37 +405,37 @@ static LionValue panda_eye(int argc, const LionValue* args) {
     return make_str(buf);
 }
 
-static LionValue panda_version(int argc, const LionValue* args) {
+static ZaminValue astra_version(int argc, const ZaminValue* args) {
     (void)argc; (void)args;
     return make_str("0.1.0");
 }
 
-static LionModuleFunc funcs[] = {
-    {"arange",    panda_arange},
-    {"zeros",     panda_zeros},
-    {"ones",      panda_ones},
-    {"linspace",  panda_linspace},
-    {"sum",       panda_sum},
-    {"mean",      panda_mean},
-    {"min",       panda_min},
-    {"max",       panda_max},
-    {"abs",       panda_abs},
-    {"sin",       panda_sin},
-    {"cos",       panda_cos},
-    {"sqrt",      panda_sqrt},
-    {"pow",       panda_pow},
-    {"add",       panda_add},
-    {"sub",       panda_sub},
-    {"mul",       panda_mul},
-    {"dot",       panda_dot},
-    {"std",       panda_std},
-    {"shape",     panda_shape},
-    {"reshape",   panda_reshape},
-    {"eye",       panda_eye},
-    {"version",   panda_version},
+static ZaminModuleFunc funcs[] = {
+    {"arange",    astra_arange},
+    {"zeros",     astra_zeros},
+    {"ones",      astra_ones},
+    {"linspace",  astra_linspace},
+    {"sum",       astra_sum},
+    {"mean",      astra_mean},
+    {"min",       astra_min},
+    {"max",       astra_max},
+    {"abs",       astra_abs},
+    {"sin",       astra_sin},
+    {"cos",       astra_cos},
+    {"sqrt",      astra_sqrt},
+    {"pow",       astra_pow},
+    {"add",       astra_add},
+    {"sub",       astra_sub},
+    {"mul",       astra_mul},
+    {"dot",       astra_dot},
+    {"std",       astra_std},
+    {"shape",     astra_shape},
+    {"reshape",   astra_reshape},
+    {"eye",       astra_eye},
+    {"version",   astra_version},
 };
 
-int lion_module_init(int* out_count, LionModuleFunc** out_funcs) {
+int zamin_module_init(int* out_count, ZaminModuleFunc** out_funcs) {
     *out_count = sizeof(funcs) / sizeof(funcs[0]);
     *out_funcs = funcs;
     return 0;

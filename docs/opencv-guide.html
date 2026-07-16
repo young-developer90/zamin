@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenCV Guide - Lion Programming Language</title>
-  <meta name="description" content="Image processing and computer vision in Lion using OpenCV. Read, transform, filter, detect objects, and display images with a clean API.">
+  <title>OpenCV Guide - Zamin Programming Language</title>
+  <meta name="description" content="Image processing and computer vision in Zamin using OpenCV. Read, transform, filter, detect objects, and display images with a clean API.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -81,7 +81,7 @@
 
         <!-- Overview -->
         <h2 id="overview">Overview</h2>
-        <p>The <code>opencv</code> module wraps OpenCV 4/5 to give Lion programs access to image I/O, color conversion, filtering, transforms, object detection, drawing, and more. It is available behind a feature flag and requires system-level OpenCV development libraries.</p>
+        <p>The <code>opencv</code> module wraps OpenCV 4/5 to give Zamin programs access to image I/O, color conversion, filtering, transforms, object detection, drawing, and more. It is available behind a feature flag and requires system-level OpenCV development libraries.</p>
         <p>Build with the <code>opencv</code> feature enabled:</p>
         <pre><code>cargo build --release --features opencv</code></pre>
         <p>Install OpenCV development libraries on your system:</p>
@@ -102,7 +102,7 @@ brew install opencv</code></pre>
 <span class="kw">let</span> edges = opencv.<span class="fn">canny</span>(gray, <span class="num">50.0</span>, <span class="num">150.0</span>)
 opencv.<span class="fn">imwrite</span>(<span class="str">"edges.png"</span>, edges)</code></pre>
         <p>Run it:</p>
-        <pre><code>$ lion run detect.lion</code></pre>
+        <pre><code>$ zamin run detect.zamin</code></pre>
 
         <!-- Image I/O -->
         <h2 id="image-io">Image I/O</h2>
@@ -455,7 +455,7 @@ print(<span class="str">"Saved gradient_flipped.png"</span>)
 <span class="cm">// Draw annotations</span>
 <span class="kw">let</span> annotated = opencv.<span class="fn">copy</span>(img)
 opencv.<span class="fn">draw_rect</span>(annotated, <span class="num">50</span>, <span class="num">50</span>, <span class="num">300</span>, <span class="num">200</span>, <span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>, <span class="num">3</span>)
-opencv.<span class="fn">draw_text</span>(annotated, <span class="str">"Lion OpenCV"</span>, <span class="num">80</span>, <span class="num">140</span>, <span class="num">2.0</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">3</span>)
+opencv.<span class="fn">draw_text</span>(annotated, <span class="str">"Zamin OpenCV"</span>, <span class="num">80</span>, <span class="num">140</span>, <span class="num">2.0</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">3</span>)
 opencv.<span class="fn">imwrite</span>(<span class="str">"gradient_annotated.png"</span>, annotated)
 print(<span class="str">"Saved gradient_annotated.png"</span>)
 

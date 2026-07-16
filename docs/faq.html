@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FAQ - Lion Programming Language</title>
-  <meta name="description" content="Frequently asked questions about the Lion programming language covering installation, syntax, standard library, performance, and tooling.">
+  <title>FAQ - Zamin Programming Language</title>
+  <meta name="description" content="Frequently asked questions about the Zamin programming language covering installation, syntax, standard library, performance, and tooling.">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
   <header class="header">
     <div class="header-brand">
       <button class="mobile-menu-btn" id="mobile-menu-btn">&#9776;</button>
-      <a href="index.html" class="header-brand"><div class="logo">L</div> Lion Docs</a>
+      <a href="index.html" class="header-brand"><div class="logo">Z</div> Zamin Docs</a>
     </div>
     <div class="header-search">
       <span class="search-icon">&#128269;</span>
@@ -56,19 +56,19 @@
         </div>
 
         <h1>Frequently Asked Questions</h1>
-        <p>Common questions and answers about the Lion programming language.</p>
+        <p>Common questions and answers about the Zamin programming language.</p>
 
-        <h2 id="install">How do I install Lion?</h2>
-        <p>Install Lion using the official installer script:</p>
-        <pre><code>curl -fsSL https://lion-lang.dev/install.sh | sh</code></pre>
+        <h2 id="install">How do I install Zamin?</h2>
+        <p>Install Zamin using the official installer script:</p>
+        <pre><code>curl -fsSL https://zamin-lang.dev/install.sh | sh</code></pre>
         <p>Or build from source:</p>
-        <pre><code>git clone https://github.com/lion-lang/lion.git
-cd lion
+        <pre><code>git clone https://github.com/zamin-lang/zamin.git
+cd zamin
 cargo build --release</code></pre>
-        <p>The binary will be at <code>target/release/lion</code>. Add it to your <code>PATH</code>.</p>
+        <p>The binary will be at <code>target/release/zamin</code>. Add it to your <code>PATH</code>.</p>
 
         <h2 id="concat-strings">How do I concatenate strings?</h2>
-        <p>Use the <code>+</code> operator. Lion does not use <code>..</code> for string concatenation.</p>
+        <p>Use the <code>+</code> operator. Zamin does not use <code>..</code> for string concatenation.</p>
         <pre><code>let greeting = "Hello" + " " + "World"
 print(greeting)  // "Hello World"
 
@@ -113,7 +113,7 @@ let resp2 = http.post("https://api.example.com/submit", json: {
 print(resp2.status_code)</code></pre>
 
         <h2 id="error-handling">How do I handle errors?</h2>
-        <p>Lion uses try/catch for error handling:</p>
+        <p>Zamin uses try/catch for error handling:</p>
         <pre><code>use fs
 
 try {
@@ -168,14 +168,14 @@ let str = json.stringify(obj)
 print(str)</code></pre>
 
         <h2 id="create-project">How do I create a project?</h2>
-        <p>Use the <code>lion new</code> command:</p>
-        <pre><code>lion new my_project
+        <p>Use the <code>zamin new</code> command:</p>
+        <pre><code>zamin new my_project
 cd my_project
-lion run src/main.lion</code></pre>
-        <p>This creates the standard project layout with <code>lion.json</code>, <code>src/main.lion</code>, <code>tests/</code>, and <code>modules/</code> directories.</p>
+zamin run src/main.zamin</code></pre>
+        <p>This creates the standard project layout with <code>zamin.json</code>, <code>src/main.zamin</code>, <code>tests/</code>, and <code>modules/</code> directories.</p>
 
         <h2 id="run-tests">How do I run tests?</h2>
-        <p>Write test functions using the <code>test</code> module, then run <code>lion test</code>:</p>
+        <p>Write test functions using the <code>test</code> module, then run <code>zamin test</code>:</p>
         <pre><code>use test
 
 fn test_addition() {
@@ -185,11 +185,11 @@ fn test_addition() {
 fn test_string_upper() {
     test.assert_eq("hello".upper(), "HELLO")
 }</code></pre>
-        <pre><code>lion test</code></pre>
-        <p>Filter tests by name: <code>lion test addition</code>.</p>
+        <pre><code>zamin test</code></pre>
+        <p>Filter tests by name: <code>zamin test addition</code>.</p>
 
-        <h2 id="multithreading">Does Lion support multithreading?</h2>
-        <p>Lion uses a single-threaded VM with cooperative concurrency via fibers (lightweight coroutines). True OS-level multithreading is available through the <code>thread</code> module, which spawns independent VM instances on separate threads that communicate via message passing.</p>
+        <h2 id="multithreading">Does Zamin support multithreading?</h2>
+        <p>Zamin uses a single-threaded VM with cooperative concurrency via fibers (lightweight coroutines). True OS-level multithreading is available through the <code>thread</code> module, which spawns independent VM instances on separate threads that communicate via message passing.</p>
         <pre><code>use thread
 
 let handle = thread.spawn(fn() {
@@ -201,7 +201,7 @@ let result = handle.join()
 print(result)  // 42</code></pre>
 
         <h2 id="gui-linux">How do I use GUI on Linux?</h2>
-        <p>Lion includes a built-in GUI toolkit that works on Linux via GTK4. Install the required system dependencies:</p>
+        <p>Zamin includes a built-in GUI toolkit that works on Linux via GTK4. Install the required system dependencies:</p>
         <pre><code># Ubuntu/Debian
 sudo apt install libgtk-4-dev
 
@@ -218,7 +218,7 @@ gui.run()</code></pre>
         <p>See the <a href="gui-guide.html">GUI Guide</a> for full details.</p>
 
         <h2 id="opencv-usage">How do I use OpenCV?</h2>
-        <p>Lion wraps OpenCV through the <code>cv</code> module. Install OpenCV on your system first, then:</p>
+        <p>Zamin wraps OpenCV through the <code>cv</code> module. Install OpenCV on your system first, then:</p>
         <pre><code>use cv
 
 let img = cv.imread("photo.jpg")
@@ -234,23 +234,23 @@ print("Saved edges.jpg")</code></pre>
           <li><strong>String concatenation in loops</strong> - Use f-strings or <code>list.join()</code> instead of repeated <code>+</code> on strings.</li>
           <li><strong>Global variable access</strong> - Local variables are ~10x faster. Cache globals in locals when accessing them in tight loops.</li>
           <li><strong>Repeated list allocation</strong> - Use <code>list.new(capacity)</code> to pre-allocate.</li>
-          <li><strong>Unoptimized build</strong> - Use <code>lion build</code> for release builds with AOT optimizations.</li>
-          <li><strong>Suboptimal algorithm</strong> - Profile first with <code>lion run --disassemble</code> to inspect bytecode, then consider algorithmic improvements.</li>
+          <li><strong>Unoptimized build</strong> - Use <code>zamin build</code> for release builds with AOT optimizations.</li>
+          <li><strong>Suboptimal algorithm</strong> - Profile first with <code>zamin run --disassemble</code> to inspect bytecode, then consider algorithmic improvements.</li>
         </ul>
         <p>See the <a href="performance.html">Performance</a> page for detailed benchmarks and optimization techniques.</p>
 
-        <h2 id="embed-rust">How do I embed Lion in my Rust application?</h2>
-        <p>Add Lion as a dependency and use the embedding API:</p>
+        <h2 id="embed-rust">How do I embed Zamin in my Rust application?</h2>
+        <p>Add Zamin as a dependency and use the embedding API:</p>
         <pre><code>// Cargo.toml
 [dependencies]
-lion = { path = "../lion" }</code></pre>
+zamin = { path = "../zamin" }</code></pre>
         <pre><code>// main.rs
 fn main() {
-    lion::execute_source(r#"
-        print("Hello from embedded Lion!")
+    zamin::execute_source(r#"
+        print("Hello from embedded Zamin!")
     "#).unwrap();
 
-    lion::execute_file("scripts/plugin.lion").unwrap();
+    zamin::execute_file("scripts/plugin.zamin").unwrap();
 }</code></pre>
         <p>See the <a href="advanced-guide.html#embedding-in-rust">Embedding in Rust</a> section for the full API reference.</p>
 

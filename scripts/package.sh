@@ -5,33 +5,33 @@ VERSION="1.7.0"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 usage() {
-    echo "Usage: $0 [--panther]"
-    echo "  --panther   Bundle GTK4 libraries for portable GUI apps"
+    echo "Usage: $0 [--luna]"
+    echo "  --luna   Bundle GTK4 libraries for portable GUI apps"
     exit 1
 }
 
 BUNDLE_GTK=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --panther) BUNDLE_GTK=1 ;;
+        --luna) BUNDLE_GTK=1 ;;
         *) usage ;;
     esac
     shift
 done
 
 if [ "$BUNDLE_GTK" -eq 1 ]; then
-    NAME="lion-${VERSION}-panther"
-    FEATURES="--features panther"
-    echo "==> Building with panther (GTK4) support..."
+    NAME="zamin-${VERSION}-luna"
+    FEATURES="--features luna"
+    echo "==> Building with luna (GTK4) support..."
 else
-    NAME="lion-${VERSION}"
+    NAME="zamin-${VERSION}"
     FEATURES=""
-    echo "==> Building without panther (no GUI)..."
+    echo "==> Building without luna (no GUI)..."
 fi
 
 OUTDIR="${ROOT}/dist/${NAME}"
 
-cargo build --release ${FEATURES} --bin lion --bin lion-rs 2>&1
+cargo build --release ${FEATURES} --bin zamin --bin zamin-rs 2>&1
 
 echo "==> Building C extension modules..."
 make -C "${ROOT}/modules" clean all 2>&1
@@ -42,15 +42,15 @@ mkdir -p "${OUTDIR}/bin"
 mkdir -p "${OUTDIR}/modules"
 mkdir -p "${OUTDIR}/examples"
 
-cp "${ROOT}/target/release/lion" "${OUTDIR}/bin/"
-cp "${ROOT}/target/release/lion-rs" "${OUTDIR}/bin/"
+cp "${ROOT}/target/release/zamin" "${OUTDIR}/bin/"
+cp "${ROOT}/target/release/zamin-rs" "${OUTDIR}/bin/"
 cp "${ROOT}/modules/"*.so "${OUTDIR}/modules/" 2>/dev/null || true
-cp "${ROOT}/examples/"*.lion "${OUTDIR}/examples/" 2>/dev/null || true
+cp "${ROOT}/examples/"*.zamin "${OUTDIR}/examples/" 2>/dev/null || true
 
 # Bundle shared libraries for portability
 echo "==> Bundling shared libraries..."
 mkdir -p "${OUTDIR}/lib"
-for lib in $(ldd "${OUTDIR}/bin/lion" 2>/dev/null | grep "=> /" | awk '{print $3}'); do
+for lib in $(ldd "${OUTDIR}/bin/zamin" 2>/dev/null | grep "=> /" | awk '{print $3}'); do
     base="$(basename "$lib")"
     case "$base" in
         linux-*.so*|ld-*.so*|libc.so*|libm.so*|libdl.so*|libpthread.so*|librt.so*|libutil.so*|libanl.so*|libBrokenLocale.so*)
@@ -68,23 +68,23 @@ if command -v gtk4-update-icon-cache &>/dev/null; then
 fi
 
 echo "==> Creating launcher..."
-cat > "${OUTDIR}/lion" << 'LAUNCHER'
+cat > "${OUTDIR}/zamin" << 'LAUNCHER'
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"
 export LD_LIBRARY_PATH="${DIR}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export PANTHER_LIB_DIR="${DIR}/lib"
-exec "${DIR}/bin/lion" "$@"
+export LUNA_LIB_DIR="${DIR}/lib"
+exec "${DIR}/bin/zamin" "$@"
 LAUNCHER
-chmod +x "${OUTDIR}/lion"
+chmod +x "${OUTDIR}/zamin"
 
-cat > "${OUTDIR}/lion-rs" << 'LAUNCHER_RS'
+cat > "${OUTDIR}/zamin-rs" << 'LAUNCHER_RS'
 #!/usr/bin/env bash
 DIR="$(cd "$(dirname "$0")" && pwd)"
 export LD_LIBRARY_PATH="${DIR}/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export PANTHER_LIB_DIR="${DIR}/lib"
-exec "${DIR}/bin/lion-rs" "$@"
+export LUNA_LIB_DIR="${DIR}/lib"
+exec "${DIR}/bin/zamin-rs" "$@"
 LAUNCHER_RS
-chmod +x "${OUTDIR}/lion-rs"
+chmod +x "${OUTDIR}/zamin-rs"
 
 echo "==> Creating tarball..."
 cd "${ROOT}/dist"
@@ -97,8 +97,8 @@ echo ""
 echo "    On target machine:"
 echo "      tar xzf dist/${NAME}.tar.gz"
 echo "      cd ${NAME}"
-echo "      ./lion run examples/hello.lion"
-echo "      ./lion-rs examples/hello.lion       # quick runner"
+echo "      ./zamin run examples/hello.zamin"
+echo "      ./zamin-rs examples/hello.zamin       # quick runner"
 if [ "$BUNDLE_GTK" -eq 1 ]; then
     echo ""
     echo "    Note: GTK4 runtime libraries are bundled, but system deps"

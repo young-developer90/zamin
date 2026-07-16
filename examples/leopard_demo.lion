@@ -1,20 +1,20 @@
-// Leopard GUI demo
-// Run with: lion run examples/leopard_demo.lion
+// Sol GUI demo
+// Run with: zamin run examples/sol_demo.lion
 
-let root = leopard.Leo("Leopard Demo", 400, 300);
+let root = sol.Leo("Sol Demo", 400, 300);
 
-let label = leopard.Label(root, "Hello from Leopard!");
-leopard.pack(label, "top", 0, 10);
+let label = sol.Label(root, "Hello from Sol!");
+sol.pack(label, "top", 0, 10);
 
-let entry = leopard.Entry(root);
-leopard.pack(entry, "top", 0, 10);
-leopard.insert(entry, 0, "Type something");
+let entry = sol.Entry(root);
+sol.pack(entry, "top", 0, 10);
+sol.insert(entry, 0, "Type something");
 
-leopard.title(root, "Leopard Demo");
-leopard.geometry(root, 400, 300);
+sol.title(root, "Sol Demo");
+sol.geometry(root, 400, 300);
 
-leopard.messagebox("Ready!", "Leopard");
+sol.messagebox("Ready!", "Sol");
 print("Starting mainloop...");
 
-leopard.mainloop(root);
+sol.mainloop(root);
 print("Done!");

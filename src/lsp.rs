@@ -18,7 +18,7 @@ fn main() {
     };
     let init_result = serde_json::json!({
         "capabilities": server_capabilities,
-        "serverInfo": { "name": "lion-lsp", "version": "0.1.0" }
+        "serverInfo": { "name": "zamin-lsp", "version": "0.1.0" }
     });
     connection.initialize(init_result).unwrap();
 
@@ -148,7 +148,7 @@ fn get_hover(params: &HoverParams) -> Option<Hover> {
     let pos = &params.text_document_position_params.position;
     Some(Hover {
         contents: HoverContents::Scalar(MarkedString::String(format!(
-            "Lion language\nLine {}, column {}",
+            "Zamin language\nLine {}, column {}",
             pos.line + 1,
             pos.character
         ))),
