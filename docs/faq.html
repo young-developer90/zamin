@@ -238,10 +238,10 @@ print("Saved edges.jpg")</code></pre>
         <p>See the <a href="https://github.com/young-developer90/zamin">README</a> for build instructions and project structure.</p>
 
         <h2 id="embed-rust">How do I embed Zamin in my Rust application?</h2>
-        <p>Add Zamin as a dependency and use the embedding API:</p>
+        <p>Zamin is published on <a href="https://crates.io/crates/zamin">crates.io</a>. Add it as a dependency and use the embedding API:</p>
         <pre><code>// Cargo.toml
 [dependencies]
-zamin = { path = "../zamin" }</code></pre>
+zamin = "1.7.3"</code></pre>
         <pre><code>// main.rs
 func main() {
     zamin::execute_source(r#"
