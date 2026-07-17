@@ -12,23 +12,64 @@
   <style>
     .playground-layout {
       display: flex;
-      gap: 1.5rem;
+      gap: 0;
       height: calc(100vh - var(--header-height) - 2rem);
       min-height: 500px;
     }
 
     .playground-left {
-      flex: 1;
+      flex: 1 1 0;
       display: flex;
       flex-direction: column;
-      min-width: 0;
+      min-width: 200px;
+      width: var(--editor-width, 1fr);
     }
 
     .playground-right {
-      width: 400px;
+      width: var(--output-width, 400px);
       display: flex;
       flex-direction: column;
-      min-width: 0;
+      min-width: 200px;
+    }
+
+    .splitter {
+      width: 6px;
+      cursor: col-resize;
+      background: transparent;
+      flex-shrink: 0;
+      position: relative;
+      transition: background 0.15s;
+      z-index: 5;
+    }
+    .splitter:hover,
+    .splitter.active {
+      background: var(--accent);
+      opacity: 0.5;
+    }
+    .splitter::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2px;
+      height: 32px;
+      background: var(--border);
+      border-radius: 1px;
+      transition: background 0.15s;
+    }
+    .splitter:hover::after,
+    .splitter.active::after {
+      background: var(--accent);
+    }
+    body.resizing {
+      cursor: col-resize;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body.resizing .playground-left,
+    body.resizing .playground-right {
+      pointer-events: none;
     }
 
     .playground-toolbar {
@@ -275,12 +316,17 @@
         height: auto;
       }
 
+      .splitter {
+        display: none;
+      }
+
       .playground-right {
-        width: 100%;
+        width: 100% !important;
         min-height: 250px;
       }
 
       .playground-left {
+        width: 100% !important;
         min-height: 350px;
       }
 
@@ -359,19 +405,19 @@
         <div class="playground-layout">
 
           <!-- Left: Editor -->
-          <div class="playground-left">
+          <div class="playground-left" id="playground-left">
             <div class="playground-toolbar">
               <button class="btn btn-primary" id="run-btn">&#9654; <span>Run</span></button>
               <select class="examples-select" id="examples-select">
                 <option value="">Load example...</option>
                 <option value="hello">Hello World</option>
-                <option value="random">Random Example</option>
-                <option value="http">HTTP Example</option>
-                <option value="json">JSON Example</option>
-                <option value="matrix">Matrix Example</option>
+                <option value="random">Random</option>
+                <option value="http">HTTP</option>
+                <option value="json">JSON</option>
+                <option value="matrix">Matrix</option>
               </select>
               <span class="spacer"></span>
-              <button class="btn btn-secondary" id="share-btn">&#128279; <span>Copy Share Link</span></button>
+              <button class="btn btn-secondary" id="share-btn">&#128279; <span>Share</span></button>
             </div>
             <div class="editor-container" id="editor-container">
               <div class="editor-gutter" id="editor-gutter"></div>
@@ -381,8 +427,11 @@
             </div>
           </div>
 
+          <!-- Splitter -->
+          <div class="splitter" id="splitter"></div>
+
           <!-- Right: Output -->
-          <div class="playground-right">
+          <div class="playground-right" id="playground-right">
             <div class="playground-toolbar" style="padding-bottom:0.75rem;">
               <span style="font-weight:600;font-size:var(--font-size-sm);color:var(--text-secondary);">Output</span>
               <span class="spacer"></span>
@@ -460,6 +509,7 @@
     var shareBtn = document.getElementById('share-btn');
     var examplesSelect = document.getElementById('examples-select');
     var notification = document.getElementById('share-notification');
+    var splitter = document.getElementById('splitter');
 
     var ZAMIN_KEYWORDS = new Set([
       'let', 'const', 'func', 'if', 'elif', 'else', 'while', 'for', 'in',
@@ -856,9 +906,60 @@
       document.body.removeChild(ta);
     }
 
+    /* ---------- Splitter: Resizable Panels ---------- */
+
+    var leftPanel = document.getElementById('playground-left');
+    var rightPanel = document.getElementById('playground-right');
+
+    function initSplitter() {
+      var saved = localStorage.getItem('zamin_playground_split');
+      if (saved) {
+        var pct = parseFloat(saved);
+        if (pct > 20 && pct < 80) {
+          leftPanel.style.width = pct + '%';
+          leftPanel.style.flex = 'none';
+          rightPanel.style.width = (100 - pct) + '%';
+          rightPanel.style.flex = 'none';
+        }
+      }
+    }
+
+    splitter.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      document.body.classList.add('resizing');
+      splitter.classList.add('active');
+
+      var startX = e.clientX;
+      var totalW = leftPanel.offsetWidth + rightPanel.offsetWidth + splitter.offsetWidth;
+      var leftPct = (leftPanel.offsetWidth / totalW) * 100;
+
+      function onMove(e2) {
+        var dx = e2.clientX - startX;
+        var newPct = leftPct + (dx / totalW) * 100;
+        newPct = Math.max(20, Math.min(80, newPct));
+        leftPanel.style.width = newPct + '%';
+        leftPanel.style.flex = 'none';
+        rightPanel.style.width = (100 - newPct) + '%';
+        rightPanel.style.flex = 'none';
+      }
+
+      function onUp() {
+        document.body.classList.remove('resizing');
+        splitter.classList.remove('active');
+        var curPct = parseFloat(leftPanel.style.width);
+        localStorage.setItem('zamin_playground_split', String(Math.round(curPct * 10) / 10));
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
     /* ---------- Init ---------- */
 
     syncEditor();
+    initSplitter();
 
     // If there's code in the URL, run it automatically
     if (new URLSearchParams(window.location.search).has('code')) {
