@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Performance - Zamin Programming Language</title>
   <meta name="description" content="Performance benchmarks, VM architecture details, optimization techniques, and tips for writing fast Zamin code.">
+  <meta property="og:title" content="Performance - Zamin">
+  <meta property="og:description" content="Benchmarks, optimization techniques, and performance tips for the Zamin language VM.">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -66,33 +69,33 @@
           <li><strong>Mark-and-Sweep Garbage Collector</strong> - A generational, non-moving GC with incremental collection phases minimizes pause times while keeping memory overhead low.</li>
         </ul>
 
-        <h2 id="benchmarks">Benchmarks vs Python 3.14</h2>
-        <p>All benchmarks run on identical hardware (AMD Ryzen 9 7950X, 64 GB DDR5, Linux 6.10). Lower is better.</p>
+        <h2 id="benchmarks">Benchmarks vs Python 3</h2>
+        <p>Real-world benchmarks comparing Zamin and Python 3 on the same machine using <code>time</code> for wall-clock measurement. Lower is better.</p>
         <table>
           <thead>
-            <tr><th>Benchmark</th><th>Zamin</th><th>Python 3.14</th><th>Speedup</th></tr>
+            <tr><th>Benchmark</th><th>Zamin</th><th>Python 3</th><th>Ratio</th></tr>
           </thead>
           <tbody>
-            <tr><td>fibonacci(35)</td><td>0.12s</td><td>0.89s</td><td>7.4x</td></tr>
-            <tr><td>string_concat (100K)</td><td>0.05s</td><td>0.42s</td><td>8.4x</td></tr>
-            <tr><td>file_io (10 MB read)</td><td>0.03s</td><td>0.28s</td><td>9.3x</td></tr>
-            <tr><td>json_parse (1 MB)</td><td>0.02s</td><td>0.19s</td><td>9.5x</td></tr>
-            <tr><td>regex_match (10K lines)</td><td>0.01s</td><td>0.15s</td><td>15x</td></tr>
+            <tr><td>Recursive fib(32)</td><td>1.51s</td><td>0.35s</td><td>4.3x</td></tr>
+            <tr><td>Integer loop (5M ops)</td><td><strong>0.47s</strong></td><td>0.53s</td><td><strong>0.9x</strong></td></tr>
+            <tr><td>String concat (100K)</td><td>3.14s</td><td>0.23s</td><td>13.4x</td></tr>
+            <tr><td>List push (500K)</td><td>0.13s</td><td>0.09s</td><td>1.5x</td></tr>
           </tbody>
         </table>
+        <p>Zamin excels at tight integer loops &mdash; often matching or exceeding CPython &mdash; but is slower on string and list operations due to bytecode interpreter overhead.</p>
 
-        <h2 id="vm-core-benchmarks">VM Core Microbenchmarks</h2>
-        <p>These microbenchmarks measure the raw performance of VM primitives before and after the optimization pass.</p>
+        <h2 id="vm-core-benchmarks">Optimization Impact</h2>
+        <p>The peephole optimizer and specialized integer opcodes provide significant speedups on core VM primitives:</p>
         <table>
           <thead>
-            <tr><th>Benchmark</th><th>Before</th><th>After</th><th>Speedup</th></tr>
+            <tr><th>Optimization</th><th>Impact</th></tr>
           </thead>
           <tbody>
-            <tr><td>int_loop (10M iterations)</td><td>17,245 ms</td><td>1,553 ms</td><td>11.1x</td></tr>
-            <tr><td>func_calls (500K calls)</td><td>1,353 ms</td><td>187 ms</td><td>7.2x</td></tr>
-            <tr><td>local_access (5M reads)</td><td>12,335 ms</td><td>1,235 ms</td><td>10.0x</td></tr>
-            <tr><td>string_concat (100K ops)</td><td>13,812 ms</td><td>4,772 ms</td><td>2.9x</td></tr>
-            <tr><td>list_push (100K pushes)</td><td>201 ms</td><td>38 ms</td><td>5.3x</td></tr>
+            <tr><td>Raw byte dispatch</td><td>15-25% faster instruction dispatch vs function pointer table</td></tr>
+            <tr><td>Specialized integer opcodes</td><td>Avoids boxing and type-checks in hot integer loops</td></tr>
+            <tr><td>Constant folding</td><td>Eliminates runtime evaluation of constant expressions</td></tr>
+            <tr><td>Jump threading</td><td>Collapses chains of unconditional jumps</td></tr>
+            <tr><td>Dead code elimination</td><td>Removes unreachable branches after return/throw</td></tr>
           </tbody>
         </table>
 
@@ -126,7 +129,7 @@
         </ul>
 
         <div class="page-meta">
-          <a id="edit-link" href="#">Edit this page on GitHub</a>
+          <a id="edit-link" href="https://github.com/young-developer90/zamin/edit/master/docs/performance.html">Edit this page on GitHub</a>
           <span>Last updated: July 2026</span>
         </div>
         <div class="feedback">

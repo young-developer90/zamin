@@ -64,9 +64,9 @@
         <!-- Hero -->
         <section class="hero">
           <h1>Zamin</h1>
-          <p class="hero-tagline">A fast, readable programming language</p>
-          <p>Zamin combines Python-like syntax with a high-performance VM, giving you the best of both worlds: code that's easy to write and read, yet runs fast enough for demanding applications. With 25+ built-in standard library modules, a native GUI toolkit, and seamless C and Python interop, Zamin is ready for real-world projects.</p>
-          <div class="hero-buttons">
+          <p class="tagline">A fast, readable programming language</p>
+          <p>Zamin combines Python-like syntax with a lightweight bytecode VM. It matches Python on integer-heavy loops and ships with 25+ built-in standard library modules, a native GUI toolkit, and seamless C and Python interop — ready for real-world projects.</p>
+          <div class="hero-actions">
             <a href="getting-started.html" class="btn btn-primary">Get Started</a>
             <a href="language-guide.html" class="btn btn-secondary">Language Guide</a>
           </div>
@@ -78,8 +78,8 @@
           <div class="feature-grid">
             <div class="feature-card">
               <div class="feature-icon">&#9889;</div>
-              <h3>Fast VM</h3>
-              <p>Bytecode VM with JIT-inspired optimizations delivers performance up to 11x faster than baseline interpreters. Zamin handles tight loops, function calls, and local variable access with ease.</p>
+              <h3>Bytecode VM</h3>
+              <p>Register-based bytecode VM with raw dispatch, specialized integer opcodes, and a peephole optimizer. Matches CPython on integer loops with 25+ built-in modules at your fingertips.</p>
             </div>
             <div class="feature-card">
               <div class="feature-icon">&#128221;</div>
@@ -137,27 +137,27 @@ greet(<span class="str">"World"</span>);
           <p>Zamin's bytecode VM with register-based architecture and JIT-inspired optimizations delivers strong performance across common workloads:</p>
           <div class="benchmark-results">
             <div class="benchmark-item">
-              <div class="benchmark-label">Integer loop (100M iterations)</div>
+              <div class="benchmark-label">Integer loop (5M ops) vs Python 3</div>
               <div class="benchmark-bar-container">
-                <div class="benchmark-bar" style="width: 100%;">11x faster</div>
+                <div class="benchmark-bar" style="width: 100%;">0.9x &mdash; matches Python</div>
               </div>
             </div>
             <div class="benchmark-item">
-              <div class="benchmark-label">Function calls (10M calls)</div>
+              <div class="benchmark-label">List push (500K) vs Python 3</div>
               <div class="benchmark-bar-container">
-                <div class="benchmark-bar" style="width: 65%;">7.2x faster</div>
+                <div class="benchmark-bar" style="width: 60%;">1.5x slower</div>
               </div>
             </div>
             <div class="benchmark-item">
-              <div class="benchmark-label">Local variable access (100M reads)</div>
+              <div class="benchmark-label">Recursive fib(32) vs Python 3</div>
               <div class="benchmark-bar-container">
-                <div class="benchmark-bar" style="width: 91%;">10x faster</div>
+                <div class="benchmark-bar" style="width: 33%;">4.3x slower</div>
               </div>
             </div>
             <div class="benchmark-item">
-              <div class="benchmark-label">String concatenation (1M operations)</div>
+              <div class="benchmark-label">String concat (100K) vs Python 3</div>
               <div class="benchmark-bar-container">
-                <div class="benchmark-bar" style="width: 26%;">2.9x faster</div>
+                <div class="benchmark-bar" style="width: 10%;">13.4x slower</div>
               </div>
             </div>
           </div>
@@ -209,7 +209,7 @@ greet(<span class="str">"World"</span>);
 
         <!-- Page Meta -->
         <div class="page-meta">
-          <a id="edit-link" href="#" target="_blank">Edit this page on GitHub</a>
+          <a id="edit-link" href="https://github.com/young-developer90/zamin/edit/master/docs/index.html" target="_blank">Edit this page on GitHub</a>
           <span>Last updated: July 2026</span>
         </div>
         <!-- Feedback -->

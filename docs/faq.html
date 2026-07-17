@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FAQ - Zamin Programming Language</title>
   <meta name="description" content="Frequently asked questions about the Zamin programming language covering installation, syntax, standard library, performance, and tooling.">
+  <meta property="og:title" content="FAQ - Zamin">
+  <meta property="og:description" content="Frequently asked questions about the Zamin programming language covering installation, syntax, standard library, performance, and tooling.">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -59,10 +62,8 @@
         <p>Common questions and answers about the Zamin programming language.</p>
 
         <h2 id="install">How do I install Zamin?</h2>
-        <p>Install Zamin using the official installer script:</p>
-        <pre><code>curl -fsSL https://zamin-lang.dev/install.sh | sh</code></pre>
-        <p>Or build from source:</p>
-        <pre><code>git clone https://github.com/zamin-lang/zamin.git
+        <p>Build Zamin from source (the only supported installation method):</p>
+        <pre><code>git clone https://github.com/young-developer90/zamin.git
 cd zamin
 cargo build --release</code></pre>
         <p>The binary will be at <code>target/release/zamin</code>. Add it to your <code>PATH</code>.</p>
@@ -90,86 +91,80 @@ PI = 3.0  // Error: cannot reassign constant</code></pre>
 
         <h2 id="read-files">How do I read files?</h2>
         <p>Use the <code>fs</code> standard library module:</p>
-        <pre><code>use fs
+        <pre><code>let content = fs.read("data.txt");
+print(content);
 
-let content = fs.read("data.txt")
-print(content)
-
-// Read as lines
-let lines = fs.read_lines("data.txt")
-for line in lines {
-    print(line)
-}</code></pre>
+// Write to a file
+fs.write("output.txt", "Hello, Zamin!");</code></pre>
 
         <h2 id="http-requests">How do I make HTTP requests?</h2>
         <p>Use the <code>http</code> module:</p>
-        <pre><code>use http
-
-let resp = http.get("https://api.example.com/data")
-print(resp.status_code)
-print(resp.body)
+        <pre><code>let resp = http.get("https://api.example.com/data");
+print(resp.status);    // 200
+print(resp.body);      // response body string
 
 // POST with JSON body
-let resp2 = http.post("https://api.example.com/submit", json: {
-    "name": "Alice",
-    "email": "alice@example.com"
-})
-print(resp2.status_code)</code></pre>
+let resp2 = http.post("https://api.example.com/submit",
+    json.stringify({"name": "Alice", "email": "alice@example.com"})
+);
+print(resp2.status);</code></pre>
 
         <h2 id="error-handling">How do I handle errors?</h2>
-        <p>Zamin uses try/catch for error handling:</p>
-        <pre><code>use fs
+        <p>Zamin uses <code>try</code>/<code>catch</code> for error handling and <code>throw</code> to raise errors:</p>
+        <pre><code>try {
+    let content = fs.read("nonexistent.txt");
+} catch (e) {
+    print(f"Error: {e}");
+}
+
+// Throw errors explicitly
+func validate(n) {
+    if n &lt; 0 {
+        throw Error("negative value not allowed");
+    }
+    return n;
+}
 
 try {
-    let content = fs.read("nonexistent.txt")
-} catch err {
-    print("Error: {err.message}")
-}
-
-// Functions can return Result types
-func divide(a, b) {
-    if b == 0 {
-        return error("Division by zero");
-    }
-    return ok(a / b);
-}
-
-let result = divide(10, 2);
-match result {
-    ok(value) => print("Result: {value}"),
-    error(msg) => print("Failed: {msg}")
+    validate(-1);
+} catch (e) {
+    print(f"Caught: {e}");
 }</code></pre>
 
         <h2 id="regex">How do I use regular expressions?</h2>
-        <p>Use the <code>regex</code> module:</p>
-        <pre><code>use regex
+        <p>Use the <code>re</code> module:</p>
+        <pre><code>let text = "Contact: user@example.com, admin@test.com";
 
-let pattern = regex.compile(r"(\w+)@(\w+)\.(\w+)")
-let result = pattern.match("user@example.com")
+let first = re.find(r"[\w.]+@[\w.]+", text);
+print(first);                          // "user@example.com"
 
-if result {
-    print(result.group(1))  // "user"
-    print(result.group(2))  // "example"
-    print(result.group(3))  // "com"
-}
+let all = re.find_all(r"[\w.]+@[\w.]+", text);
+print(all);                            // ["user@example.com", "admin@test.com"]
 
-// Find all matches
-let text = "Call 555-1234 or 555-5678"
-let phones = regex.find_all(r"\d{3}-\d{4}", text)
-print(phones)  // ["555-1234", "555-5678"]</code></pre>
+// Check if pattern matches
+print(re.is_match(r"\d+", "abc 123"));  // true
+
+// Replace matches
+let cleaned = re.sub(r"\d+", "#", "abc 123 def 456");
+print(cleaned);                         // "abc # def 456"
+
+// Extract capture groups
+let caps = re.captures(r"(\w+)@(\w+)", "user@example.com");
+print(caps);                            // ["user@example.com", "user", "example.com"]</code></pre>
 
         <h2 id="json-parse">How do I parse JSON?</h2>
         <p>Use the <code>json</code> module:</p>
-        <pre><code>use json
-
-let data = json.parse('{"name": "Alice", "age": 30}')
-print(data.name)   // "Alice"
-print(data.age)    // 30
+        <pre><code>let data = json.parse('{"name": "Alice", "age": 30}');
+print(data["name"]);   // "Alice"
+print(data["age"]);    // 30
 
 // Serialize to JSON string
-let obj = { "name": "Bob", "age": 25 }
-let str = json.stringify(obj)
-print(str)</code></pre>
+let obj = {"name": "Bob", "age": 25};
+let str = json.stringify(obj);
+print(str);             // {"name":"Bob","age":25}
+
+// Pretty-print with indentation
+print(json.pretty(obj));</code></pre>
 
         <h2 id="create-project">How do I create a project?</h2>
         <p>Use the <code>zamin new</code> command:</p>
@@ -193,16 +188,8 @@ func test_string_upper() {
         <p>Filter tests by name: <code>zamin test addition</code>.</p>
 
         <h2 id="multithreading">Does Zamin support multithreading?</h2>
-        <p>Zamin uses a single-threaded VM with cooperative concurrency via fibers (lightweight coroutines). True OS-level multithreading is available through the <code>thread</code> module, which spawns independent VM instances on separate threads that communicate via message passing.</p>
-        <pre><code>use thread
-
-let handle = thread.spawn(func() {
-    print("Running on thread {thread.id()}");
-    return 42;
-})
-
-let result = handle.join()
-print(result)  // 42</code></pre>
+        <p>Zamin uses a single-threaded VM with cooperative concurrency via fibers (lightweight coroutines). Each fiber runs within the same thread and yields control explicitly, allowing concurrent task scheduling without shared-state synchronization issues.</p>
+        <p>For CPU-bound work, Zamin can spawn independent processes via the <code>subprocess</code> module. True parallelism across multiple OS threads is available through Rust's embedding API when calling Zamin from a multi-threaded Rust application.</p>
 
         <h2 id="gui-linux">How do I use GUI on Linux?</h2>
         <p>Zamin includes a built-in GUI toolkit that works on Linux via GTK4. Install the required system dependencies:</p>
@@ -211,14 +198,11 @@ sudo apt install libgtk-4-dev
 
 # Fedora
 sudo dnf install gtk4-devel</code></pre>
-        <p>Then use the <code>gui</code> module:</p>
-        <pre><code>use gui
-
-let window = gui.Window("My App", width: 800, height: 600)
-let label = gui.Label("Hello, Linux!")
-window.add(label)
-window.show()
-gui.run()</code></pre>
+        <p>Then use the <code>luna</code> module (build with <code>--features luna</code>):</p>
+        <pre><code>let win = luna.Leo("My App", 800, 600);
+let label = luna.Label(win, "Hello, Linux!");
+luna.pack(label);
+luna.mainloop(win);</code></pre>
         <p>See the <a href="gui-guide.html">GUI Guide</a> for full details.</p>
 
         <h2 id="opencv-usage">How do I use OpenCV?</h2>
@@ -243,6 +227,16 @@ print("Saved edges.jpg")</code></pre>
         </ul>
         <p>See the <a href="performance.html">Performance</a> page for detailed benchmarks and optimization techniques.</p>
 
+        <h2 id="contribute">How can I contribute to Zamin?</h2>
+        <p>Zamin is open source under the MIT license. To contribute:</p>
+        <ul>
+          <li><strong>Report bugs</strong> — Open an issue at <a href="https://github.com/young-developer90/zamin/issues">github.com/young-developer90/zamin/issues</a></li>
+          <li><strong>Submit code</strong> — Fork the repo, create a feature branch, and open a pull request</li>
+          <li><strong>Improve docs</strong> — All documentation is in the <code>docs/</code> directory as HTML files</li>
+          <li><strong>Share feedback</strong> — Feature requests and suggestions are welcome on the issue tracker</li>
+        </ul>
+        <p>See the <a href="https://github.com/young-developer90/zamin">README</a> for build instructions and project structure.</p>
+
         <h2 id="embed-rust">How do I embed Zamin in my Rust application?</h2>
         <p>Add Zamin as a dependency and use the embedding API:</p>
         <pre><code>// Cargo.toml
@@ -259,7 +253,7 @@ func main() {
         <p>See the <a href="advanced-guide.html#embedding-in-rust">Embedding in Rust</a> section for the full API reference.</p>
 
         <div class="page-meta">
-          <a id="edit-link" href="#">Edit this page on GitHub</a>
+          <a id="edit-link" href="https://github.com/young-developer90/zamin/edit/master/docs/faq.html">Edit this page on GitHub</a>
           <span>Last updated: July 2026</span>
         </div>
         <div class="feedback">

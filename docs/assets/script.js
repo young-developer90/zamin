@@ -76,7 +76,7 @@
     let searchIndex = null;
 
     if (searchInput && searchResults) {
-      fetch('/zamin/assets/search-index.json')
+      fetch('assets/search-index.json')
         .then(function(r) { return r.json(); })
         .then(function(data) { searchIndex = data; })
         .catch(function() { /* Search unavailable */ });
@@ -193,7 +193,7 @@
     const editBtn = document.getElementById('edit-link');
     if (editBtn) {
       const page = window.location.pathname.split('/').pop() || 'index.html';
-      editBtn.href = 'https://github.com/anomalyco/zamin/edit/master/docs/' + page;
+      editBtn.href = 'https://github.com/young-developer90/zamin/edit/master/docs/' + page;
     }
   });
 
