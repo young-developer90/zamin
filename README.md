@@ -16,19 +16,19 @@ print("Hello, Zamin!");
 
 ## Documentation
 
-**[Full Documentation](docs/index.html)** -- language guide, standard library reference, GUI toolkit guide, OpenCV guide, and more.
+**[Website →](https://young-developer90.github.io/zamin/)** -- full language documentation, guides, and reference.
 
 | Page | Description |
 |------|-------------|
-| [Getting Started](docs/getting-started.html) | Installation, setup, and first script |
-| [Language Guide](docs/language-guide.html) | Complete language reference |
-| [Standard Library](docs/standard-library.html) | All 25+ built-in modules |
-| [GUI Toolkit](docs/gui-guide.html) | Sol (Windows) and Luna (Linux) |
-| [OpenCV](docs/opencv-guide.html) | Computer vision and image processing |
-| [Advanced Guide](docs/advanced-guide.html) | C extensions, Python interop, CUDA, embedding |
-| [Project Management](docs/project-management.html) | CLI commands and project structure |
-| [Performance](docs/performance.html) | Benchmarks and optimization tips |
-| [FAQ](docs/faq.html) | Frequently asked questions |
+| [Getting Started](https://young-developer90.github.io/zamin/getting-started.html) | Installation, setup, and first script |
+| [Language Guide](https://young-developer90.github.io/zamin/language-guide.html) | Complete language reference |
+| [Standard Library](https://young-developer90.github.io/zamin/standard-library.html) | All 25+ built-in modules |
+| [GUI Toolkit](https://young-developer90.github.io/zamin/gui-guide.html) | Sol (Windows) and Luna (Linux) |
+| [OpenCV](https://young-developer90.github.io/zamin/opencv-guide.html) | Computer vision and image processing |
+| [Advanced Guide](https://young-developer90.github.io/zamin/advanced-guide.html) | C extensions, Python interop, CUDA, embedding |
+| [Project Management](https://young-developer90.github.io/zamin/project-management.html) | CLI commands and project structure |
+| [Performance](https://young-developer90.github.io/zamin/performance.html) | Benchmarks and optimization tips |
+| [FAQ](https://young-developer90.github.io/zamin/faq.html) | Frequently asked questions |
 
 ## Quick Start
 
