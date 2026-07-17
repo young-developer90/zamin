@@ -2526,6 +2526,184 @@ fn execute_chunk(chunk_idx: usize, args: &[Value], ctx: &mut VmContext) -> Resul
             OpCode::NewStructInstance => { ip += 2; }
             OpCode::StructSetField => { ip += 2; }
             OpCode::StructGetField => { ip += 2; }
+            // === INT FAST-PATH OPCODES ===
+            OpCode::IntAdd => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_add(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x + y));
+                } else {
+                    stack.push(add_values(&a, &b, ctx.heap)?);
+                }
+            }
+            OpCode::IntSub => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_sub(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x - y));
+                } else {
+                    stack.push(sub_values(&a, &b)?);
+                }
+            }
+            OpCode::IntMul => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_mul(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x * y));
+                } else {
+                    stack.push(mul_values(&a, &b)?);
+                }
+            }
+            OpCode::IntEq => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x == y));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x == y));
+                } else if let (Value::Int(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(*x as f64 == *y));
+                } else if let (Value::Float(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(*x == *y as f64));
+                } else {
+                    stack.push(Value::Bool(a.eq(&b, ctx.heap)));
+                }
+            }
+            OpCode::IntNe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x != y));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x != y));
+                } else {
+                    stack.push(Value::Bool(!a.eq(&b, ctx.heap)));
+                }
+            }
+            OpCode::IntLt => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x < y));
+                } else {
+                    stack.push(Value::Bool(cmp_lt(&a, &b)?));
+                }
+            }
+            OpCode::IntGt => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x > y));
+                } else {
+                    stack.push(Value::Bool(cmp_lt(&b, &a)?));
+                }
+            }
+            OpCode::IntLe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x <= y));
+                } else {
+                    stack.push(Value::Bool(!cmp_lt(&b, &a)?));
+                }
+            }
+            OpCode::IntGe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x >= y));
+                } else {
+                    stack.push(Value::Bool(!cmp_lt(&a, &b)?));
+                }
+            }
+            OpCode::IntInc => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                match &mut stack[idx] {
+                    Value::Int(n) => { *n = n.wrapping_add(1); }
+                    Value::UInt(n) => { *n = n.wrapping_add(1); }
+                    _ => return Err("IntInc: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntDec => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                match &mut stack[idx] {
+                    Value::Int(n) => { *n = n.wrapping_sub(1); }
+                    Value::UInt(n) => {
+                        if *n == 0 { return Err("cannot decrement uint below 0".to_string()); }
+                        *n -= 1;
+                    }
+                    _ => return Err("IntDec: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntJumpIfNotLt => {
+                let a_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let b_idx = u16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]) as usize;
+                let target = u16::from_le_bytes([chunk.code[ip+4], chunk.code[ip+5]]) as usize;
+                ip += 6;
+                let a_val = &stack[a_idx];
+                let b_val = &stack[b_idx];
+                let should_jump = match (a_val, b_val) {
+                    (Value::Int(x), Value::Int(y)) => x >= y,
+                    (Value::Float(x), Value::Float(y)) => x >= y,
+                    (Value::Int(x), Value::Float(y)) => (*x as f64) >= *y,
+                    (Value::Float(x), Value::Int(y)) => *x >= (*y as f64),
+                    _ => !cmp_lt(a_val, b_val)?,
+                };
+                if should_jump { ip = target; }
+            }
+            OpCode::IntJumpIfNotGt => {
+                let a_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let b_idx = u16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]) as usize;
+                let target = u16::from_le_bytes([chunk.code[ip+4], chunk.code[ip+5]]) as usize;
+                ip += 6;
+                let a_val = &stack[a_idx];
+                let b_val = &stack[b_idx];
+                let should_jump = match (a_val, b_val) {
+                    (Value::Int(x), Value::Int(y)) => x <= y,
+                    (Value::Float(x), Value::Float(y)) => x <= y,
+                    (Value::Int(x), Value::Float(y)) => (*x as f64) <= *y,
+                    (Value::Float(x), Value::Int(y)) => *x <= (*y as f64),
+                    _ => !cmp_lt(b_val, a_val)?,
+                };
+                if should_jump { ip = target; }
+            }
+            OpCode::IntAddLocal => {
+                let local_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let imm = i16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]);
+                ip += 4;
+                match &mut stack[local_idx] {
+                    Value::Int(n) => { *n = n.wrapping_add(imm as i64); }
+                    Value::UInt(n) => { *n = n.wrapping_add(imm as u64); }
+                    _ => return Err("IntAddLocal: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntPushConst => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                stack.push(chunk.constants[idx].clone());
+            }
+            OpCode::LoadLocalInt => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                stack.push(stack[idx].clone());
+            }
+            OpCode::LoadGlobalCached => {
+                let sidx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                let name = chunk.string_pool.get(sidx).ok_or("invalid global name index")?;
+                match ctx.globals.get(name) {
+                    Some(val) => stack.push(val.clone()),
+                    None => return Err(format!("undefined global '{}'", name)),
+                }
+            }
             _ => {
                 let count = op.operand_count();
                 ip += count * 2;
@@ -2804,6 +2982,184 @@ fn execute_closure_chunk(chunk_idx: usize, args: &[Value], upvalues: Vec<Upvalue
                 ctx.try_frames.push((stack.len(), catch_ip));
             }
             OpCode::EndTry => { ctx.try_frames.pop(); }
+            // === INT FAST-PATH OPCODES ===
+            OpCode::IntAdd => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_add(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x + y));
+                } else {
+                    stack.push(add_values(&a, &b, ctx.heap)?);
+                }
+            }
+            OpCode::IntSub => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_sub(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x - y));
+                } else {
+                    stack.push(sub_values(&a, &b)?);
+                }
+            }
+            OpCode::IntMul => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Int(x.wrapping_mul(*y)));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Float(x * y));
+                } else {
+                    stack.push(mul_values(&a, &b)?);
+                }
+            }
+            OpCode::IntEq => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x == y));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x == y));
+                } else if let (Value::Int(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(*x as f64 == *y));
+                } else if let (Value::Float(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(*x == *y as f64));
+                } else {
+                    stack.push(Value::Bool(a.eq(&b, ctx.heap)));
+                }
+            }
+            OpCode::IntNe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x != y));
+                } else if let (Value::Float(x), Value::Float(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x != y));
+                } else {
+                    stack.push(Value::Bool(!a.eq(&b, ctx.heap)));
+                }
+            }
+            OpCode::IntLt => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x < y));
+                } else {
+                    stack.push(Value::Bool(cmp_lt(&a, &b)?));
+                }
+            }
+            OpCode::IntGt => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x > y));
+                } else {
+                    stack.push(Value::Bool(cmp_lt(&b, &a)?));
+                }
+            }
+            OpCode::IntLe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x <= y));
+                } else {
+                    stack.push(Value::Bool(!cmp_lt(&b, &a)?));
+                }
+            }
+            OpCode::IntGe => {
+                let b = stack.pop().ok_or("stack empty")?;
+                let a = stack.pop().ok_or("stack empty")?;
+                if let (Value::Int(x), Value::Int(y)) = (&a, &b) {
+                    stack.push(Value::Bool(x >= y));
+                } else {
+                    stack.push(Value::Bool(!cmp_lt(&a, &b)?));
+                }
+            }
+            OpCode::IntInc => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                match &mut stack[idx] {
+                    Value::Int(n) => { *n = n.wrapping_add(1); }
+                    Value::UInt(n) => { *n = n.wrapping_add(1); }
+                    _ => return Err("IntInc: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntDec => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                match &mut stack[idx] {
+                    Value::Int(n) => { *n = n.wrapping_sub(1); }
+                    Value::UInt(n) => {
+                        if *n == 0 { return Err("cannot decrement uint below 0".to_string()); }
+                        *n -= 1;
+                    }
+                    _ => return Err("IntDec: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntJumpIfNotLt => {
+                let a_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let b_idx = u16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]) as usize;
+                let target = u16::from_le_bytes([chunk.code[ip+4], chunk.code[ip+5]]) as usize;
+                ip += 6;
+                let a_val = &stack[a_idx];
+                let b_val = &stack[b_idx];
+                let should_jump = match (a_val, b_val) {
+                    (Value::Int(x), Value::Int(y)) => x >= y,
+                    (Value::Float(x), Value::Float(y)) => x >= y,
+                    (Value::Int(x), Value::Float(y)) => (*x as f64) >= *y,
+                    (Value::Float(x), Value::Int(y)) => *x >= (*y as f64),
+                    _ => !cmp_lt(a_val, b_val)?,
+                };
+                if should_jump { ip = target; }
+            }
+            OpCode::IntJumpIfNotGt => {
+                let a_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let b_idx = u16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]) as usize;
+                let target = u16::from_le_bytes([chunk.code[ip+4], chunk.code[ip+5]]) as usize;
+                ip += 6;
+                let a_val = &stack[a_idx];
+                let b_val = &stack[b_idx];
+                let should_jump = match (a_val, b_val) {
+                    (Value::Int(x), Value::Int(y)) => x <= y,
+                    (Value::Float(x), Value::Float(y)) => x <= y,
+                    (Value::Int(x), Value::Float(y)) => (*x as f64) <= *y,
+                    (Value::Float(x), Value::Int(y)) => *x <= (*y as f64),
+                    _ => !cmp_lt(b_val, a_val)?,
+                };
+                if should_jump { ip = target; }
+            }
+            OpCode::IntAddLocal => {
+                let local_idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                let imm = i16::from_le_bytes([chunk.code[ip+2], chunk.code[ip+3]]);
+                ip += 4;
+                match &mut stack[local_idx] {
+                    Value::Int(n) => { *n = n.wrapping_add(imm as i64); }
+                    Value::UInt(n) => { *n = n.wrapping_add(imm as u64); }
+                    _ => return Err("IntAddLocal: local is not an integer".to_string()),
+                }
+            }
+            OpCode::IntPushConst => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                stack.push(chunk.constants[idx].clone());
+            }
+            OpCode::LoadLocalInt => {
+                let idx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                stack.push(stack[idx].clone());
+            }
+            OpCode::LoadGlobalCached => {
+                let sidx = u16::from_le_bytes([chunk.code[ip], chunk.code[ip+1]]) as usize;
+                ip += 2;
+                let name = chunk.string_pool.get(sidx).ok_or("invalid global name index")?;
+                match ctx.globals.get(name) {
+                    Some(val) => stack.push(val.clone()),
+                    None => return Err(format!("undefined global '{}'", name)),
+                }
+            }
             _ => {
                 let count = op.operand_count();
                 ip += count * 2;

@@ -218,7 +218,8 @@ impl OpCode {
             | MakeStruct | NewStructInstance | StructSetField | StructGetField
             | JumpIfFalsePop | JumpIfTruePop | Inc | Dec
             | IntInc | IntDec | IntPushConst | LoadLocalInt | LoadGlobalCached => 1,
-            IntJumpIfNotLt | IntJumpIfNotGt | IntAddLocal => 2, // 2 operands (each u16)
+            IntAddLocal => 2, // 2 operands (each u16): local_idx + immediate
+            IntJumpIfNotLt | IntJumpIfNotGt => 3, // 3 operands (each u16): a_idx + b_idx + target
             _ => 0,
         }
     }
@@ -275,6 +276,14 @@ impl Chunk {
 
     pub fn emit_u32(&mut self, val: u32) {
         self.code.extend_from_slice(&val.to_le_bytes());
+    }
+
+    pub fn instruction_size_at(&self, offset: usize) -> usize {
+        if offset >= self.code.len() {
+            return 0;
+        }
+        let op = OpCode::from_u8(self.code[offset]).unwrap_or(OpCode::Halt);
+        1 + op.operand_count() * 2
     }
 
     pub fn add_constant(&mut self, val: super::gc::Value) -> u16 {
@@ -354,7 +363,15 @@ impl Chunk {
                     i += 3;
                     continue;
                 }
-                OpCode::IntJumpIfNotLt | OpCode::IntJumpIfNotGt | OpCode::IntAddLocal => {
+                OpCode::IntJumpIfNotLt | OpCode::IntJumpIfNotGt => {
+                    let a = u16::from_le_bytes([self.code[i+1], self.code[i+2]]);
+                    let b = u16::from_le_bytes([self.code[i+3], self.code[i+4]]);
+                    let c = u16::from_le_bytes([self.code[i+5], self.code[i+6]]);
+                    output.push_str(&format!(" {} {} target:{}", a, b, c));
+                    i += 7;
+                    continue;
+                }
+                OpCode::IntAddLocal => {
                     let a = u16::from_le_bytes([self.code[i+1], self.code[i+2]]);
                     let b = u16::from_le_bytes([self.code[i+3], self.code[i+4]]);
                     output.push_str(&format!(" {} {}", a, b));

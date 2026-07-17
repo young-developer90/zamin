@@ -227,37 +227,38 @@ impl GcHeap {
         }
     }
 
-    pub fn mark_gray(&mut self, r: ObjRef) {
-        let children: Vec<ObjRef> = {
-            let obj = self.objects[r.0].as_ref().unwrap();
-            match obj {
-                GcObj::List(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
-                GcObj::Dict(entries) => entries.iter().flat_map(|(k, v)| [k.ref_or_nil(), v.ref_or_nil()]).filter_map(|x| x).collect(),
-                GcObj::Set(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
-                GcObj::Tuple(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
-                GcObj::Closure { function, upvalues } => {
-                    let mut refs = Vec::with_capacity(1 + upvalues.len());
-                    refs.push(*function);
-                    for uv in upvalues {
-                        if let Some(ref val) = uv.value {
-                            if let Some(r) = val.ref_or_nil() { refs.push(r); }
-                        }
+    pub fn children_of(&self, r: ObjRef) -> Vec<ObjRef> {
+        let obj = match self.objects[r.0].as_ref() { Some(o) => o, _ => return Vec::new() };
+        match obj {
+            GcObj::List(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
+            GcObj::Dict(entries) => entries.iter().flat_map(|(k, v)| [k.ref_or_nil(), v.ref_or_nil()]).filter_map(|x| x).collect(),
+            GcObj::Set(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
+            GcObj::Tuple(items) => items.iter().filter_map(|v| v.ref_or_nil()).collect(),
+            GcObj::Closure { function, upvalues } => {
+                let mut refs = Vec::with_capacity(1 + upvalues.len());
+                refs.push(*function);
+                for uv in upvalues {
+                    if let Some(ref val) = uv.value {
+                        if let Some(r) = val.ref_or_nil() { refs.push(r); }
                     }
-                    refs
                 }
-                GcObj::StructInstance { struct_ref, fields } => {
-                    let mut refs = Vec::with_capacity(1 + fields.len() * 2);
-                    refs.push(*struct_ref);
-                    for (k, v) in fields {
-                        if let Some(r) = k.ref_or_nil() { refs.push(r); }
-                        if let Some(r) = v.ref_or_nil() { refs.push(r); }
-                    }
-                    refs
-                }
-                _ => Vec::new(),
+                refs
             }
-        };
-        for child in children {
+            GcObj::StructInstance { struct_ref, fields } => {
+                let mut refs = Vec::with_capacity(1 + fields.len() * 2);
+                refs.push(*struct_ref);
+                for (k, v) in fields {
+                    if let Some(r) = k.ref_or_nil() { refs.push(r); }
+                    if let Some(r) = v.ref_or_nil() { refs.push(r); }
+                }
+                refs
+            }
+            _ => Vec::new(),
+        }
+    }
+
+    pub fn mark_gray(&mut self, r: ObjRef) {
+        for child in self.children_of(r) {
             self.mark(child);
         }
     }
@@ -268,8 +269,17 @@ impl GcHeap {
         let perm: Vec<Value> = self.permanent_roots.clone();
         for v in &perm { self.mark_value(v); }
         let len = self.objects.len();
-        for i in 0..len {
-            if self.marks[i] { self.mark_gray(ObjRef(i)); }
+        let mut gray: Vec<ObjRef> = Vec::new();
+        for (i, marked) in self.marks.iter().enumerate() {
+            if *marked { gray.push(ObjRef(i)); }
+        }
+        while let Some(r) = gray.pop() {
+            for child in self.children_of(r) {
+                if !self.marks[child.0] {
+                    self.marks[child.0] = true;
+                    gray.push(child);
+                }
+            }
         }
         let dropper = *RESOURCE_DROPPER.lock().unwrap();
         for i in 0..len {
