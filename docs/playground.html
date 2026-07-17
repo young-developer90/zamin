@@ -430,22 +430,44 @@
           { success: false, output: "..." }.
        ============================================ */
 
-    // --- Placeholder: Replace this function to connect a WASM runtime ---
+    // --- Zamin WASM Runtime ---
+    // The WASM module is loaded from docs/wasm/zamin_wasm.js when the page loads.
+    // If you haven't built the WASM runtime yet, run: ./build-wasm.sh
+
+    var zaminWasm = null;
+
+    async function initZaminWasm() {
+      try {
+        var mod = await import('./wasm/zamin_wasm.js');
+        await mod.default();
+        zaminWasm = mod;
+        console.log('Zamin WASM runtime loaded');
+        return true;
+      } catch (e) {
+        console.warn('Zamin WASM runtime not available:', e.message);
+        return false;
+      }
+    }
+
     async function executeZamin(sourceCode) {
-      // TODO: Connect Zamin WASM runtime here.
-      // Example:
-      //   const result = await wasmRuntime.run(sourceCode);
-      //   return { success: true, output: result };
+      if (zaminWasm) {
+        try {
+          var result = zaminWasm.run_zamin(sourceCode);
+          return { success: true, output: result };
+        } catch (e) {
+          return { success: false, output: String(e) };
+        }
+      }
+      // Fallback when WASM is not loaded
       await new Promise(function(r) { return setTimeout(r, 10); });
       return {
         success: false,
         output: '[playground] No WASM runtime connected yet.\n' +
-                'To run this code, copy-paste it into a local Zamin binary or\n' +
-                'connect a Zamin WebAssembly runtime here.\n\n' +
+                'Run ./build-wasm.sh to build the Zamin WebAssembly runtime.\n\n' +
                 '--- Source code ---\n' + sourceCode
       };
     }
-    // --- End placeholder ---
+    // --- End Zamin WASM Runtime ---
 
     // DOM refs
     var textarea = document.getElementById('editor-textarea');
@@ -857,6 +879,7 @@
     /* ---------- Init ---------- */
 
     syncEditor();
+    initZaminWasm();
 
     // If there's code in the URL, run it automatically
     if (new URLSearchParams(window.location.search).has('code')) {

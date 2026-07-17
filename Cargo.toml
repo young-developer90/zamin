@@ -22,11 +22,13 @@ url = "2"
 ureq = "2"
 gtk4 = { version = "0.9", optional = true }
 opencv = { version = "0.99", optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
 
 [features]
 python = ["dep:pyo3"]
 luna = ["dep:gtk4"]
 opencv = ["dep:opencv"]
+wasm = ["dep:wasm-bindgen"]
 default = []
 
 [[bin]]

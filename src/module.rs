@@ -1,13 +1,19 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap};
+#[cfg(not(target_arch = "wasm32"))]
+use std::collections::HashSet;
+#[cfg(not(target_arch = "wasm32"))]
 use std::path::Path;
 use std::rc::Rc;
 
 use crate::bytecode::{Chunk, OpCode};
+#[cfg(not(target_arch = "wasm32"))]
 use crate::cext;
 use crate::comet_mod;
 use crate::compiler::Compiler;
 use crate::gc::*;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::http_module;
+#[cfg(not(target_arch = "wasm32"))]
 use crate::nova_mod;
 #[cfg(target_os = "windows")]
 use crate::sol_mod;
@@ -17,12 +23,14 @@ use crate::parser::Parser;
 use crate::stdlib;
 use crate::vm::Vm;
 
+#[cfg(not(target_arch = "wasm32"))]
 fn builtin_names() -> HashSet<String> {
     [
         "print", "main", "nova", "comet", "nova_version", "_nova_row",
     ].iter().map(|s| s.to_string()).collect()
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn load_zamin_library(path: &Path) -> Option<(String, Vec<Chunk>, Vec<String>)> {
     let source = std::fs::read_to_string(path).ok()?;
     let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string())?;
@@ -49,6 +57,7 @@ fn load_zamin_library(path: &Path) -> Option<(String, Vec<Chunk>, Vec<String>)> 
 
 /// Patch OpCode::MakeFunc / MakeClosure chunk indices in library bytecode
 /// so they point to the correct chunks after insertion at `offset`.
+#[cfg(not(target_arch = "wasm32"))]
 fn patch_chunk_indices(chunks: &mut [Chunk], offset: u16) {
     for chunk in chunks.iter_mut() {
         let mut i = 0;
@@ -72,6 +81,7 @@ fn patch_chunk_indices(chunks: &mut [Chunk], offset: u16) {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn opcode_operand_len(opcode: u8) -> usize {
     match OpCode::from_u8(opcode) {
         Some(OpCode::LoadConst) | Some(OpCode::LoadGlobal) |
@@ -109,11 +119,14 @@ impl ModuleLoader {
             modules.insert(name, module_val);
         }
 
-        let mut http_items = Vec::new();
-        for (key, val) in http_module::build_http() {
-            http_items.push((make_string(heap, &key), val));
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let mut http_items = Vec::new();
+            for (key, val) in http_module::build_http() {
+                http_items.push((make_string(heap, &key), val));
+            }
+            modules.insert("http".to_string(), Value::Dict(heap.alloc(GcObj::Dict(http_items))));
         }
-        modules.insert("http".to_string(), Value::Dict(heap.alloc(GcObj::Dict(http_items))));
 
         #[cfg(target_os = "windows")]
         {
@@ -157,6 +170,7 @@ impl ModuleLoader {
         }
 
         // Load C extension modules (*.dll / *.so)
+        #[cfg(not(target_arch = "wasm32"))]
         if let Ok(dir) = std::env::current_dir() {
             let ext_dir = dir.join("modules");
             if ext_dir.is_dir() {
@@ -206,6 +220,7 @@ impl ModuleLoader {
         }));
 
         // Add nova() as a top-level function
+        #[cfg(not(target_arch = "wasm32"))]
         for (name, val) in nova_mod::build_nova() {
             globals.insert(name, val);
         }
@@ -217,71 +232,75 @@ impl ModuleLoader {
     }
 
     fn load_zamin_libs(vm: &mut Vm, modules: &mut HashMap<String, Value>) {
-        let lib_dir = Path::new("/etc/zamin/lib");
-        if !lib_dir.is_dir() { return; }
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let lib_dir = Path::new("/etc/zamin/lib");
+            if !lib_dir.is_dir() { return; }
 
-        let builtins = builtin_names();
-        let entries: Vec<_> = std::fs::read_dir(lib_dir).ok()
-            .into_iter().flat_map(|d| d.flatten()).collect();
+            let builtins = builtin_names();
+            let entries: Vec<_> = std::fs::read_dir(lib_dir).ok()
+                .into_iter().flat_map(|d| d.flatten()).collect();
 
-        // First pass: compile all libraries and collect their chunks
-        struct LibInfo {
-            stem: String,
-            chunks: Vec<Chunk>,
-            #[allow(dead_code)]
-            exports: Vec<String>,
-        }
-        let mut libs: Vec<LibInfo> = Vec::new();
-        for entry in &entries {
-            let path = entry.path();
-            if path.extension().and_then(|e| e.to_str()) != Some("zamin") { continue; }
-            let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string());
-            let _ = match stem { Some(n) if !modules.contains_key(&n) => n, _ => continue, };
-            if let Some((s, chunks, exports)) = crate::module::load_zamin_library(&path) {
-                libs.push(LibInfo { stem: s, chunks, exports });
-            } else {
-                eprintln!("warning: failed to compile library '{}'", path.display());
+            // First pass: compile all libraries and collect their chunks
+            struct LibInfo {
+                stem: String,
+                chunks: Vec<Chunk>,
+                #[allow(dead_code)]
+                exports: Vec<String>,
             }
-        }
+            let mut libs: Vec<LibInfo> = Vec::new();
+            for entry in &entries {
+                let path = entry.path();
+                if path.extension().and_then(|e| e.to_str()) != Some("zamin") { continue; }
+                let stem = path.file_stem().and_then(|s| s.to_str()).map(|s| s.to_string());
+                let _ = match stem { Some(n) if !modules.contains_key(&n) => n, _ => continue, };
+                if let Some((s, chunks, exports)) = crate::module::load_zamin_library(&path) {
+                    libs.push(LibInfo { stem: s, chunks, exports });
+                } else {
+                    eprintln!("warning: failed to compile library '{}'", path.display());
+                }
+            }
 
-        // Compute library chunk start index (after user chunks)
-        let lib_start = vm.chunks.len();
-        // Append library chunks, patching their internal chunk indices
-        for lib in &libs {
-            let mut patched = lib.chunks.clone();
-            patch_chunk_indices(&mut patched, lib_start as u16);
-            for chunk in &mut patched {
-                for (i, content) in chunk.string_constants.iter().enumerate() {
-                    if let Some(s) = content {
-                        chunk.constants[i] = Value::String(vm.heap.alloc(GcObj::String(s.clone())));
+            // Compute library chunk start index (after user chunks)
+            let lib_start = vm.chunks.len();
+            // Append library chunks, patching their internal chunk indices
+            for lib in &libs {
+                let mut patched = lib.chunks.clone();
+                patch_chunk_indices(&mut patched, lib_start as u16);
+                for chunk in &mut patched {
+                    for (i, content) in chunk.string_constants.iter().enumerate() {
+                        if let Some(s) = content {
+                            chunk.constants[i] = Value::String(vm.heap.alloc(GcObj::String(s.clone())));
+                        }
+                    }
+                    vm.chunks.push(chunk.clone());
+                }
+            }
+
+            // Run library entry chunks to populate globals
+            for (i, lib) in libs.iter().enumerate() {
+                let entry_chunk = lib_start + libs[..i].iter().map(|l| l.chunks.len()).sum::<usize>();
+                let before: HashSet<String> = vm.globals.keys().cloned().collect();
+                if let Err(e) = vm.run_chunk(entry_chunk) {
+                    eprintln!("warning: failed to execute library '{}': {}", lib.stem, e);
+                    continue;
+                }
+                // Build module dict from newly-set globals
+                let mut items = Vec::new();
+                for (name, val) in &vm.globals {
+                    if !builtins.contains(name) && !modules.contains_key(name) && !before.contains(name) {
+                        items.push((make_string(&mut vm.heap, name), val.clone()));
                     }
                 }
-                vm.chunks.push(chunk.clone());
-            }
-        }
-
-        // Run library entry chunks to populate globals
-        for (i, lib) in libs.iter().enumerate() {
-            let entry_chunk = lib_start + libs[..i].iter().map(|l| l.chunks.len()).sum::<usize>();
-            let before: HashSet<String> = vm.globals.keys().cloned().collect();
-            if let Err(e) = vm.run_chunk(entry_chunk) {
-                eprintln!("warning: failed to execute library '{}': {}", lib.stem, e);
-                continue;
-            }
-            // Build module dict from newly-set globals
-            let mut items = Vec::new();
-            for (name, val) in &vm.globals {
-                if !builtins.contains(name) && !modules.contains_key(name) && !before.contains(name) {
-                    items.push((make_string(&mut vm.heap, name), val.clone()));
+                if !items.is_empty() {
+                    modules.insert(lib.stem.clone(), Value::Dict(vm.heap.alloc(GcObj::Dict(items))));
+                    vm.globals.insert(lib.stem.clone(), modules[&lib.stem].clone());
                 }
-            }
-            if !items.is_empty() {
-                modules.insert(lib.stem.clone(), Value::Dict(vm.heap.alloc(GcObj::Dict(items))));
-                vm.globals.insert(lib.stem.clone(), modules[&lib.stem].clone());
             }
         }
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn execute_file(&mut self, path: &str) -> Result<(), String> {
         let source = std::fs::read_to_string(path)
             .map_err(|e| format!("cannot read file '{}': {}", path, e))?;

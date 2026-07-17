@@ -1,5 +1,6 @@
 pub mod ast;
 pub mod bytecode;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod cext;
 pub mod comet_mod;
 pub mod cli;
@@ -10,9 +11,12 @@ pub mod datetime_mod;
 pub mod gc;
 pub mod hashlib_mod;
 pub mod html_mod;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod http;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod http_module;
 pub mod itertools_mod;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod nova_mod;
 pub mod json_mod;
 #[cfg(target_os = "windows")]
@@ -23,12 +27,15 @@ pub mod lexer;
 pub mod logging_mod;
 pub mod module;
 pub mod parser;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod path_mod;
 pub mod re_mod;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod repl;
 pub mod stats_mod;
 pub mod stdlib;
 pub mod string_mod;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod subprocess_mod;
 pub mod test_mod;
 pub mod url_mod;
@@ -43,6 +50,9 @@ pub mod linum;
 
 #[cfg(feature = "python")]
 pub mod py;
+
+#[cfg(all(target_arch = "wasm32", feature = "wasm"))]
+pub mod wasm_entry;
 
 pub use vm::Vm;
 pub use gc::{GcHeap, Value, GcObj, ObjRef, VmContext, NativeFunc, make_string, make_string_owned, make_list, make_dict, make_set, make_tuple, make_error, make_range, make_matrix, make_struct_def, make_struct_instance, make_image, set_resource_dropper, to_f64, to_i64, get_str, get_str_owned};

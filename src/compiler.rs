@@ -1009,7 +1009,7 @@ impl Compiler {
                 let mut end_jumps = Vec::new();
                 let num_arms = arms.len();
 
-                for (i, (pattern, body)) in arms.iter().enumerate() {
+                for (_i, (pattern, body)) in arms.iter().enumerate() {
                     self.chunk().emit(OpCode::LoadGlobal);
                     self.chunk().emit_u16(tmp_idx);
                     self.compile_match_pattern(pattern.clone())?;
