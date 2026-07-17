@@ -1,0 +1,14 @@
+func fib(n) {
+    if n <= 1 { return n; }
+    return fib(n - 1) + fib(n - 2);
+}
+let r = fib(32);
+
+let x = 0;
+for i in 0..5000000 { x = x + i; }
+
+let s = "";
+for i in 0..100000 { s = s + "x"; }
+
+let lst = [];
+for i in 0..500000 { lst.push(i); }

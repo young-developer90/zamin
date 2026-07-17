@@ -113,17 +113,17 @@ luna.mainloop(win);
 
 ## Performance
 
-Zamin's bytecode VM achieves significant speedups through raw byte dispatch, specialized integer opcodes, and a peephole optimizer:
+Zamin's bytecode VM competes well with CPython on integer-heavy workloads, thanks to raw byte dispatch, specialized integer opcodes, and a peephole optimizer:
 
-| Benchmark | Speedup |
-|-----------|---------|
-| Integer loop (10M iterations) | **11.1x** |
-| Local variable access (5M) | **10.0x** |
-| Function calls (500K) | **7.2x** |
-| List push (100K) | **5.3x** |
-| String concat (100K) | **2.9x** |
+| Benchmark | Zamin | Python 3 | Ratio |
+|-----------|-------|----------|-------|
+| Recursive fib(32) | 1.51s | 0.35s | 4.3x |
+| Integer loop (5M ops) | **0.47s** | **0.53s** | **0.9x** |
+| String concat (100K) | 3.14s | 0.23s | 13.4x |
+| List push (500K) | 0.13s | 0.09s | 1.5x |
+| **Overall** | **5.63s** | **1.18s** | **4.8x** |
 
-See [Performance](docs/performance.html) for detailed benchmarks.
+Zamin excels at tight integer loops — often matching or exceeding CPython — but is slower on string and list operations due to the overhead of its bytecode interpreter. Benchmarks run on the same machine using `time` for wall-clock measurement.
 
 ## Build Options
 
