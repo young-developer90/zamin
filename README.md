@@ -56,7 +56,7 @@ Zamin> print(fib(20));
 
 ### Fibonacci
 
-```lion
+```zamin
 func fibonacci(n) {
     if n <= 1 { return n; }
     return fibonacci(n - 1) + fibonacci(n - 2);
@@ -66,14 +66,14 @@ for i in 0..10 { print(f"fib({i}) = {fibonacci(i)}"); }
 
 ### HTTP Request
 
-```lion
+```zamin
 let resp = http.get("https://api.github.com/repos/young-developer90/zamin");
 print(resp.status);
 ```
 
 ### File I/O
 
-```lion
+```zamin
 fs.write("hello.txt", "Hello, Zamin!");
 let content = fs.read("hello.txt");
 print(content);
@@ -86,7 +86,7 @@ sudo apt install libgtk-4-dev
 cargo build --release --features luna
 ```
 
-```lion
+```zamin
 let win = luna.Leo("App", 400, 300);
 let label = luna.Label(win, "Hello from Luna!");
 luna.pack(label);
