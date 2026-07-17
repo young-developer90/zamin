@@ -3,6 +3,7 @@
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-dea584?logo=rust)](https://rustup.rs/)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.7.0-green)](https://github.com/young-developer90/zamin/releases)
+[![Crates.io](https://img.shields.io/crates/v/zamin?color=purple&logo=rust)](https://crates.io/crates/zamin)
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/young-developer90/zamin/actions)
 [![PRs](https://img.shields.io/badge/PRs-welcome-orange)](https://github.com/young-developer90/zamin/pulls)
 
