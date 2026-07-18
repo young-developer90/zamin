@@ -37,29 +37,35 @@
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
   <div class="main-layout">
     <nav class="sidebar" id="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">はじめに</div>
-        <a href="index.html" class="sidebar-link">概要</a>
-        <a href="getting-started.html" class="sidebar-link">インストール</a>
-        <a href="playground.html" class="sidebar-link">プレイグラウンド</a>
+      <div class="sidebar-inner">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">はじめに</div>
+          <a href="index.html" class="sidebar-link">概要</a>
+          <a href="getting-started.html" class="sidebar-link">インストール</a>
+          <a href="playground.html" class="sidebar-link">プレイグラウンド</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">言語</div>
+          <a href="language-guide.html" class="sidebar-link">言語ガイド</a>
+          <a href="standard-library.html" class="sidebar-link">標準ライブラリ</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">機能</div>
+          <a href="gui-guide.html" class="sidebar-link">GUI ツールキット</a>
+          <a href="opencv-guide.html" class="sidebar-link">OpenCV</a>
+          <a href="advanced-guide.html" class="sidebar-link">高度な機能</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">リファレンス</div>
+          <a href="project-management.html" class="sidebar-link">プロジェクト管理</a>
+          <a href="performance.html" class="sidebar-link active">パフォーマンス</a>
+          <a href="faq.html" class="sidebar-link">よくある質問</a>
+        </div>
       </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">言語</div>
-        <a href="language-guide.html" class="sidebar-link">言語ガイド</a>
-        <a href="standard-library.html" class="sidebar-link">標準ライブラリ</a>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">機能</div>
-        <a href="gui-guide.html" class="sidebar-link">GUI ツールキット</a>
-        <a href="opencv-guide.html" class="sidebar-link">OpenCV</a>
-        <a href="advanced-guide.html" class="sidebar-link">高度な機能</a>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">リファレンス</div>
-        <a href="project-management.html" class="sidebar-link">プロジェクト管理</a>
-        <a href="performance.html" class="sidebar-link active">パフォーマンス</a>
-        <a href="faq.html" class="sidebar-link">よくある質問</a>
-      </div>
+      <div class="sidebar-grip" id="sidebar-grip"></div>
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
+        <span class="toggle-icon">&#9654;</span>
+      </button>
     </nav>
     <main class="content">
       <div class="content-inner">

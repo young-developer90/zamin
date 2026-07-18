@@ -39,29 +39,35 @@
 
   <div class="main-layout">
     <nav class="sidebar" id="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Getting Started</div>
-        <a href="index.html" class="sidebar-link">Overview</a>
-        <a href="getting-started.html" class="sidebar-link">Installation</a>
-        <a href="playground.html" class="sidebar-link">Playground</a>
+      <div class="sidebar-inner">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Getting Started</div>
+          <a href="index.html" class="sidebar-link">Overview</a>
+          <a href="getting-started.html" class="sidebar-link">Installation</a>
+          <a href="playground.html" class="sidebar-link">Playground</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Language</div>
+          <a href="language-guide.html" class="sidebar-link">Language Guide</a>
+          <a href="standard-library.html" class="sidebar-link">Standard Library</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Features</div>
+          <a href="gui-guide.html" class="sidebar-link active">GUI Toolkit</a>
+          <a href="opencv-guide.html" class="sidebar-link">OpenCV</a>
+          <a href="advanced-guide.html" class="sidebar-link">Advanced</a>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Reference</div>
+          <a href="project-management.html" class="sidebar-link">Project CLI</a>
+          <a href="performance.html" class="sidebar-link">Performance</a>
+          <a href="faq.html" class="sidebar-link">FAQ</a>
+        </div>
       </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Language</div>
-        <a href="language-guide.html" class="sidebar-link">Language Guide</a>
-        <a href="standard-library.html" class="sidebar-link">Standard Library</a>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Features</div>
-        <a href="gui-guide.html" class="sidebar-link active">GUI Toolkit</a>
-        <a href="opencv-guide.html" class="sidebar-link">OpenCV</a>
-        <a href="advanced-guide.html" class="sidebar-link">Advanced</a>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-title">Reference</div>
-        <a href="project-management.html" class="sidebar-link">Project CLI</a>
-        <a href="performance.html" class="sidebar-link">Performance</a>
-        <a href="faq.html" class="sidebar-link">FAQ</a>
-      </div>
+      <div class="sidebar-grip" id="sidebar-grip"></div>
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
+        <span class="toggle-icon">&#9654;</span>
+      </button>
     </nav>
 
     <main class="content">

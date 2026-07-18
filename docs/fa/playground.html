@@ -357,6 +357,30 @@
         display: none;
       }
     }
+
+    [lang="fa"] .editor-gutter {
+      left: auto;
+      right: 0;
+      border-right: none;
+      border-left: 1px solid var(--border);
+      padding: 12px 9px 12px 0;
+      text-align: left;
+    }
+
+    [lang="fa"] .editor-highlight {
+      left: 0;
+      right: 44px;
+      direction: ltr;
+      text-align: left;
+    }
+
+    [lang="fa"] .editor-textarea {
+      left: 0;
+      right: 44px;
+      width: calc(100% - 44px);
+      direction: rtl;
+      text-align: right;
+    }
   </style>
 </head>
 <body>
