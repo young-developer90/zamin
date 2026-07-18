@@ -268,29 +268,20 @@
     const langMenu = document.getElementById('lang-menu');
     const langOptions = document.querySelectorAll('.lang-option');
 
-    function getPathSegments() {
-      return window.location.pathname.split('/').filter(Boolean);
-    }
-
     function getCurrentLang() {
-      var segs = getPathSegments();
-      for (var i = 0; i < segs.length; i++) {
-        if (segs[i] === 'fa') return 'fa';
-        if (segs[i] === 'ja') return 'ja';
-      }
+      var path = window.location.pathname;
+      if (path.indexOf('/fa/') >= 0) return 'fa';
+      if (path.indexOf('/ja/') >= 0) return 'ja';
       return 'en';
     }
 
-    function getCurrentPage() {
-      var segs = getPathSegments();
-      return segs[segs.length - 1] || 'index.html';
-    }
-
-    function getBasePath() {
-      var segs = getPathSegments();
-      var lang = getCurrentLang();
-      var end = lang !== 'en' ? segs.indexOf(lang) : segs.length - 1;
-      return '/' + segs.slice(0, end).join('/') + '/';
+    function langHref(targetLang) {
+      var path = window.location.pathname;
+      var dir = path.substring(0, path.lastIndexOf('/') + 1);
+      dir = dir.replace(/\/(fa|ja)\//, '/');
+      var page = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
+      if (targetLang === 'en') return dir + page;
+      return dir + targetLang + '/' + page;
     }
 
     if (langBtn && langMenu) {
@@ -316,14 +307,7 @@
       langOptions.forEach(function(opt) {
         opt.addEventListener('click', function(e) {
           e.preventDefault();
-          var targetLang = opt.getAttribute('data-lang');
-          var page = getCurrentPage();
-          var base = getBasePath();
-          if (targetLang === 'en') {
-            window.location.href = base + page;
-          } else {
-            window.location.href = base + targetLang + '/' + page;
-          }
+          window.location.href = langHref(opt.getAttribute('data-lang'));
         });
       });
     }
@@ -331,8 +315,8 @@
     // === GitHub Link ===
     const editBtn = document.getElementById('edit-link');
     if (editBtn) {
-      var segs = getPathSegments();
-      var page = segs[segs.length - 1] || 'index.html';
+      var path = window.location.pathname;
+      var page = path.substring(path.lastIndexOf('/') + 1) || 'index.html';
       var lang = getCurrentLang();
       var localeDir = lang !== 'en' ? lang + '/' : '';
       editBtn.href = 'https://github.com/young-developer90/zamin/edit/master/docs/' + localeDir + page;
